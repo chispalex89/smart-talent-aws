@@ -1,0 +1,35 @@
+{
+  "name": "business-portal",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/business-portal/src",
+  "projectType": "application",
+  "tags": [],
+  "// targets": "to see all targets run: nx show project business-portal --web",
+  "targets": {
+    "build": {
+      "executor": "@nx/vite:build",
+      "outputs": ["dist/apps/business-portal"],
+      "options": {
+        "root": "apps/business-portal",
+        "assets": ["apps/business-portal/src/assets"],
+        "publicRoot": "apps/business-portal/public",
+        "index": "apps/business-portal/src/index.html",
+        "main": "apps/business-portal/src/main.tsx",
+        "tsConfig": "apps/business-portal/tsconfig.app.json",
+        "polyfills": "apps/business-portal/src/polyfills.ts",
+        "inlineStyleLanguage": "scss",
+        "inlineTemplateLanguage": "html",
+        "inlineTemplateOptions": {
+          "style": "scss"
+        },
+        "postcssConfig": "apps/business-portal/postcss.config.js"
+      },
+      "dependsOn": [
+        {
+          "target": "build",
+          "projects": "dependencies"
+        }
+      ]
+    }
+  }
+}

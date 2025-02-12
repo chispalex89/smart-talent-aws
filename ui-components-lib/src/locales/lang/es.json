@@ -1,0 +1,21 @@
+{
+    "nav": {
+        "home": "Dashboard",
+        "job": {
+            "job": "Empleos",
+            "jobOffers": "Ofertas de Empleo",
+            "createJob": "Publicar Oferta de Empleo"
+        },
+        "candidates": {
+            "candidates": "Candidatos",
+            "favorite": "Favoritos",
+            "all": "Buscar Candidatos"
+        },
+        "dashboard": "Crear nueva convocatoria",
+        "membership": {
+            "membership": "Membresía",
+            "pricing": "Membresías",
+            "myMembership": "Mi Membresía"
+        }
+    }
+}
