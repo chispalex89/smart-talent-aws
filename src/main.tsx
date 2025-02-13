@@ -3,16 +3,24 @@ import * as ReactDOM from 'react-dom/client';
 
 import App from './app';
 import { Amplify } from 'aws-amplify';
+import { ThemeProvider } from '@aws-amplify/ui-react';
+import outputs from '../amplify_outputs.json';
 
+import '@aws-amplify/ui-react/styles.css';
 import '@/index.css';
+import AuthenticatorApp from './authenticator-app';
 
+Amplify.configure(outputs);
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement,
 );
 
 root.render(
-  <StrictMode>
-    <App />
-  </StrictMode>,
+  // <StrictMode>
+  //   <App />
+  // </StrictMode>,
+  <ThemeProvider>
+    <AuthenticatorApp />
+  </ThemeProvider>,
 );

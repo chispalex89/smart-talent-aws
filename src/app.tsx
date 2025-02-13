@@ -15,13 +15,11 @@ const App: FC = () => {
   return (
     <Theme>
       <BrowserRouter>
-        <AuthProvider authService={AuthService}>
           <CatalogContextProvider>
             <Layouts>
               <Views />
             </Layouts>
           </CatalogContextProvider>
-        </AuthProvider>
       </BrowserRouter>
     </Theme>
   );

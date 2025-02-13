@@ -21,7 +21,7 @@ type AllRoutesProps = ViewsProps;
 const { authenticatedEntryPath } = appConfig;
 
 const AllRoutes = (props: AllRoutesProps) => {
-  const { user } = useAuth();
+  // const { user } = useAuth();
   const { protectedRoutes, publicRoutes } = props;
   return (
     <Routes>
@@ -36,7 +36,7 @@ const AllRoutes = (props: AllRoutesProps) => {
             path={route.path}
             element={
               <AuthorityGuard
-                userAuthority={user.authority}
+                // userAuthority={user.authority}
                 authority={route.authority}
               >
                 <PageContainer {...props} {...route.meta}>

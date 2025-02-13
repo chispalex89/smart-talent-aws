@@ -152,7 +152,7 @@ model Company {
 
   @@map("company")
 }
-
+// missing relation
 model JobOffer {
   id                           Int              @id @default(autoincrement())
   uuid                         String
@@ -214,6 +214,7 @@ model JobOffer {
   @@map("job_offer")
 }
 
+// missing relation
 model JobApplicant {
   id           Int       @id @default(autoincrement())
   appliedAt    DateTime  @map("applied_at")

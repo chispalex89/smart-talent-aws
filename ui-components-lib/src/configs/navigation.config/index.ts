@@ -18,16 +18,6 @@ const navigationConfig: NavigationTree[] = [
     subMenu: [],
   },
   {
-    key: 'home-applicant',
-    path: '/home',
-    title: 'Dashboard',
-    translateKey: 'nav.home',
-    icon: 'home',
-    type: NAV_ITEM_TYPE_ITEM,
-    authority: ['Applicant'],
-    subMenu: [],
-  },
-  {
     key: 'job',
     path: '',
     title: 'Job',
