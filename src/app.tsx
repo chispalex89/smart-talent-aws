@@ -1,25 +1,32 @@
-import React, { FC } from 'react';
+import React, { FC, useEffect } from 'react';
 import { BrowserRouter } from 'react-router-dom';
 
 import Theme from '@/components/template/Theme';
 import Layouts from '@/components/layouts';
-import { AuthProvider } from '@/auth';
-
-import { AuthService } from './services/authService';
 import Views from './views';
 
-import './styles.css'; // Import Tailwind CSS
 import { CatalogContextProvider } from './context/catalogContext';
+import { useUserContext } from './context/userContext';
+import { getCurrentUser } from 'aws-amplify/auth';
+import navigationConfigByRole from './config/navigation.config';
 
 const App: FC = () => {
+  const { setAuthUser, role } = useUserContext();
+
+  useEffect(() => {
+    getCurrentUser().then((user) => {
+      setAuthUser(user);
+    });
+  }, [getCurrentUser]);
+
   return (
     <Theme>
       <BrowserRouter>
-          <CatalogContextProvider>
-            <Layouts>
-              <Views />
-            </Layouts>
-          </CatalogContextProvider>
+        <CatalogContextProvider>
+          <Layouts navigationConfig={navigationConfigByRole(role)}>
+            <Views />
+          </Layouts>
+        </CatalogContextProvider>
       </BrowserRouter>
     </Theme>
   );

@@ -13,6 +13,7 @@ export const initialTableData: TableQueries = {
 
 export const initialFilterData = {
   companyId: 1,
+  status: 'active',
 };
 
 export type JobOfferListState = {

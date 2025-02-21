@@ -7,6 +7,7 @@ import { ThemeProvider } from '@aws-amplify/ui-react';
 import outputs from '../amplify_outputs.json';
 
 import '@aws-amplify/ui-react/styles.css';
+import './styles.css'; // Import Tailwind CSS
 import '@/index.css';
 import AuthenticatorApp from './authenticator-app';
 

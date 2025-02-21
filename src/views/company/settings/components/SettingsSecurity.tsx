@@ -13,8 +13,10 @@ import { z } from 'zod';
 import type { ZodType } from 'zod';
 import apiService from '../../../../services/apiService';
 import Notification from '@/components/ui/Notification';
-import { toast } from '@/components/ui';
+import { Alert, toast } from '@/components/ui';
 import { useAuth } from '@/auth';
+import { updatePassword, signOut } from 'aws-amplify/auth';
+import { MdWarningAmber } from 'react-icons/md';
 
 type PasswordSchema = {
   currentPassword: string;
@@ -63,30 +65,47 @@ const SettingsSecurity = () => {
   const handlePostSubmit = async () => {
     setIsSubmitting(true);
     try {
-      const response = await apiService.patch<{ status: number }>(
-        `/user/${user.userId}/change-password`,
-        getValues(),
-      );
-      console.log(response); 
-      if (response.status === 200) {
-        toast.push(
+      // const response = await apiService.patch<{ status: number }>(
+      //   `/user/${user.userId}/change-password`,
+      //   getValues(),
+      // );
+      // console.log(response); 
+      // if (response.status === 200) {
+      await updatePassword({
+        newPassword: getValues().newPassword,
+        oldPassword: getValues().currentPassword,
+      });
+        await toast.push(
           <Notification type="success">
-            ¡Contraseña actualizada con éxito!
+            ¡Contraseña actualizada con éxito!, Por favor inicia sesión
+            nuevamente
           </Notification>,
           {
             placement: 'top-center',
-          },
+          }
         );
-      } else {
+
+        await sleep(2000);
         toast.push(
-          <Notification type="danger">
-            ¡Error al actualizar la contraseña!
+          <Notification type="info">
+            
           </Notification>,
           {
             placement: 'top-center',
           },
         );
-      }
+
+        signOut();
+      // } else {
+      //   toast.push(
+      //     <Notification type="danger">
+      //       ¡Error al actualizar la contraseña!
+      //     </Notification>,
+      //     {
+      //       placement: 'top-center',
+      //     },
+      //   );
+      // }
     } catch (error) {
       console.error(error);
       toast.push(
@@ -116,6 +135,10 @@ const SettingsSecurity = () => {
           proteger tu cuenta.
         </p>
       </div>
+      <Alert type="warning" showIcon style={{ marginBottom: '1rem' }}>
+        Al cambiar tu contraseña, se cerrará tu sesión actual y deberás iniciar
+        sesión nuevamente.
+      </Alert>
       <Form ref={formRef} className="mb-8" onSubmit={handleSubmit(onSubmit)}>
         <FormItem
           label="Contraseña actual"

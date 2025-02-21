@@ -59,7 +59,7 @@ type DataTableProps<T> = {
   checkboxChecked?: (row: T) => boolean;
   indeterminateCheckboxChecked?: (row: Row<T>[]) => boolean;
   getRowCanExpand?: (row: Row<unknown>) => boolean;
-  renderSubComponent? : (row: Row<T>) => ReactNode;
+  renderSubComponent?: (row: Row<T>) => ReactNode;
 } & TableProps;
 
 type CheckBoxChangeEvent = ChangeEvent<HTMLInputElement>;
@@ -284,7 +284,16 @@ function _DataTable<T>(
             <Tr key={headerGroup.id}>
               {headerGroup.headers.map((header) => {
                 return (
-                  <Th key={header.id} colSpan={header.colSpan}>
+                  <Th
+                    key={header.id}
+                    colSpan={
+                      (header.column.columnDef.header || '')
+                        .toString()
+                        .toLowerCase() === 'nombre'
+                        ? 2
+                        : header.colSpan
+                    }
+                  >
                     {header.isPlaceholder ? null : (
                       <div
                         className={classNames(
@@ -346,32 +355,37 @@ function _DataTable<T>(
                 .map((row) => {
                   return (
                     <Fragment key={row.id}>
-                        <Tr key={row.id}>
+                      <Tr key={row.id}>
                         {row.getVisibleCells().map((cell) => {
-                            return (
+                          return (
                             <Td
-                                key={cell.id}
-                                style={{
+                              key={cell.id}
+                              style={{
                                 width: cell.column.getSize(),
-                                }}
+                              }}
+                              colSpan={
+                                (cell.column.columnDef.header || '')
+                                  .toString()
+                                  .toLowerCase() === 'nombre'
+                                  ? 2
+                                  : 1
+                              }
                             >
-                                {flexRender(
+                              {flexRender(
                                 cell.column.columnDef.cell,
                                 cell.getContext()
-                                )}
+                              )}
                             </Td>
-                            );
+                          );
                         })}
+                      </Tr>
+                      {row.getIsExpanded() && (
+                        <Tr>
+                          <Td colSpan={finalColumns.length + 1}>
+                            {props.renderSubComponent?.(row as any)}
+                          </Td>
                         </Tr>
-                        {
-                            row.getIsExpanded() && (
-                                <Tr>
-                                    <Td colSpan={finalColumns.length}>
-                                        {props.renderSubComponent?.(row as any)}
-                                    </Td>
-                                </Tr>
-                            )
-                        }
+                      )}
                     </Fragment>
                   );
                 })

@@ -6,7 +6,9 @@ import withHeaderItem, {
 import { useSessionUser } from '@/store/authStore';
 import { Link } from 'react-router-dom';
 import { PiUserDuotone, PiSignOutDuotone } from 'react-icons/pi';
-import { useAuth } from '@/auth';
+import { signOut } from 'aws-amplify/auth';
+import { JSX } from 'react';
+
 
 type DropdownList = {
   label: string;
@@ -22,8 +24,6 @@ const _UserDropdown = (
   { dropdownItemList }: UserDropdownProps = { dropdownItemList: [] },
 ) => {
   const { avatar, userName, email } = useSessionUser((state) => state.user);
-
-  const { signOut } = useAuth();
 
   const handleSignOut = () => {
     signOut();

@@ -16,8 +16,21 @@ import type {
 import type { Candidate } from '../types';
 import type { TableQueries } from '@/@types/common';
 import dayjs from 'dayjs';
-import { Card } from '@/components/ui';
-import { HiOutlineChevronDown, HiOutlineChevronRight, HiOutlineMinusCircle, HiOutlinePlusCircle } from 'react-icons/hi';
+import { Button, Card } from '@/components/ui';
+import {
+  HiOutlineChevronDown,
+  HiOutlineChevronRight,
+  HiOutlineMinusCircle,
+  HiOutlinePlusCircle,
+  HiRefresh,
+} from 'react-icons/hi';
+import {
+  calculateAge,
+  dateFormat,
+  nameFormat,
+} from '../../../../helpers/textConverter';
+import { BsCloudDownload, BsStar } from 'react-icons/bs';
+import { PiArchive, PiFloppyDisk, PiWarning } from 'react-icons/pi';
 
 const statusColor: Record<string, string> = {
   active: 'bg-emerald-200 dark:bg-emerald-200 text-gray-900 dark:text-gray-900',
@@ -37,46 +50,24 @@ const NameColumn = ({ row }: { row: Candidate }) => {
         className={`hover:text-primary ml-2 rtl:mr-2 font-semibold text-gray-900 dark:text-gray-100`}
         to={`/concepts/customers/customer-details/${row.id}`}
       >
-        {`${row.user.firstName} ${row.user.middleName ?? ''} ${row.user.lastName ?? ''} ${row.user.secondLastName ?? ''} ${row.user.marriedLastName ?? ''}`}
+        {nameFormat(row.user)}
       </Link>
-    </div>
-  );
-};
-
-const ActionColumn = ({
-  onViewDetail,
-  onDelete,
-}: {
-  onViewDetail: () => void;
-  onDelete: () => void;
-}) => {
-  return (
-    <div className="flex items-center gap-3">
-      <Tooltip title="View">
-        <div
-          className={`text-xl cursor-pointer select-none font-semibold`}
-          role="button"
-          onClick={onViewDetail}
-        >
-          <TbEye />
-        </div>
-      </Tooltip>
-      <Tooltip wrapperClass="flex" title="Eliminar">
-        <span
-          className="cursor-pointer p-2 hover:text-red-500"
-          onClick={onDelete}
-        >
-          <TbTrash />
-        </span>
-      </Tooltip>
     </div>
   );
 };
 
 const CandidateListTable = ({
   handleDelete,
+  handleArchive,
+  handleReport,
+  handleFavorite,
+  handleDownload,
 }: {
   handleDelete: (id: number) => void;
+  handleArchive: (id: number) => void;
+  handleReport: (id: number) => void;
+  handleFavorite: (id: number) => void;
+  handleDownload: (id: number) => void;
 }) => {
   const navigate = useNavigate();
 
@@ -172,16 +163,6 @@ const CandidateListTable = ({
           );
         },
       },
-      {
-        header: '',
-        id: 'action',
-        cell: (props) => (
-          <ActionColumn
-            onViewDetail={() => handleViewDetails(props.row.original)}
-            onDelete={() => handleDelete(props.row.original.id)}
-          />
-        ),
-      },
     ],
     []
   );
@@ -227,9 +208,120 @@ const CandidateListTable = ({
 
   const renderSubComponent = (row: Row<Candidate>) => {
     return (
-      <pre style={{ fontSize: '10px' }}>
-        <code>{JSON.stringify(row.original, null, 2)}</code>
-      </pre>
+      <div className="grid md:grid-cols-4 gap-4">
+        <div className="flex items-center gap-2">
+          <Avatar
+            size={200}
+            shape="square"
+            src={'api.dicebear.com/7.x/pixel-art/svg'}
+          />
+        </div>
+        <div className="flex flex-col flex-start gap-2 md:col-span-2">
+          <h4>{nameFormat(row.original.user)}</h4>
+          <div className="flex flex-row gap-2 flex-start items-center">
+            <Button variant="plain" size="xs" style={{ padding: '0' }}>
+              <HiRefresh size={20} />
+            </Button>
+            <span className="align-bottom">
+              Última actualización:{' '}
+              {dateFormat(row.original.updated_At ?? row.original.created_at)}
+            </span>
+          </div>
+          <span className="text-md font-semibold">
+            {
+              // TODO: description
+              'Descripción'
+            }
+          </span>
+          <span className="text-md font-semibold">Área de trabajo:</span>
+          <span className="text-md font-semibold">
+            Edad:{' '}
+            {
+              // TODO: calculate age
+            }
+          </span>
+          <span className="text-md font-semibold">
+            Sexo:{' '}
+            {
+              // TODO: add gender
+              // row.original.user.gender
+            }
+          </span>
+          <span className="text-md font-semibold">
+            Rango Salarial:{' '}
+            {
+              // TODO: add salary range
+            }
+          </span>
+          <span className="text-md font-semibold">
+            Ubicación:{' '}
+            {
+              // TODO: add location (city, state)
+            }
+          </span>
+          <span className="text-md font-semibold">
+            Jornada:{' '}
+            {
+              // TODO: add work shift
+            }
+          </span>
+        </div>
+        <div className="grid md:grid-cols-2 gap-4 items-center">
+          <Button
+            variant="solid"
+            size="md"
+            className="flex items-center gap-2 max-w-[250px]"
+            customColorClass={() =>
+              'border-success ring-1 ring-success text-success hover:bg-success hover:ring-success hover:text-white bg-transparent'
+            }
+          >
+            <PiFloppyDisk />
+            Guardar
+          </Button>
+          <Button
+            variant="default"
+            size="md"
+            className="flex items-center gap-2 max-w-[250px]"
+            onClick={() => handleArchive(row.original.id)}
+          >
+            <PiArchive />
+            Archivar
+          </Button>
+          <Button
+            variant="solid"
+            size="md"
+            customColorClass={() =>
+              'border-warning ring-1 ring-warning text-warning hover:bg-warning hover:ring-warning hover:text-white bg-transparent'
+            }
+            className="flex items-center gap-2 max-w-[250px]"
+            onClick={() => handleFavorite(row.original.id)}
+          >
+            <BsStar /> Favorito
+          </Button>
+          <Button
+            variant="solid"
+            size="md"
+            customColorClass={() =>
+              'border-blue-500 ring-1 ring-blue-500 text-blue-500 hover:border-blue-500 hover:ring-blue-500 hover:text-white hover:bg-blue-500 bg-transparent'
+            }
+            className="flex items-center gap-2 max-w-[250px]"
+            onClick={() => handleDownload(row.original.id)}
+          >
+            <BsCloudDownload /> Descargar CV
+          </Button>
+          <Button
+            variant="solid"
+            size="md"
+            customColorClass={() =>
+              'border-red-500 ring-1 ring-red-500 text-red-500 hover:border-red-500 hover:ring-red-500 hover:text-white hover:bg-red-500 bg-transparent'
+            }
+            className="flex items-center gap-2 max-w-[250px]"
+            onClick={() => handleReport(row.original.id)}
+          >
+            <PiWarning /> Reportar
+          </Button>
+        </div>
+      </div>
     );
   };
 

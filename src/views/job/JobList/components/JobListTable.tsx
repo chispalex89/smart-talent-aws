@@ -5,7 +5,7 @@ import DataTable from '@/components/shared/DataTable';
 import useJobOfferList from '../hooks/useJobOfferList';
 import cloneDeep from 'lodash/cloneDeep';
 import { useNavigate } from 'react-router-dom';
-import { TbTrash, TbEdit, TbArchiveFilled } from 'react-icons/tb';
+import { TbTrash, TbEdit, TbArchiveFilled, TbRefresh } from 'react-icons/tb';
 import dayjs from 'dayjs';
 import { NumericFormat } from 'react-number-format';
 import type { OnSortParam, ColumnDef } from '@/components/shared/DataTable';
@@ -44,15 +44,15 @@ const jobOfferStatusColor: Record<
 const ActionColumn = ({
   row,
   handleDelete,
+  handleArchive,
+  handleRepublish,
 }: {
   row: Job;
   handleDelete: (uuid: string) => void;
+  handleArchive: (uuid: string) => void;
+  handleRepublish: (uuid: string) => void;
 }) => {
   const navigate = useNavigate();
-
-  const onDelete = () => {
-    apiService.delete(`/job-offer/${row.uuid}`);
-  };
 
   const onEdit = () => {
     navigate(`/job/edit/${row.uuid}`);
@@ -60,8 +60,19 @@ const ActionColumn = ({
 
   return (
     <div className="flex justify-end text-lg gap-1">
+      <Tooltip wrapperClass="flex" title="Republicar">
+        <span
+          className="cursor-pointer p-2"
+          onClick={() => handleRepublish(row.uuid)}
+        >
+          <TbRefresh />
+        </span>
+      </Tooltip>
       <Tooltip wrapperClass="flex" title="Archivar">
-        <span className="cursor-pointer p-2">
+        <span
+          className="cursor-pointer p-2"
+          onClick={() => handleArchive(row.uuid)}
+        >
           <TbArchiveFilled />
         </span>
       </Tooltip>
@@ -84,8 +95,12 @@ const ActionColumn = ({
 
 const JobListTable = ({
   handleDelete,
+  handleArchive,
+  handleRepublish,
 }: {
   handleDelete: (uuid: string) => void;
+  handleArchive: (uuid: string) => void;
+  handleRepublish: (uuid: string) => void;
 }) => {
   const {
     jobOfferList,
@@ -106,10 +121,12 @@ const JobListTable = ({
       };
       await apiService.post(`/job-offer`, updatedJob);
       toast.push(
-        <Notification type="success">¡Oferta de Empleo Actualizada!</Notification>,
+        <Notification type="success">
+          ¡Oferta de Empleo Actualizada!
+        </Notification>,
         {
           placement: 'top-center',
-        },
+        }
       );
       mutate();
     } catch (error) {
@@ -120,7 +137,7 @@ const JobListTable = ({
         </Notification>,
         {
           placement: 'top-center',
-        },
+        }
       );
     }
   };
@@ -208,11 +225,16 @@ const JobListTable = ({
         header: '',
         id: 'action',
         cell: (props) => (
-          <ActionColumn row={props.row.original} handleDelete={handleDelete} />
+          <ActionColumn
+            row={props.row.original}
+            handleDelete={handleDelete}
+            handleArchive={handleArchive}
+            handleRepublish={handleRepublish}
+          />
         ),
       },
     ],
-    [],
+    []
   );
 
   const handleSetTableData = (data: TableQueries) => {

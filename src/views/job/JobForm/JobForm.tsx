@@ -25,7 +25,12 @@ type JobFormProps = {
   newOrder?: boolean;
 } & CommonProps;
 
-const validationSchema: ZodType<JobFormSchema> = z.object({
+const validationSchema = z.object({
+  id: z.number().optional(),
+  status: z.string().optional(),
+  created_at: z.date().optional(),
+  updated_at: z.date().optional(),
+  isDeleted: z.boolean().optional(),
   name: z
     .string({ message: 'Nombre del trabajo requerido' })
     .min(1, { message: 'Nombre del trabajo requerido' }),
@@ -82,7 +87,7 @@ const JobForm = (props: JobFormProps) => {
 
   const { larger } = useResponsive();
 
-  const handleSubmitForm = (e) => {
+  const handleSubmitForm = (e: any) => {
     e.preventDefault();
     const { expectedDriverLicense, hiringDate, publicationDate } = getValues();
     if (typeof hiringDate === 'string') {
@@ -97,14 +102,14 @@ const JobForm = (props: JobFormProps) => {
     setValue('otherLanguages', {});
     setValue(
       'expectedDriverLicense',
-      expectedDriverLicense?.map((edl: any) => edl.value) ?? [],
+      expectedDriverLicense?.map((edl: any) => edl.value) ?? []
     );
     setValue('ageRangeFrom', Number(getValues('ageRangeFrom')));
     setValue('ageRangeTo', Number(getValues('ageRangeTo')));
     const requiredExperience = getValues('requiredExperience');
     setValue(
       'requiredExperience',
-      requiredExperience ? Number(requiredExperience) : null,
+      requiredExperience ? Number(requiredExperience) : null
     );
     setValue('vacancies', Number(getValues('vacancies')));
     setValue('companyId', 1);

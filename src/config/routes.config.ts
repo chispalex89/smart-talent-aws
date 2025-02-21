@@ -9,7 +9,7 @@ export const protectedRoutes: Routes = [
   {
     key: 'home',
     path: '/home',
-    component: lazy(() => import('../views/dashboards/ProjectDashboard')),
+    component: lazy(() => import('../views/dashboards/BusinessDashboard')),
     authority: ['Recruiter'],
   },
   {
@@ -50,7 +50,7 @@ export const protectedRoutes: Routes = [
   },
   {
     key: 'companyProfile',
-    path: '/company/profile',
+    path: '/profile/company',
     component: lazy(() => import('../views/company/settings')),
     authority: ['Recruiter'],
   },

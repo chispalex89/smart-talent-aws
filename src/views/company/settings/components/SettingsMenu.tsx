@@ -18,7 +18,7 @@ const menuList: { label: string; value: View; icon: ReactNode }[] = [
     { label: 'Perfil', value: 'profile', icon: <TbUserSquare /> },
     { label: 'Seguridad', value: 'security', icon: <TbLock /> },
     // { label: 'Notification', value: 'notification', icon: <TbBell /> },
-    { label: 'Pagos', value: 'billing', icon: <TbFileDollar /> },
+    // { label: 'Pagos', value: 'billing', icon: <TbFileDollar /> },
     // { label: 'Integration', value: 'integration', icon: <TbRefreshDot /> },
 ]
 

@@ -13,16 +13,59 @@ import apiService from '../../../services/apiService';
 const JobOfferList = () => {
   const [deleteJobOfferConfirmationOpen, setDeleteJobOfferConfirmationOpen] =
     useState(false);
+  const [archiveJobOfferConfirmationOpen, setArchiveJobOfferConfirmationOpen] =
+    useState(false);
 
   const [uuid, setUuid] = useState('');
   const { mutate } = useJobOfferList();
   const handleConfirmDelete = async () => {
-    await apiService.delete(`/job-offer/${uuid}`);
-    toast.push(<Notification type="info">Oferta de empleo eliminada</Notification>, {
-      placement: 'top-center',
-    });
-    setDeleteJobOfferConfirmationOpen(false);
-    mutate();
+    try {
+      await apiService.delete(`/job-offer/${uuid}`);
+      toast.push(
+        <Notification type="info">Oferta de empleo eliminada</Notification>,
+        {
+          placement: 'top-center',
+        }
+      );
+    } catch (error) {
+      console.error(error);
+      toast.push(
+        <Notification type="danger">
+          Error al eliminar la oferta de empleo
+        </Notification>,
+        {
+          placement: 'top-center',
+        }
+      );
+    } finally {
+      handleCancel();
+      mutate();
+    }
+  };
+
+  const handleConfirmArchive = async () => {
+    try {
+      await apiService.put(`/job-offer/${uuid}`, { status: 'archived' });
+      toast.push(
+        <Notification type="info">Oferta de empleo archivada</Notification>,
+        {
+          placement: 'top-center',
+        }
+      );
+    } catch (error) {
+      console.error(error);
+      toast.push(
+        <Notification type="danger">
+          Error al archivar la oferta de empleo
+        </Notification>,
+        {
+          placement: 'top-center',
+        }
+      );
+    } finally {
+      handleCancel();
+      mutate();
+    }
   };
 
   const handleDelete = (uuid: string) => {
@@ -30,8 +73,42 @@ const JobOfferList = () => {
     setUuid(uuid);
   };
 
+  const handleArchive = (uuid: string) => {
+    setArchiveJobOfferConfirmationOpen(true);
+    setUuid(uuid);
+  };
+
+  const handleRepublish = async (uuid: string) => {
+    try {
+      await apiService.put(`/job-offer/${uuid}`, {
+        status: 'active',
+        publicationDate: new Date(),
+      });
+      toast.push(
+        <Notification type="info">Oferta de empleo republicada</Notification>,
+        {
+          placement: 'top-center',
+        }
+      );
+    } catch (error) {
+      console.error(error);
+      toast.push(
+        <Notification type="danger">
+          Error al republicar la oferta de empleo
+        </Notification>,
+        {
+          placement: 'top-center',
+        }
+      );
+    } finally {
+      handleCancel();
+      mutate();
+    }
+  };
+
   const handleCancel = () => {
     setDeleteJobOfferConfirmationOpen(false);
+    setArchiveJobOfferConfirmationOpen(false);
     setUuid('');
   };
   return (
@@ -43,7 +120,11 @@ const JobOfferList = () => {
             <JobOfferListActionTools />
           </div>
           <JobOfferListTableTools />
-          <JobListTable handleDelete={handleDelete} />
+          <JobListTable
+            handleDelete={handleDelete}
+            handleArchive={handleArchive}
+            handleRepublish={handleRepublish}
+          />
         </div>
       </AdaptiveCard>
       <ConfirmDialog
@@ -56,6 +137,17 @@ const JobOfferList = () => {
         onConfirm={handleConfirmDelete}
       >
         <p>¿Está seguro de eliminar la oferta de empleo?</p>
+      </ConfirmDialog>
+      <ConfirmDialog
+        isOpen={archiveJobOfferConfirmationOpen}
+        type="danger"
+        title="Archivar Oferta de Empleo"
+        onClose={handleCancel}
+        onRequestClose={handleCancel}
+        onCancel={handleCancel}
+        onConfirm={handleConfirmArchive}
+      >
+        <p>¿Está seguro de archivar la oferta de empleo?</p>
       </ConfirmDialog>
     </Container>
   );

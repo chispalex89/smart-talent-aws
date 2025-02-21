@@ -16,6 +16,11 @@
             "membership": "Membresía",
             "pricing": "Membresías",
             "myMembership": "Mi Membresía"
+        },
+        "archive": {
+            "archive": "Archivo",
+            "jobOffers": "Ofertas de Empleo",
+            "candidates": "Candidatos"
         }
     }
 }

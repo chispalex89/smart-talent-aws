@@ -5,7 +5,6 @@ import VerticalMenuContent from '@/components/template/VerticalMenuContent';
 import { useThemeStore } from '@/store/themeStore';
 import { useSessionUser } from '@/store/authStore';
 import { useRouteKeyStore } from '@/store/routeKeyStore';
-import navigationConfig from '@/configs/navigation.config';
 import appConfig from '@/configs/app.config';
 import { Link } from 'react-router-dom';
 import {
@@ -16,6 +15,7 @@ import {
   LOGO_X_GUTTER,
 } from '@/constants/theme.constant';
 import type { Mode } from '@/@types/theme';
+import { NavigationTree } from '@/@types/navigation';
 
 type SideNavProps = {
   translationSetup?: boolean;
@@ -23,6 +23,7 @@ type SideNavProps = {
   className?: string;
   contentClass?: string;
   mode?: Mode;
+  navigationConfig?: NavigationTree[];
 };
 
 const sideNavStyle = {
@@ -41,11 +42,12 @@ const SideNav = ({
   className,
   contentClass,
   mode,
+  navigationConfig,
 }: SideNavProps) => {
   const defaultMode = useThemeStore((state) => state.mode);
   const direction = useThemeStore((state) => state.direction);
   const sideNavCollapse = useThemeStore(
-    (state) => state.layout.sideNavCollapse,
+    (state) => state.layout.sideNavCollapse
   );
 
   const currentRouteKey = useRouteKeyStore((state) => state.currentRouteKey);
@@ -59,7 +61,7 @@ const SideNav = ({
         'side-nav',
         background && 'side-nav-bg',
         !sideNavCollapse && 'side-nav-expand',
-        className,
+        className
       )}
     >
       <Link
@@ -73,7 +75,7 @@ const SideNav = ({
           type={sideNavCollapse ? 'streamline' : 'full'}
           className={classNames(
             sideNavCollapse && 'ltr:ml-[11.5px] ltr:mr-[11.5px]',
-            sideNavCollapse ? SIDE_NAV_CONTENT_GUTTER : LOGO_X_GUTTER,
+            sideNavCollapse ? SIDE_NAV_CONTENT_GUTTER : LOGO_X_GUTTER
           )}
         />
       </Link>

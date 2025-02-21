@@ -12,6 +12,8 @@ import { I18n } from 'aws-amplify/utils';
 import { translations } from '@aws-amplify/ui-react';
 import React, { useEffect } from 'react';
 import App from './app';
+import HeaderLogo from '@/components/template/HeaderLogo';
+import { UserContextProvider } from './context/userContext';
 
 const components = {
   Header() {
@@ -19,10 +21,7 @@ const components = {
 
     return (
       <View textAlign="center" padding={tokens.space.large}>
-        <Image
-          alt="Amplify logo"
-          src="https://docs.amplify.aws/assets/logo-dark.svg"
-        />
+        <HeaderLogo innerLink={false} />
       </View>
     );
   },
@@ -240,15 +239,38 @@ const formFields = {
   },
 };
 
+const customTranslations = {
+  es: {
+    'Sign in': 'Iniciar sesión',
+    'Create a new account': 'Crear una nueva cuenta',
+    'Forgot Password': 'Olvidé mi contraseña',
+    'Back to Sign In': 'Volver a Iniciar sesión',
+    'Enter your Password Please:': 'Ingrese su contraseña por favor:',
+    'Enter your email:': 'Ingrese su correo electrónico:',
+    'Enter your Confirmation Code:': 'Ingrese su código de confirmación:',
+    'New Label': 'Nueva etiqueta',
+    'La contraseña debe tener al menos 8 caracteres':
+      'La contraseña debe tener al menos 8 caracteres',
+    'Password must have upper case letters':
+      'La contraseña debe tener letras mayúsculas',
+    'Password must have numbers': 'La contraseña debe tener números',
+    'Password must have special characters':
+      'La contraseña debe tener caracteres especiales',
+  },
+};
+
 export default function AuthenticatorApp() {
   useEffect(() => {
     I18n.putVocabularies(translations);
+    I18n.putVocabularies(customTranslations);
     I18n.setLanguage('es');
   }, []);
 
   return (
     <Authenticator formFields={formFields} components={components}>
-      <App />
+      <UserContextProvider>
+        <App />
+      </UserContextProvider>
     </Authenticator>
   );
 }

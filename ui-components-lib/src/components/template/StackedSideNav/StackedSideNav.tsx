@@ -11,10 +11,10 @@ import useResponsive from '@/utils/hooks/useResponsive'
 import { useThemeStore } from '@/store/themeStore'
 import { useRouteKeyStore } from '@/store/routeKeyStore'
 import { useSessionUser } from '@/store/authStore'
-import navigationConfig from '@/configs/navigation.config'
 import isEmpty from 'lodash/isEmpty'
 import useTranslation from '@/utils/hooks/useTranslation'
 import type { TranslationFn } from '@/@types/common'
+import { NavigationTree } from '@/@types/navigation'
 
 const stackedSideNavDefaultStyle = {
     width: SPLITTED_SIDE_NAV_MINI_WIDTH,
@@ -22,8 +22,10 @@ const stackedSideNavDefaultStyle = {
 
 const StackedSideNav = ({
     translationSetup = true,
+    navigationConfig,
 }: {
     translationSetup?: boolean
+    navigationConfig: NavigationTree[]
 }) => {
     const { t } = useTranslation(!translationSetup)
 

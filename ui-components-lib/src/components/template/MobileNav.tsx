@@ -4,10 +4,10 @@ import Drawer from '@/components/ui/Drawer'
 import NavToggle from '@/components/shared/NavToggle'
 import { DIR_RTL } from '@/constants/theme.constant'
 import withHeaderItem, { WithHeaderItemProps } from '@/utils/hoc/withHeaderItem'
-import navigationConfig from '@/configs/navigation.config'
 import { useThemeStore } from '@/store/themeStore'
 import { useRouteKeyStore } from '@/store/routeKeyStore'
 import { useSessionUser } from '@/store/authStore'
+import { NavigationTree } from '@/@types/navigation'
 
 const VerticalMenuContent = lazy(
     () => import('@/components/template/VerticalMenuContent'),
@@ -21,7 +21,9 @@ const MobileNavToggle = withHeaderItem<
     MobileNavToggleProps & WithHeaderItemProps
 >(NavToggle)
 
-const MobileNav = () => {
+const MobileNav = (
+    { navigationConfig }: { navigationConfig: NavigationTree[] },
+) => {
     const [isOpen, setIsOpen] = useState(false)
 
     const handleOpenDrawer = () => {

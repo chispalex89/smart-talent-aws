@@ -24,22 +24,23 @@ const defaultTheme: ThemeVariables = {
     },
 }
 
+// THEME VARIABLES
 const darkTheme: ThemeVariables = {
-    light: {
-        primary: '#18181b',
-        primaryDeep: '#09090b',
-        primaryMild: '#27272a',
-        primarySubtle: '#18181b0d',
-        neutral: '#ffffff',
-    },
-    dark: {
-        primary: '#ffffff',
-        primaryDeep: '#09090b',
-        primaryMild: '#e5e7eb',
-        primarySubtle: '#ffffff1a',
-        neutral: '#111827',
-    },
-}
+  light: {
+    primary: '#2a85ff',
+    primaryDeep: '#0069f6',
+    primaryMild: '#4996ff',
+    primarySubtle: '#2a85ff1a',
+    neutral: '#ffffff',
+  },
+  dark: {
+    primary: '#ffffff',
+    primaryDeep: '#09090b',
+    primaryMild: '#e5e7eb',
+    primarySubtle: '#ffffff1a',
+    neutral: '#111827',
+  },
+};
 
 const greenTheme: ThemeVariables = {
     light: {
@@ -94,6 +95,7 @@ const orangeTheme: ThemeVariables = {
 
 const presetThemeSchemaConfig: Record<string, ThemeVariables> = {
     default: defaultTheme,
+    light: defaultTheme,
     dark: darkTheme,
     green: greenTheme,
     purple: purpleTheme,

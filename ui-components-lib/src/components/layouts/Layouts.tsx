@@ -5,10 +5,10 @@ import { useAuth } from '@/auth';
 import { useThemeStore } from '@/store/themeStore';
 import PostLoginLayout from './PostLoginLayout';
 import PreLoginLayout from './PreLoginLayout';
+import { LayoutProps } from './PostLoginLayout/components/LayoutProps.interface';
 
-const Layout = ({ children }: CommonProps) => {
+const Layout = ({ children, navigationConfig }: LayoutProps) => {
   const layoutType = useThemeStore((state) => state.layout.type);
-
   return (
     <Suspense
       fallback={
@@ -17,7 +17,12 @@ const Layout = ({ children }: CommonProps) => {
         </div>
       }
     >
-      <PostLoginLayout layoutType={layoutType}>{children}</PostLoginLayout>
+      <PostLoginLayout
+        layoutType={layoutType}
+        navigationConfig={navigationConfig}
+      >
+        {children}
+      </PostLoginLayout>
     </Suspense>
   );
 };
