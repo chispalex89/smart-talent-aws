@@ -4,7 +4,7 @@ import classNames from '@/utils/classNames';
 import { Link, useNavigate } from 'react-router-dom';
 import { TbBriefcase2Filled, TbCopyCheck, TbStar } from 'react-icons/tb';
 import { MdCardMembership } from 'react-icons/md';
-import { GetBusinessDashboardResponse, Project } from '../types';
+import { GetApplicantDashboardResponse, Project } from '../types';
 import type { ReactNode } from 'react';
 
 type StatisticCardProps = {
@@ -16,7 +16,7 @@ type StatisticCardProps = {
 };
 
 type DashboardOverviewData = {
-  data: GetBusinessDashboardResponse;
+  data: GetApplicantDashboardResponse;
 };
 
 const StatisticCard = ({
@@ -62,40 +62,23 @@ const DashboardOverview = ({ data }: DashboardOverviewData) => {
     <Card>
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3 rounded-2xl mt-4">
         <StatisticCard
-          title="Empleos Publicados Activos"
-          className="bg-sky-100 dark:bg-opacity-75"
-          value={data.activeJobOffers}
-          icon={<TbBriefcase2Filled />}
-          onClick={() => navigate('/job/my-jobs')}
-        />
-        <StatisticCard
-          title="Candidatos Postulados"
-          className="bg-emerald-100 dark:bg-opacity-75"
-          value={data.activeCandidates}
-          icon={<TbCopyCheck />}
-        />
-        <StatisticCard
-          title="Candidatos Favoritos"
-          className="bg-purple-100 dark:bg-opacity-75"
-          value={data.favoriteCandidates}
+          title="Empleos Favoritos"
+          className="bg-yellow-100 dark:bg-opacity-75"
+          value={data.favoriteJobOffers}
           icon={<TbStar />}
           onClick={() => navigate('/candidates/favorite')}
         />
         <StatisticCard
-          title="Membresía Actual"
-          className="bg-yellow-100 dark:bg-opacity-75"
-          value={
-            <div>
-              <h2 className="mb-1 text-gray-900">{data.membership.name}</h2>
-              <div className={classNames('heading-text font-bold mb-1')}>
-                Fecha de expiración:{' '}
-                {data.membership.expirationDate
-                  ? new Date(data.membership.expirationDate).toUTCString()
-                  : 'Nunca'}
-              </div>
-            </div>
-          }
-          icon={<MdCardMembership />}
+          title="Trabajos a los que he Aplicado"
+          className="bg-emerald-100 dark:bg-opacity-75"
+          value={data.jobOffers}
+          icon={<TbCopyCheck />}
+        />
+        <StatisticCard
+          title="Empresas que han visto mi Perfil"
+          className="bg-purple-100 dark:bg-opacity-75"
+          value={data.resumeCheckedByCompany}
+          icon={<TbCopyCheck />}
         />
       </div>
     </Card>

@@ -2,7 +2,7 @@ import { Suspense, useEffect, useState } from 'react';
 import Loading from '@/components/shared/Loading';
 import type { LayoutType } from '@/@types/theme';
 import { Route, Routes } from 'react-router-dom';
-import ProjectDashboard from './dashboards/BusinessDashboard';
+import BusinessDashboard from './dashboards/BusinessDashboard';
 import JobList from './job/JobList';
 import JobCreate from './job/JobCreate';
 import FavoriteCandidateList from './candidates/favorite';
@@ -13,6 +13,8 @@ import Settings from './company/settings';
 import ArchivedJobList from './archive/JobList';
 import { useUserContext } from '../context/userContext';
 // import ArchivedCandidateList from './archive/CandidateList';
+import ApplicantDashboard from './dashboards/ApplicantDashboard';
+import ApplicantSettings from './candidates/Settings';
 
 interface ViewsProps {
   pageContainerType?: 'default' | 'gutterless' | 'contained';
@@ -23,7 +25,7 @@ const renderRoutes = (role: string | null) => {
   if (role === 'Recruiter') {
     return (
       <Routes>
-        <Route path="/home" element={<ProjectDashboard />} />
+        <Route path="/home" element={<BusinessDashboard />} />
         <Route path="/job">
           <Route path="/job/create" element={<JobCreate />} />
           <Route path="/job/edit/:id" element={<JobCreate />} />
@@ -46,47 +48,25 @@ const renderRoutes = (role: string | null) => {
           <Route path="/archive/jobOffers" element={<ArchivedJobList />} />
           {/* <Route path="/archive/candidates" element={<ArchivedCandidateList />} /> */}
         </Route>
-        <Route path="/" element={<ProjectDashboard />} />
+        <Route path="/" element={<BusinessDashboard />} />
       </Routes>
     );
   }
 
-  if (role === 'Applicant')
-  {
+  if (role === 'Applicant') {
     return (
       <Routes>
-        <Route path="/home" element={<ProjectDashboard />} />
-        <Route path="/job">
-          <Route path="/job/create" element={<JobCreate />} />
-          <Route path="/job/edit/:id" element={<JobCreate />} />
-          <Route path="/job/my-jobs" element={<JobList />} />
-        </Route>
-        <Route path="/candidates">
-          <Route
-            path="/candidates/favorite"
-            element={<FavoriteCandidateList />}
-          />
-          <Route path="/candidates/find" element={<CandidateList />} />
-        </Route>
-        <Route path="/membership">
-          <Route path="/membership/plans" element={<Pricing />} />
-        </Route>
-        <Route path="/profile">
-          <Route path="/profile/company" element={<Settings />} />
-        </Route>
-        <Route path="/archive">
-          <Route path="/archive/jobOffers" element={<ArchivedJobList />} />
-          {/* <Route path="/archive/candidates" element={<ArchivedCandidateList />} /> */}
-        </Route>
-        <Route path="/" element={<ProjectDashboard />} />
+        <Route path="/home" element={<ApplicantDashboard />} />
+        <Route path="/profile" element={<ApplicantSettings />} />
+        <Route path="/" element={<ApplicantDashboard />} />
       </Routes>
     );
   }
-    return (
-      <Routes>
-        <Route path="/" element={<ProjectDashboard />} />
-      </Routes>
-    );
+  return (
+    <Routes>
+      <Route path="/" />
+    </Routes>
+  );
 };
 
 const Views = () => {

@@ -52,12 +52,8 @@ export type Task = {
   };
 };
 
-export type GetBusinessDashboardResponse = {
-  activeJobOffers: number;
-  activeCandidates: number;
-  favoriteCandidates: number;
-  membership: {
-    name: string;
-    expirationDate: Date;
-  };
+export type GetApplicantDashboardResponse = {
+  favoriteJobOffers: number;
+  jobOffers: number;
+  resumeCheckedByCompany: number;
 };

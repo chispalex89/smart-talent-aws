@@ -126,7 +126,28 @@ const navigationConfigByRole = (role: string): NavigationTree[] => {
         },
       ];
     case 'Applicant':
-      return [];
+      return [
+        {
+          key: 'home',
+          path: '/home',
+          title: 'Dashboard',
+          translateKey: 'nav.home',
+          icon: 'home',
+          type: NAV_ITEM_TYPE_ITEM,
+          authority: [],
+          subMenu: [],
+        },
+        {
+          key: 'cv',
+          path: '/profile',
+          title: 'CV',
+          translateKey: 'nav.cv',
+          icon: 'cv',
+          authority: [],
+          subMenu: [],
+          type: NAV_ITEM_TYPE_ITEM,
+        }
+      ];
     default:
       return [];
   }

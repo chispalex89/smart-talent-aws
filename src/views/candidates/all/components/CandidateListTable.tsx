@@ -224,7 +224,7 @@ const CandidateListTable = ({
             </Button>
             <span className="align-bottom">
               Última actualización:{' '}
-              {dateFormat(row.original.updated_At ?? row.original.created_at)}
+              {dateFormat(row.original.updated_at ?? row.original.created_at)}
             </span>
           </div>
           <span className="text-md font-semibold">

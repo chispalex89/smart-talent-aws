@@ -38,7 +38,12 @@ const CurrentTasks = ({ data }: CurrentTasksProps) => {
   return (
     <Card>
       <div className="flex items-center justify-between">
-        <h4>Mis trabajos</h4>
+        <div>
+          <h4>Mis trabajos</h4>
+          <p className="text-sm text-gray-500 dark:text-gray-400">
+            Aquí puedes ver los últimos 5 trabajos que has aplicado
+          </p>
+        </div>
         <Link to="/job/my-jobs">
           <Button asElement="div" size="sm">
             Todos mis trabajos

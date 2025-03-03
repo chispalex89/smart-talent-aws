@@ -29,6 +29,7 @@ const navigationIcon: NavigationIcons = {
   list: <MdOutlinePostAdd />,
   membershipPlans: <MdOutlineCurrencyExchange />,
   search: <PiMagnifyingGlassDuotone />,
+  cv: <PiUserBold />,
 };
 
 export default navigationIcon;

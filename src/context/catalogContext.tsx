@@ -19,6 +19,7 @@ import {
   State,
   MembershipType,
   GenderPreference,
+  OtherSkills,
 } from '@prisma/client';
 import React, { FC, useEffect } from 'react';
 import useFetch from '../hooks/useFetch';
@@ -42,9 +43,9 @@ export interface ICatalogContext {
   salaryRanges: SalaryRange[];
   skillLevels: SkillLevel[];
   softwareSkills: SoftwareSkills[];
+  otherSkills: OtherSkills[];
   states: State[];
   workShifts: WorkShift[];
-
   membershipTypes: MembershipType[];
 }
 
@@ -91,6 +92,7 @@ export const CatalogContextProvider: FC<{
   const [membershipTypes, setMembershipTypes] = React.useState<
     MembershipType[]
   >([]);
+  const [otherSkills, setOtherSkills] = React.useState<OtherSkills[]>([]);
   const [loaded, setLoaded] = React.useState(false);
 
   useEffect(() => {
@@ -198,6 +200,11 @@ export const CatalogContextProvider: FC<{
       setMembershipTypes(data);
     }
 
+    async function fetchOtherSkills() {
+      const data = await apiService.get<OtherSkills[]>('/other-skills');
+      setOtherSkills(data);
+    }
+
     if (!loaded) {
       fetchAcademicLevels();
       fetchCities();
@@ -219,6 +226,7 @@ export const CatalogContextProvider: FC<{
       fetchStates();
       fetchWorkShifts();
       fetchMembershipTypes();
+      fetchOtherSkills();
       setLoaded(true);
     }
   }, [setLoaded]);
@@ -245,7 +253,7 @@ export const CatalogContextProvider: FC<{
         skillLevels,
         softwareSkills,
         workShifts,
-
+        otherSkills,
         membershipTypes: membershipTypes ?? [],
       }}
     >
