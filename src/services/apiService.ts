@@ -20,6 +20,9 @@ class ApiService {
 
   async get<T>(path: string, data?: Record<string, unknown>) {
     const queryString = this.toQueryString(data);
+    console.log(this.baseUrl);
+    console.log(import.meta.env);
+    console.log(process.env);
     const url = queryString
       ? `${this.baseUrl}${path}?${queryString}`
       : `${this.baseUrl}${path}`;
