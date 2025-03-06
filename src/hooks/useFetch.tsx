@@ -14,6 +14,9 @@ const useFetch = <T,>(
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<Error | null>(null);
   const baseUrl = import.meta.env.VITE_API_BASE_URL || process.env.REACT_APP_API_BASE_URL;
+  console.log(baseUrl);
+  console.log(import.meta.env);
+  console.log(process.env);
 
   useEffect(() => {
     const fetchData = async () => {
