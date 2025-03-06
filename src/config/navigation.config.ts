@@ -146,6 +146,26 @@ const navigationConfigByRole = (role: string): NavigationTree[] => {
           authority: [],
           subMenu: [],
           type: NAV_ITEM_TYPE_ITEM,
+        },
+        {
+          key: 'account',
+          path: '/account',
+          title: 'Account',
+          translateKey: 'nav.account',
+          icon: 'account',
+          authority: [],
+          subMenu: [],
+          type: NAV_ITEM_TYPE_ITEM,
+        },
+        {
+          key: 'logout',
+          path: '/logout',
+          title: 'Logout',
+          translateKey: 'nav.logout',
+          icon: 'logout',
+          authority: [],
+          subMenu: [],
+          type: NAV_ITEM_TYPE_ITEM,
         }
       ];
     default:

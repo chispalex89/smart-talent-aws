@@ -80,7 +80,6 @@ const validationSchema = z.object({
   driverLicenseId: z.number().optional(),
 });
 
-
 const SettingsLocation = () => {
   const { data, mutate } = useSWR('/api/settings/profile/', () => {}, {
     revalidateOnFocus: false,
@@ -90,14 +89,7 @@ const SettingsLocation = () => {
 
   const [stateId, setStateId] = useState<number | null>(null);
 
-  const {
-    academicLevels,
-    countries,
-    languages,
-    skillLevels,
-    softwareSkills,
-    states,
-  } = useCatalogContext();
+  const { countries, states } = useCatalogContext();
 
   const countriesOptions = useMemo(() => {
     return countries.map((countries) => ({
@@ -116,7 +108,7 @@ const SettingsLocation = () => {
   }, [states]);
 
   const [cityOptions, setCityOptions] = useState(
-    [] as { label: string; value: number, className: string }[]
+    [] as { label: string; value: number; className: string }[]
   );
 
   useEffect(() => {

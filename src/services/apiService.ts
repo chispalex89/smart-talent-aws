@@ -1,5 +1,6 @@
 class ApiService {
-  readonly baseUrl = import.meta.env.VITE_API_BASE_URL;
+  readonly baseUrl =
+    import.meta.env.VITE_API_ || process.env.REACT_APP_API_BASE_URL;
 
   private toQueryString(data?: Record<string, unknown>) {
     if (!data) return '';

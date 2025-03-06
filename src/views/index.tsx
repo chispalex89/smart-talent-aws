@@ -15,6 +15,7 @@ import { useUserContext } from '../context/userContext';
 // import ArchivedCandidateList from './archive/CandidateList';
 import ApplicantDashboard from './dashboards/ApplicantDashboard';
 import ApplicantSettings from './candidates/Settings';
+import Logout from './auth/logout';
 
 interface ViewsProps {
   pageContainerType?: 'default' | 'gutterless' | 'contained';
@@ -48,6 +49,7 @@ const renderRoutes = (role: string | null) => {
           <Route path="/archive/jobOffers" element={<ArchivedJobList />} />
           {/* <Route path="/archive/candidates" element={<ArchivedCandidateList />} /> */}
         </Route>
+        <Route path="/logout" element={<Logout />} />
         <Route path="/" element={<BusinessDashboard />} />
       </Routes>
     );
@@ -58,6 +60,7 @@ const renderRoutes = (role: string | null) => {
       <Routes>
         <Route path="/home" element={<ApplicantDashboard />} />
         <Route path="/profile" element={<ApplicantSettings />} />
+        <Route path="/logout" element={<Logout />} />
         <Route path="/" element={<ApplicantDashboard />} />
       </Routes>
     );

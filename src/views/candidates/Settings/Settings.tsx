@@ -15,6 +15,7 @@ const WorkingExperience = lazy(() => import('./components/SettingWorkingExperien
 const AcademicFormation = lazy(
   () => import('./components/SettingsAcademicFormation')
 );
+const WorkingPreferences = lazy(() => import('./components/SettingWorkingPreferences'));
 
 const Settings = () => {
   const { currentView } = useSettingsStore();
@@ -44,7 +45,7 @@ const Settings = () => {
             )}
             {currentView === 'residence' && <Location />}
             {currentView === 'workExperience' && <WorkingExperience />}
-            {currentView === 'workPreferences' && <WorkingExperience />}
+            {currentView === 'workPreferences' && <WorkingPreferences />}
           </Suspense>
         </div>
       </div>

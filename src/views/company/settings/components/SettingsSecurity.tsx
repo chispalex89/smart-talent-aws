@@ -65,12 +65,6 @@ const SettingsSecurity = () => {
   const handlePostSubmit = async () => {
     setIsSubmitting(true);
     try {
-      // const response = await apiService.patch<{ status: number }>(
-      //   `/user/${user.userId}/change-password`,
-      //   getValues(),
-      // );
-      // console.log(response); 
-      // if (response.status === 200) {
       await updatePassword({
         newPassword: getValues().newPassword,
         oldPassword: getValues().currentPassword,
@@ -96,16 +90,6 @@ const SettingsSecurity = () => {
         );
 
         signOut();
-      // } else {
-      //   toast.push(
-      //     <Notification type="danger">
-      //       ¡Error al actualizar la contraseña!
-      //     </Notification>,
-      //     {
-      //       placement: 'top-center',
-      //     },
-      //   );
-      // }
     } catch (error) {
       console.error(error);
       toast.push(

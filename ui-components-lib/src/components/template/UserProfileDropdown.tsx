@@ -4,9 +4,8 @@ import withHeaderItem, {
   WithHeaderItemProps,
 } from '@/utils/hoc/withHeaderItem';
 import { useSessionUser } from '@/store/authStore';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { PiUserDuotone, PiSignOutDuotone } from 'react-icons/pi';
-import { signOut } from 'aws-amplify/auth';
 import { JSX } from 'react';
 
 
@@ -24,9 +23,10 @@ const _UserDropdown = (
   { dropdownItemList }: UserDropdownProps = { dropdownItemList: [] },
 ) => {
   const { avatar, userName, email } = useSessionUser((state) => state.user);
+  const navigate = useNavigate();
 
   const handleSignOut = () => {
-    signOut();
+    navigate('/logout');
   };
 
   const avatarProps = {

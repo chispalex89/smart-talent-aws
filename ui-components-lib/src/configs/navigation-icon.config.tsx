@@ -5,13 +5,15 @@ import {
   PiArchiveBold,
   PiPlusBold,
   PiUserBold,
-  PiMagnifyingGlassDuotone
+  PiMagnifyingGlassDuotone,
+  PiSignOutBold,
 } from 'react-icons/pi';
 import {
   MdCardMembership,
   MdOutlineCurrencyExchange,
   MdOutlinePostAdd,
   MdCreditCard,
+  MdOutlineContactPage,
 } from 'react-icons/md';
 import { JSX } from 'react';
 
@@ -29,7 +31,9 @@ const navigationIcon: NavigationIcons = {
   list: <MdOutlinePostAdd />,
   membershipPlans: <MdOutlineCurrencyExchange />,
   search: <PiMagnifyingGlassDuotone />,
-  cv: <PiUserBold />,
+  cv: <MdOutlineContactPage />,
+  account: <PiUserBold />,
+  logout: <PiSignOutBold />,
 };
 
 export default navigationIcon;

@@ -22,6 +22,8 @@
             "jobOffers": "Ofertas de Empleo",
             "candidates": "Candidatos"
         },
-        "cv": "Mi Curriculum"
+        "cv": "Mi Curriculum",
+        "account": "Mi Cuenta",
+        "logout": "Cerrar Sesión"
     }
 }
