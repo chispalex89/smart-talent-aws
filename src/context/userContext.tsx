@@ -48,7 +48,6 @@ export const UserContextProvider: React.FC<{
         const userRole = await apiService.get<UserRoleWithDetails>(
           `/user-role/${user.id}`
         );
-        console.log('User Roles:', userRole);
         setRole(userRole.role.name);
       };
       const fetchUserPermissions = async () => {

@@ -1,22 +1,16 @@
 import { useState, useRef } from 'react';
-import Avatar from '@/components/ui/Avatar';
 import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
 import ConfirmDialog from '@/components/shared/ConfirmDialog';
 import { Form, FormItem } from '@/components/ui/Form';
-import classNames from '@/utils/classNames';
 import sleep from '@/utils/sleep';
-import isLastChild from '@/utils/isLastChild';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm, Controller } from 'react-hook-form';
 import { z } from 'zod';
 import type { ZodType } from 'zod';
-import apiService from '../../../../services/apiService';
 import Notification from '@/components/ui/Notification';
 import { Alert, toast } from '@/components/ui';
-import { useAuth } from '@/auth';
 import { updatePassword, signOut } from 'aws-amplify/auth';
-import { MdWarningAmber } from 'react-icons/md';
 
 type PasswordSchema = {
   currentPassword: string;
@@ -60,8 +54,6 @@ const SettingsSecurity = () => {
     resolver: zodResolver(validationSchema),
   });
 
-  const { user } = useAuth();
-
   const handlePostSubmit = async () => {
     setIsSubmitting(true);
     try {
@@ -69,27 +61,21 @@ const SettingsSecurity = () => {
         newPassword: getValues().newPassword,
         oldPassword: getValues().currentPassword,
       });
-        await toast.push(
-          <Notification type="success">
-            ¡Contraseña actualizada con éxito!, Por favor inicia sesión
-            nuevamente
-          </Notification>,
-          {
-            placement: 'top-center',
-          }
-        );
+      await toast.push(
+        <Notification type="success">
+          ¡Contraseña actualizada con éxito!, Por favor inicia sesión nuevamente
+        </Notification>,
+        {
+          placement: 'top-center',
+        }
+      );
 
-        await sleep(2000);
-        toast.push(
-          <Notification type="info">
-            
-          </Notification>,
-          {
-            placement: 'top-center',
-          },
-        );
+      await sleep(2000);
+      toast.push(<Notification type="info"></Notification>, {
+        placement: 'top-center',
+      });
 
-        signOut();
+      signOut();
     } catch (error) {
       console.error(error);
       toast.push(
@@ -98,7 +84,7 @@ const SettingsSecurity = () => {
         </Notification>,
         {
           placement: 'top-center',
-        },
+        }
       );
     } finally {
       setIsSubmitting(false);

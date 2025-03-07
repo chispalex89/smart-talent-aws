@@ -16,6 +16,7 @@ import { useUserContext } from '../context/userContext';
 import ApplicantDashboard from './dashboards/ApplicantDashboard';
 import ApplicantSettings from './candidates/Settings';
 import Logout from './auth/logout';
+import ChangePassword from './auth/changePassword';
 
 interface ViewsProps {
   pageContainerType?: 'default' | 'gutterless' | 'contained';
@@ -60,6 +61,7 @@ const renderRoutes = (role: string | null) => {
       <Routes>
         <Route path="/home" element={<ApplicantDashboard />} />
         <Route path="/profile" element={<ApplicantSettings />} />
+        <Route path="/account" element={<ChangePassword />} />
         <Route path="/logout" element={<Logout />} />
         <Route path="/" element={<ApplicantDashboard />} />
       </Routes>
@@ -68,6 +70,7 @@ const renderRoutes = (role: string | null) => {
   return (
     <Routes>
       <Route path="/" />
+      <Route path="/logout" element={<Logout />} />
     </Routes>
   );
 };

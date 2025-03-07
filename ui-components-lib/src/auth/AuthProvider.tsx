@@ -91,7 +91,6 @@ function AuthProvider({
   const signIn = async (values: SignInCredential): AuthResult => {
     try {
       const resp = await apiSignIn(values);
-      console.log('resp', resp);
       if (resp) {
         handleSignIn({ accessToken: resp.token }, resp.user);
         redirect();
