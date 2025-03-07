@@ -44,7 +44,9 @@ const NameColumn = ({ row }: { row: Candidate }) => {
       <Avatar
         size={40}
         shape="circle"
-        src={'api.dicebear.com/7.x/pixel-art/svg'}
+        src={
+          'https://tengai.io/hs-fs/hubfs/avatar-images/Avatar-round-NO-BG.png'
+        }
       />
       <Link
         className={`hover:text-primary ml-2 rtl:mr-2 font-semibold text-gray-900 dark:text-gray-100`}
@@ -213,7 +215,9 @@ const CandidateListTable = ({
           <Avatar
             size={200}
             shape="square"
-            src={'api.dicebear.com/7.x/pixel-art/svg'}
+            src={
+              'https://tengai.io/hs-fs/hubfs/avatar-images/Avatar-round-NO-BG.png'
+            }
           />
         </div>
         <div className="flex flex-col flex-start gap-2 md:col-span-2">

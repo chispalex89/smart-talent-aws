@@ -25,7 +25,6 @@ const HorizontalMenuNavLink = ({
                 className,
             )}
             to={path}
-            target={isExternalLink ? '_blank' : ''}
             onClick={onClick}
         >
             {children}
