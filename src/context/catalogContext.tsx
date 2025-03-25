@@ -20,13 +20,14 @@ import {
   MembershipType,
   GenderPreference,
   OtherSkills,
+  AcademicDataStatus,
 } from '@prisma/client';
 import React, { FC, useEffect } from 'react';
-import useFetch from '../hooks/useFetch';
 import apiService from '../services/apiService';
 
 export interface ICatalogContext {
   academicLevels: AcademicLevel[];
+  academicStatuses: AcademicDataStatus[];
   cities: City[];
   contractTypes: ContractType[];
   countries: Country[];
@@ -56,6 +57,9 @@ export const CatalogContextProvider: FC<{
 }> = (props) => {
   const [academicLevels, setAcademicLevels] = React.useState<AcademicLevel[]>(
     [],
+  );
+  const [academicStatuses, setAcademicStatuses] = React.useState<AcademicDataStatus[]>(
+    []
   );
   const [cities, setCities] = React.useState<City[]>([]);
   const [countries, setCountries] = React.useState<Country[]>([]);
@@ -101,8 +105,13 @@ export const CatalogContextProvider: FC<{
       setAcademicLevels(data);
     }
 
+    async function fetchAcademicStatuses() {
+      const data = await apiService.get<AcademicDataStatus[]>('/academic-status');
+      setAcademicStatuses(data);
+    }
+
     async function fetchCities() {
-      const data = await apiService.get<City[]>('/city?countryId=1');
+      const data = await apiService.get<City[]>('/city');
       setCities(data);
     }
 
@@ -207,6 +216,7 @@ export const CatalogContextProvider: FC<{
 
     if (!loaded) {
       fetchAcademicLevels();
+      fetchAcademicStatuses();
       fetchCities();
       fetchCountries();
       fetchContractTypes();
@@ -235,6 +245,7 @@ export const CatalogContextProvider: FC<{
     <CatalogContext.Provider
       value={{
         academicLevels,
+        academicStatuses,
         cities,
         contractTypes,
         countries,

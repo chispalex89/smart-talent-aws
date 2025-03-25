@@ -32,7 +32,6 @@ const menuList: { label: string; value: View; icon: ReactNode }[] = [
     value: 'languagesAndSkills',
     icon: <TbMessageLanguage />,
   },
-  { label: 'Preferencias de Trabajo', value: 'workPreferences', icon: <TbSettings /> },
 ];
 
 export const SettingsMenu = ({ onChange }: { onChange?: () => void }) => {

@@ -1,30 +1,51 @@
 import { useMemo, useEffect, useState } from 'react';
 import Button from '@/components/ui/Button';
-import Upload from '@/components/ui/Upload';
 import Input from '@/components/ui/Input';
-import Select, { Option as DefaultOption } from '@/components/ui/Select';
-import Avatar from '@/components/ui/Avatar';
+import Select from '@/components/ui/Select';
+import Notification from '@/components/ui/Notification';
 import { Form, FormItem } from '@/components/ui/Form';
-import NumericInput from '@/components/shared/NumericInput';
-import { countryList } from '@/constants/countries.constant';
 import { components } from 'react-select';
 import sleep from '@/utils/sleep';
 import useSWR from 'swr';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm, Controller } from 'react-hook-form';
+import { useForm, Controller, useFieldArray } from 'react-hook-form';
 import { z } from 'zod';
-import { HiOutlineUser } from 'react-icons/hi';
-import { TbPlus, TbTrash } from 'react-icons/tb';
-import type { ZodType } from 'zod';
-import type { GetSettingsProfileResponse } from '../types';
-import { City, AcademicData, User } from '@prisma/client';
-import { Alert, Checkbox, DatePicker, Switcher } from '@/components/ui';
+import { TbTrash } from 'react-icons/tb';
+import {
+  SoftwareSkillsData,
+  User,
+  LanguageSkillsData,
+  OtherSkillsData,
+} from '@prisma/client';
+import { Card, Checkbox, toast } from '@/components/ui';
 import { useCatalogContext } from '../../../../context/catalogContext';
 import apiService from '../../../../services/apiService';
+import { useUserContext } from '../../../../context/userContext';
 
-type PersonalDataSchema = Omit<
-  AcademicData,
-  | 'id'
+type LanguageSkillsDataSchema = Omit<
+  LanguageSkillsData,
+  | 'userId'
+  | 'created_at'
+  | 'updated_at'
+  | 'applicantId'
+  | 'companyId'
+  | 'created_by'
+  | 'updated_by'
+>;
+
+type SoftwareSkillsDataSchema = Omit<
+  SoftwareSkillsData,
+  | 'userId'
+  | 'created_at'
+  | 'updated_at'
+  | 'applicantId'
+  | 'companyId'
+  | 'created_by'
+  | 'updated_by'
+>;
+
+type OtherSkillsDataSchema = Omit<
+  OtherSkillsData,
   | 'userId'
   | 'created_at'
   | 'updated_at'
@@ -46,8 +67,11 @@ type UserSchema = Omit<
   | 'created_by'
   | 'updated_by'
 >;
-
-type ProfileSchema = PersonalDataSchema & UserSchema;
+type KnowledgeSchema = {
+  languages: LanguageSkillsDataSchema[];
+  softwareSkills: SoftwareSkillsDataSchema[];
+  otherSkills: OtherSkillsDataSchema;
+};
 
 type Option = {
   value: number;
@@ -58,34 +82,51 @@ type Option = {
 const { Control } = components;
 
 const validationSchema = z.object({
-  firstName: z.string().min(1, { message: 'Nombre requerido' }),
-  middleName: z.string().optional(),
-  lastName: z.string().min(1, { message: 'Apellido requerido' }),
-  secondLastName: z.string().optional(),
-  email: z.string().email({ message: 'Email invalido' }),
-  marriedLastName: z.string().optional(),
-  documentId: z
-    .string()
-    .min(1, { message: 'Documento de Identificación requerido' }),
-  address: z.string().min(1, { message: 'Dirección requerida' }),
-  phone: z.string().optional().or(z.literal('')),
-  mobile: z.string().optional().or(z.literal('')),
-  availabilityToTravel: z.boolean(),
-  documentTypeId: z.number().min(1, { message: 'Tipo de documento requerido' }),
-  genderId: z.number().min(1, { message: 'Género requerido' }),
-  maritalStatusId: z.number().min(1, { message: 'Estado civil requerido' }),
-  countryOfResidencyId: z
-    .number()
-    .min(1, { message: 'País de residencia requerido' }),
-  driverLicenseId: z.number().optional(),
+  languages: z.array(
+    z.object({
+      id: z.number().optional().nullable(),
+      languageId: z
+        .number()
+        .int()
+        .nonnegative('Por favor seleccione un idioma.'),
+      skillLevelId: z
+        .number()
+        .int()
+        .nonnegative('Por favor seleccione un nivel.'),
+    })
+  ),
+  softwareSkills: z.array(
+    z.object({
+      id: z.number().optional().nullable(),
+      softwareId: z
+        .number()
+        .int()
+        .nonnegative('Por favor seleccione un programa.'),
+      skillLevelId: z
+        .number()
+        .int()
+        .nonnegative('Por favor seleccione un nivel.'),
+    })
+  ),
+  otherSkills: z.object({
+    id: z.number().optional().nullable(),
+    skillIds: z.array(z.string()).optional().or(z.null()),
+    otherSkills: z.string().optional().or(z.null()),
+  }),
 });
 
 const SettingsKnowledge = () => {
-  const { data, mutate } = useSWR('/api/settings/profile/', () => {}, {
-    revalidateOnFocus: false,
-    revalidateIfStale: false,
-    revalidateOnReconnect: false,
-  });
+  const { user } = useUserContext();
+
+  const { data, mutate } = useSWR(
+    `/applicant/${user?.id || 0}/applicant-data`,
+    (url) => apiService.get<any>(url),
+    {
+      revalidateOnFocus: false,
+      revalidateIfStale: false,
+      revalidateOnReconnect: false,
+    }
+  );
 
   const { languages, skillLevels, softwareSkills, otherSkills } =
     useCatalogContext();
@@ -127,237 +168,321 @@ const SettingsKnowledge = () => {
     reset,
     formState: { errors, isSubmitting },
     control,
-  } = useForm<ProfileSchema>({
+    getValues,
+  } = useForm<KnowledgeSchema>({
     resolver: zodResolver(validationSchema),
+    defaultValues: {
+      languages: [],
+      softwareSkills: [],
+      otherSkills: { skillIds: [], otherSkills: '' },
+    },
   });
+
+  const {
+    fields: languageFields,
+    append: appendLanguage,
+    remove: removeLanguage,
+  } = useFieldArray({
+    control,
+    name: 'languages',
+  });
+
+  const {
+    fields: softwareFields,
+    append: appendSoftware,
+    remove: removeSoftware,
+  } = useFieldArray({
+    control,
+    name: 'softwareSkills',
+  });
+
+  const [deletedLanguages, setDeletedLanguages] = useState<number[]>([]);
+  const [deletedSoftwareSkills, setDeletedSoftwareSkills] = useState<number[]>(
+    []
+  );
+
+  useEffect(() => {
+    if (user) {
+      mutate();
+    }
+  }, [user]);
 
   useEffect(() => {
     if (data) {
-      reset(data);
+      const { languageSkillsData, otherSkillsData, softwareSkillsData } = data;
+      const otherSkills = otherSkillsData[0];
+      reset({
+        languages: languageSkillsData,
+        softwareSkills: softwareSkillsData,
+        otherSkills: otherSkills
+          ? {
+              id: otherSkills.id,
+              skillIds: otherSkills.skillIds?.map(String) || [],
+              otherSkills: otherSkills.otherSkills,
+            }
+          : {},
+      });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data]);
 
-  const onSubmit = async (values: ProfileSchema) => {
-    await sleep(500);
-    if (data) {
-      mutate({ ...data, ...values }, false);
+  const onSubmit = async (values: KnowledgeSchema) => {
+    const { languages, softwareSkills, otherSkills } = values;
+    const { id } = data;
+    try {
+      const languagePromises = languages.map((language) => {
+        if (language.id) {
+          return apiService.put(
+            `/language-skills-data/${language.id}`,
+            language
+          );
+        } else {
+          return apiService.post('/language-skills-data', {
+            ...language,
+            applicantId: id,
+          });
+        }
+      });
+
+      const softwarePromises = softwareSkills.map((softwareSkill) => {
+        if (softwareSkill.id) {
+          return apiService.put(
+            `/software-skills-data/${softwareSkill.id}`,
+            softwareSkill
+          );
+        } else {
+          return apiService.post('/software-skills-data', {
+            ...softwareSkill,
+            applicantId: id,
+          });
+        }
+      });
+
+      const { skillIds, ...otherSkillsData } = otherSkills;
+
+      const otherSkillsPromise = otherSkills.id
+        ? apiService.put(`/other-skills-data/${otherSkills.id}`, {
+            ...otherSkillsData,
+            skillIds: skillIds.map(Number),
+          })
+        : apiService.post('/other-skills-data', {
+            ...otherSkillsData,
+            skillIds: skillIds.map(Number),
+            applicantId: id,
+          });
+
+      const deleteLanguagePromises = deletedLanguages.map((languageId) =>
+        apiService.delete(`/language-skills-data/${languageId}`)
+      );
+
+      const deleteSoftwarePromises = deletedSoftwareSkills.map((softwareId) =>
+        apiService.delete(`/software-skills-data/${softwareId}`)
+      );
+
+      const results = await Promise.allSettled([
+        ...languagePromises,
+        ...softwarePromises,
+        otherSkillsPromise,
+        ...deleteLanguagePromises,
+        ...deleteSoftwarePromises,
+      ]);
+
+      const hasErrors = results.some((result) => result.status === 'rejected');
+
+      if (hasErrors) {
+        toast.push(
+          <Notification type="danger">
+            Ha ocurrido un error al guardar los conocimientos extra.
+          </Notification>
+        );
+      } else {
+        toast.push(
+          <Notification type="success">
+            Los conocimientos extra se han guardado correctamente.
+          </Notification>
+        );
+      }
+
+      mutate();
+    } catch (error) {
+      console.error(error);
+      toast.push(
+        <Notification type="danger">
+          ¡Error al actualizar los conocimientos!
+        </Notification>,
+        {
+          placement: 'top-center',
+        }
+      );
     }
+  };
+
+  const onError = (errors: any) => {
+    console.log(errors);
   };
 
   return (
     <>
       <h4 className="mb-8">Idiomas y Otros Conocimientos</h4>
-      <Form onSubmit={handleSubmit(onSubmit)}>
-        <div className="grid md:grid-cols-2 gap-4">
-          <FormItem
-            label="Idioma"
-            invalid={Boolean(errors.languages)}
-            errorMessage={errors.languages?.message}
-            className="w-[calc(100%-30px)] md:w-[100%]"
-          >
-            <Controller
-              name="languages"
-              control={control}
-              render={({ field }) => (
-                <Select<Option>
-                  placeholder="Idioma"
-                  {...field}
-                  options={languageOptions}
-                  value={languageOptions.filter(
-                    (option) => option.value === field.value
+      <Form onSubmit={handleSubmit(onSubmit, onError)}>
+        <Card>
+          <h6>Idiomas</h6>
+          {languageFields.map((field, index) => (
+            <div key={field.id} className="grid md:grid-cols-5 gap-4">
+              <FormItem
+                label="Idioma"
+                invalid={Boolean(errors.languages?.[index]?.languageId)}
+                errorMessage={errors.languages?.[index]?.languageId?.message}
+                className="w-[calc(100%-30px)] md:w-[100%] col-span-2"
+              >
+                <Controller
+                  name={`languages.${index}.languageId`}
+                  control={control}
+                  render={({ field }) => (
+                    <Select<Option>
+                      placeholder="Idioma"
+                      {...field}
+                      options={languageOptions}
+                      value={languageOptions.find(
+                        (option) => option.value === field.value
+                      )}
+                      onChange={(option) => field.onChange(option?.value)}
+                    />
                   )}
-                  onChange={(option) => field.onChange(option?.value)}
                 />
-              )}
-            />
-          </FormItem>
-          <FormItem
-            label="Nivel"
-            invalid={Boolean(errors.languages)}
-            errorMessage={errors.languages?.message}
-            className="w-[calc(100%-30px)] md:w-[100%]"
-          >
-            <Controller
-              name="languagesLevel"
-              control={control}
-              render={({ field }) => (
-                <Select<Option>
-                  placeholder="Nivel"
-                  {...field}
-                  options={skillLevelOptions}
-                  value={skillLevelOptions.filter(
-                    (option) => option.value === field.value
+              </FormItem>
+              <FormItem
+                label="Nivel"
+                invalid={Boolean(errors.languages?.[index]?.skillLevelId)}
+                errorMessage={errors.languages?.[index]?.skillLevelId?.message}
+                className="w-[calc(100%-30px)] md:w-[100%] col-span-2"
+              >
+                <Controller
+                  name={`languages.${index}.skillLevelId`}
+                  control={control}
+                  render={({ field }) => (
+                    <Select<Option>
+                      placeholder="Nivel"
+                      {...field}
+                      options={skillLevelOptions}
+                      value={skillLevelOptions.find(
+                        (option) => option.value === field.value
+                      )}
+                      onChange={(option) => field.onChange(option?.value)}
+                    />
                   )}
-                  onChange={(option) => field.onChange(option?.value)}
                 />
-              )}
-            />
-          </FormItem>
-        </div>
-        {[1, 2, 3].map((i) => (
-          <div className="grid md:grid-cols-5 gap-4">
-            <FormItem
-              label="Idioma"
-              invalid={Boolean(errors.languages)}
-              errorMessage={errors.languages?.message}
-              className="w-[calc(100%-30px)] md:w-[100%] col-span-2"
-            >
-              <Controller
-                name={`languages${i}`}
-                control={control}
-                render={({ field }) => (
-                  <Select<Option>
-                    placeholder="Idioma"
-                    {...field}
-                    options={languageOptions}
-                    value={languageOptions.filter(
-                      (option) => option.value === field.value
-                    )}
-                    onChange={(option) => field.onChange(option?.value)}
-                  />
-                )}
+                <Controller
+                  name={`languages.${index}.id`}
+                  control={control}
+                  render={({ field }) => <Input type="hidden" {...field} />}
+                />
+              </FormItem>
+              <Button
+                variant="plain"
+                className="mt-8"
+                icon={<TbTrash />}
+                onClick={() => {
+                  setDeletedLanguages([...deletedLanguages, getValues().languages[index].id]);
+                  removeLanguage(index);
+                }}
               />
-            </FormItem>
-            <FormItem
-              label="Nivel"
-              invalid={Boolean(errors.languages)}
-              errorMessage={errors.languages?.message}
-              className="w-[calc(100%-30px)] md:w-[100%] col-span-2"
-            >
-              <Controller
-                name={`languagesLevel${i}`}
-                control={control}
-                render={({ field }) => (
-                  <Select<Option>
-                    placeholder="Nivel"
-                    {...field}
-                    options={skillLevelOptions}
-                    value={skillLevelOptions.filter(
-                      (option) => option.value === field.value
-                    )}
-                    onChange={(option) => field.onChange(option?.value)}
-                  />
-                )}
-              />
-            </FormItem>
-            <Button
-              variant="plain"
-              className="mt-8"
-              icon={<TbTrash />}
-              onClick={() => {}}
-            />
-          </div>
-        ))}
-        <div className="grid md:grid-cols-2 gap-4">
-          <FormItem
-            label="Programas de Software"
-            invalid={Boolean(errors.softwareSkills)}
-            errorMessage={errors.softwareSkills?.message}
-            className="w-[calc(100%-30px)] md:w-[100%]"
+            </div>
+          ))}
+          <Button
+            type="button"
+            onClick={() => appendLanguage({} as LanguageSkillsDataSchema)}
           >
-            <Controller
-              name="softwareSkills"
-              control={control}
-              render={({ field }) => (
-                <Select<Option>
-                  placeholder="Programa"
-                  {...field}
-                  options={softwareSkillOptions}
-                  value={softwareSkillOptions.filter(
-                    (option) => option.value === field.value
+            Agregar Idioma
+          </Button>
+        </Card>
+        <br />
+        <Card>
+          <h6>Programas de Computadora</h6>
+          {softwareFields.map((field, index) => (
+            <div key={field.id} className="grid md:grid-cols-5 gap-4">
+              <FormItem
+                label="Programa"
+                invalid={Boolean(errors.softwareSkills?.[index]?.softwareId)}
+                errorMessage={
+                  errors.softwareSkills?.[index]?.softwareId?.message
+                }
+                className="w-[calc(100%-30px)] md:w-[100%] col-span-2"
+              >
+                <Controller
+                  name={`softwareSkills.${index}.softwareId`}
+                  control={control}
+                  render={({ field }) => (
+                    <Select<Option>
+                      placeholder="Programa"
+                      {...field}
+                      options={softwareSkillOptions}
+                      value={softwareSkillOptions.find(
+                        (option) => option.value === field.value
+                      )}
+                      onChange={(option) => field.onChange(option?.value)}
+                    />
                   )}
-                  onChange={(option) => field.onChange(option?.value)}
                 />
-              )}
-            />
-          </FormItem>
-          <FormItem
-            className="w-[calc(100%-30px)] md:w-[100%]"
-            invalid={Boolean(errors.softwareSkills)}
-            errorMessage={errors.softwareSkills?.message}
-            label="Nivel"
+              </FormItem>
+              <FormItem
+                label="Nivel"
+                invalid={Boolean(errors.softwareSkills?.[index]?.skillLevelId)}
+                errorMessage={
+                  errors.softwareSkills?.[index]?.skillLevelId?.message
+                }
+                className="w-[calc(100%-30px)] md:w-[100%] col-span-2"
+              >
+                <Controller
+                  name={`softwareSkills.${index}.skillLevelId`}
+                  control={control}
+                  render={({ field }) => (
+                    <Select<Option>
+                      placeholder="Nivel"
+                      {...field}
+                      options={skillLevelOptions}
+                      value={skillLevelOptions.find(
+                        (option) => option.value === field.value
+                      )}
+                      onChange={(option) => field.onChange(option?.value)}
+                    />
+                  )}
+                />
+                <Controller
+                  name={`softwareSkills.${index}.id`}
+                  control={control}
+                  render={({ field }) => <Input type="hidden" {...field} />}
+                />
+              </FormItem>
+              <Button
+                variant="plain"
+                className="mt-8"
+                icon={<TbTrash />}
+                onClick={() => {
+                  removeSoftware(index);
+                  setDeletedSoftwareSkills([
+                    ...deletedSoftwareSkills,
+                    getValues().softwareSkills[index].id,
+                  ]);
+                }}
+              />
+            </div>
+          ))}
+          <Button
+            type="button"
+            onClick={() => appendSoftware({} as SoftwareSkillsDataSchema)}
           >
-            <Controller
-              name="softwareSkillLevels"
-              control={control}
-              render={({ field }) => (
-                <Select<Option>
-                  placeholder="Nivel"
-                  {...field}
-                  options={skillLevelOptions}
-                  value={skillLevelOptions.filter(
-                    (option) => option.value === field.value
-                  )}
-                  onChange={(option) => field.onChange(option?.value)}
-                />
-              )}
-            />
-          </FormItem>
-        </div>
-        {[1, 2, 3].map((i) => (
-          <div className="grid md:grid-cols-5 gap-4">
-            <FormItem
-              label="Programas de Software"
-              invalid={Boolean(errors.softwareSkills)}
-              errorMessage={errors.softwareSkills?.message}
-              className="w-[calc(100%-30px)] md:w-[100%] col-span-2"
-            >
-              <Controller
-                name={`softwareSkills${i}`}
-                control={control}
-                render={({ field }) => (
-                  <Select<Option>
-                    placeholder="Programa"
-                    {...field}
-                    options={softwareSkillOptions}
-                    value={softwareSkillOptions.filter(
-                      (option) => option.value === field.value
-                    )}
-                    onChange={(option) => field.onChange(option?.value)}
-                  />
-                )}
-              />
-            </FormItem>
-            <FormItem
-              className="w-[calc(100%-30px)] md:w-[100%] col-span-2"
-              invalid={Boolean(errors.softwareSkills)}
-              errorMessage={errors.softwareSkills?.message}
-              label="Nivel"
-            >
-              <Controller
-                name={`softwareSkillLevels${i}`}
-                control={control}
-                render={({ field }) => (
-                  <Select<Option>
-                    placeholder="Nivel"
-                    {...field}
-                    options={skillLevelOptions}
-                    value={skillLevelOptions.filter(
-                      (option) => option.value === field.value
-                    )}
-                    onChange={(option) => field.onChange(option?.value)}
-                  />
-                )}
-              />
-            </FormItem>
-            <Button
-              variant="plain"
-              className="mt-8"
-              icon={<TbTrash />}
-              onClick={() => {}}
-            />
-          </div>
-        ))}
+            Agregar Programa de Computadora
+          </Button>
+        </Card>
         <div className="grid md:grid-cols-2 gap-4">
           <FormItem
             label="Otros Conocimientos"
-            invalid={Boolean(errors.otherSkillsDescription)}
-            errorMessage={errors.otherSkillsDescription?.message}
+            invalid={Boolean(errors.otherSkills?.otherSkills)}
+            errorMessage={errors.otherSkills?.otherSkills?.message}
             className="w-[calc(100%-30px)] md:w-[100%]"
           >
             <Controller
-              name="otherSkillsDescription"
+              name="otherSkills.otherSkills"
               control={control}
               render={({ field }) => (
                 <Input
@@ -374,12 +499,12 @@ const SettingsKnowledge = () => {
           </FormItem>
           <FormItem
             className="w-[calc(100%-30px)] md:w-[100%]"
-            invalid={Boolean(errors.otherSkills)}
-            errorMessage={errors.otherSkills?.message}
+            invalid={Boolean(errors.otherSkills?.skillIds)}
+            errorMessage={errors.otherSkills?.skillIds?.message}
             label="Habilidades"
           >
             <Controller
-              name="otherSkills"
+              name="otherSkills.skillIds"
               control={control}
               render={({ field }) => (
                 <Checkbox.Group
@@ -387,6 +512,10 @@ const SettingsKnowledge = () => {
                   className="flex mt-4"
                   {...field}
                   value={(field.value ?? []).map(String)}
+                  onChange={(value) => {
+                    field.onChange(value);
+                    console.log(value);
+                  }}
                 >
                   {otherSkillsOptions.map((source) => (
                     <Checkbox
@@ -400,6 +529,13 @@ const SettingsKnowledge = () => {
                   ))}
                 </Checkbox.Group>
               )}
+            />
+          </FormItem>
+          <FormItem>
+            <Controller
+              name="otherSkills.id"
+              control={control}
+              render={({ field }) => <Input type="hidden" {...field} />}
             />
           </FormItem>
         </div>

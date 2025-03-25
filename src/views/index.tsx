@@ -18,11 +18,6 @@ import ApplicantSettings from './candidates/Settings';
 import Logout from './auth/logout';
 import ChangePassword from './auth/changePassword';
 
-interface ViewsProps {
-  pageContainerType?: 'default' | 'gutterless' | 'contained';
-  layout?: LayoutType;
-}
-
 const renderRoutes = (role: string | null) => {
   if (role === 'Recruiter') {
     return (

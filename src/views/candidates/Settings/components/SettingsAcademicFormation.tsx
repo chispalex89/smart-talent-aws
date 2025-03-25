@@ -3,7 +3,7 @@ import Button from '@/components/ui/Button';
 import Upload from '@/components/ui/Upload';
 import Input from '@/components/ui/Input';
 import Select, { Option as DefaultOption } from '@/components/ui/Select';
-import Avatar from '@/components/ui/Avatar';
+import Notification from '@/components/ui/Notification';
 import { Form, FormItem } from '@/components/ui/Form';
 import NumericInput from '@/components/shared/NumericInput';
 import { countryList } from '@/constants/countries.constant';
@@ -11,20 +11,20 @@ import { components } from 'react-select';
 import sleep from '@/utils/sleep';
 import useSWR from 'swr';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm, Controller } from 'react-hook-form';
+import { useForm, Controller, useFieldArray } from 'react-hook-form';
 import { z } from 'zod';
 import { HiOutlineUser } from 'react-icons/hi';
 import { TbPlus } from 'react-icons/tb';
 import type { ZodType } from 'zod';
 import type { GetSettingsProfileResponse } from '../types';
 import { City, AcademicData, User } from '@prisma/client';
-import { Alert, DatePicker, Switcher } from '@/components/ui';
+import { Alert, Card, DatePicker, Switcher, toast } from '@/components/ui';
 import { useCatalogContext } from '../../../../context/catalogContext';
 import apiService from '../../../../services/apiService';
+import { useUserContext } from '../../../../context/userContext';
 
 type AcademicDataSchema = Omit<
   AcademicData,
-  | 'id'
   | 'userId'
   | 'created_at'
   | 'updated_at'
@@ -49,6 +49,10 @@ type UserSchema = Omit<
 
 type ProfileSchema = AcademicDataSchema & UserSchema;
 
+type AcademicFormationsSchema = {
+  academicFormations: ProfileSchema[];
+};
+
 type Option = {
   value: number;
   label: string;
@@ -57,49 +61,53 @@ type Option = {
 
 const { Control } = components;
 
-const validationSchema = z.array(
-  z.object({
-    firstName: z.string().min(1, { message: 'Nombre requerido' }),
-    middleName: z.string().optional(),
-    lastName: z.string().min(1, { message: 'Apellido requerido' }),
-    secondLastName: z.string().optional(),
-    email: z.string().email({ message: 'Email invalido' }),
-    marriedLastName: z.string().optional(),
-    documentId: z
-      .string()
-      .min(1, { message: 'Documento de Identificación requerido' }),
-    address: z.string().min(1, { message: 'Dirección requerida' }),
-    phone: z.string().optional().or(z.literal('')),
-    mobile: z.string().optional().or(z.literal('')),
-    availabilityToTravel: z.boolean(),
-    documentTypeId: z
-      .number()
-      .min(1, { message: 'Tipo de documento requerido' }),
-    genderId: z.number().min(1, { message: 'Género requerido' }),
-    maritalStatusId: z.number().min(1, { message: 'Estado civil requerido' }),
-    countryOfResidencyId: z
-      .number()
-      .min(1, { message: 'País de residencia requerido' }),
-    driverLicenseId: z.number().optional(),
-  })
-);
+const validationSchema = z.object({
+  academicFormations: z.array(
+    z.object({
+      id: z.number().optional().or(z.null()),
+      institutionName: z
+        .string()
+        .nonempty('Por favor ingrese el nombre de la institución.'),
+      academicLevelId: z
+        .number()
+        .int()
+        .nonnegative('Por favor seleccione un nivel académico.'),
+      academicStatusId: z
+        .number()
+        .int()
+        .nonnegative(
+          'Por favor seleccione un estado de su formación académica.'
+        ),
+      employmentSectorId: z
+        .number()
+        .int()
+        .nonnegative('Por favor seleccione un área de estudios.'),
+      titleObtained: z
+        .string()
+        .nonempty('Por favor ingrese el título obtenido.'),
+      startDate: z
+        .date()
+        .transform((val) => val.toISOString())
+        .or(z.string().min(1, { message: 'Fecha de inicio requerida' })),
+      endDate: z.date().optional().or(z.null()).or(z.string()),
+    })
+  ),
+});
 
 const SettingsAcademicFormation = () => {
-  const { data, mutate } = useSWR('/api/settings/profile/', () => {}, {
-    revalidateOnFocus: false,
-    revalidateIfStale: false,
-    revalidateOnReconnect: false,
-  });
+  const { user } = useUserContext();
 
-  const [stateId, setStateId] = useState<number | null>(null);
+  const { data, mutate } = useSWR(
+    `/applicant/${user?.id || 0}/applicant-data`,
+    (url) => apiService.get<any>(url),
+    {
+      revalidateOnFocus: false,
+      revalidateIfStale: false,
+      revalidateOnReconnect: false,
+    }
+  );
 
-  const {
-    academicLevels,
-    professions,
-    jobHierarchies,
-    softwareSkills,
-    states,
-  } = useCatalogContext();
+  const { academicLevels, professions, academicStatuses } = useCatalogContext();
 
   const academicLevelOptions = useMemo(() => {
     return academicLevels.map((academicLevel) => ({
@@ -108,6 +116,14 @@ const SettingsAcademicFormation = () => {
       className: 'text-gray-900',
     }));
   }, [academicLevels]);
+
+  const academicStatusOptions = useMemo(() => {
+    return academicStatuses.map((academicStatus) => ({
+      label: academicStatus.name,
+      value: academicStatus.id,
+      className: 'text-gray-900',
+    }));
+  }, [academicStatuses]);
 
   const professionOptions = useMemo(() => {
     return professions.map((profession) => ({
@@ -122,21 +138,66 @@ const SettingsAcademicFormation = () => {
     reset,
     formState: { errors, isSubmitting },
     control,
-  } = useForm<ProfileSchema>({
+  } = useForm<AcademicFormationsSchema>({
     resolver: zodResolver(validationSchema),
   });
 
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: 'academicFormations',
+  });
+
+  useEffect(() => {
+    if (user) {
+      mutate();
+    }
+  }, [user]);
+
   useEffect(() => {
     if (data) {
-      reset(data);
+      const { academicData: academicFormations } = data;
+      reset({
+        academicFormations,
+      });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data]);
 
-  const onSubmit = async (values: ProfileSchema) => {
-    await sleep(500);
-    if (data) {
-      mutate({ ...data, ...values }, false);
+  const onSubmit = async (values: AcademicFormationsSchema) => {
+    try {
+      const { id } = data;
+      const promises = values.academicFormations.map((formation) => {
+        if (formation.id) {
+          return apiService.put(`/academic-data/${formation.id}`, formation);
+        }
+        return apiService.post('/academic-data', {
+          ...formation,
+          applicantId: id,
+        });
+      });
+      const results = await Promise.allSettled(promises);
+
+      const hasErrors = results.some((result) => result.status === 'rejected');
+
+      if (hasErrors) {
+        toast.push(
+          <Notification type="danger">
+            Ha ocurrido un error al guardar la información académica.
+          </Notification>
+        );
+      } else {
+        toast.push(
+          <Notification type="success">
+            La información académica se ha guardado correctamente.
+          </Notification>
+        );
+      }
+      await mutate();
+    } catch (error) {
+      toast.push(
+        <Notification type="danger">
+          Ha ocurrido un error al guardar la información académica.
+        </Notification>
+      );
     }
   };
 
@@ -144,131 +205,212 @@ const SettingsAcademicFormation = () => {
     <>
       <h4 className="mb-8">Formación Académica</h4>
       <Form onSubmit={handleSubmit(onSubmit)}>
-        <div className="grid md:grid-cols-2 gap-4">
-          <FormItem
-            label="Nombre de la Institución"
-            invalid={Boolean(errors.institutionName)}
-            errorMessage={errors.institutionName?.message}
-            className="w-[calc(100%-30px)] md:w-[100%]"
+        {fields.map((field, index) => (
+          <Card
+            key={field.id}
+            bodyClass="grid md:grid-cols-2 gap-4"
+            className="mb-4"
           >
-            <Controller
-              name="institutionName"
-              control={control}
-              render={({ field }) => (
-                <Input
-                  {...field}
-                  autoComplete="off"
-                  value={field.value}
-                  onChange={field.onChange}
-                  onBlur={field.onBlur}
-                />
+            <FormItem
+              label="Nombre de la Institución"
+              invalid={Boolean(
+                errors.academicFormations?.[index]?.institutionName
               )}
-            />
-          </FormItem>
-          <FormItem
-            label="Nivel de Estudio"
-            invalid={Boolean(errors.academicLevelId)}
-            errorMessage={errors.academicLevelId?.message}
-            className="w-[calc(100%-30px)] md:w-[100%]"
-          >
-            <Controller
-              name="academicLevelId"
-              control={control}
-              render={({ field }) => (
-                <Select<Option>
-                  placeholder="Nivel de Estudio"
-                  {...field}
-                  options={academicLevelOptions}
-                  value={academicLevelOptions.filter(
-                    (option) => option.value === field.value
-                  )}
-                  onChange={(option) => field.onChange(option?.value)}
-                />
+              errorMessage={
+                errors.academicFormations?.[index]?.institutionName?.message
+              }
+              className="w-[calc(100%-30px)] md:w-[100%]"
+            >
+              <Controller
+                name={`academicFormations.${index}.institutionName`}
+                control={control}
+                render={({ field }) => (
+                  <Input
+                    {...field}
+                    autoComplete="off"
+                    value={field.value}
+                    onChange={field.onChange}
+                    onBlur={field.onBlur}
+                  />
+                )}
+              />
+            </FormItem>
+            <FormItem
+              label="Nivel de Estudio"
+              invalid={Boolean(
+                errors.academicFormations?.[index]?.academicLevelId
               )}
-            />
-          </FormItem>
-        </div>
-        <div className="grid md:grid-cols-2 gap-4">
-          <FormItem
-            className="w-[calc(100%-30px)] md:w-[100%]"
-            invalid={Boolean(errors.employmentSectorId)}
-            errorMessage={errors.employmentSectorId?.message}
-            label="Área de Estudios"
-          >
-            <Controller
-              name="employmentSectorId"
-              control={control}
-              render={({ field }) => (
-                <Select<Option>
-                  placeholder="Área de Estudios"
-                  {...field}
-                  options={professionOptions}
-                  value={professionOptions.filter(
-                    (option) => option.value === field.value
-                  )}
-                  onChange={(option) => field.onChange(option?.value)}
-                />
+              errorMessage={
+                errors.academicFormations?.[index]?.academicLevelId?.message
+              }
+              className="w-[calc(100%-30px)] md:w-[100%]"
+            >
+              <Controller
+                name={`academicFormations.${index}.academicLevelId`}
+                control={control}
+                render={({ field }) => (
+                  <Select<Option>
+                    placeholder="Nivel de Estudio"
+                    {...field}
+                    options={academicLevelOptions}
+                    value={academicLevelOptions.filter(
+                      (option) => option.value === field.value
+                    )}
+                    onChange={(option) => field.onChange(option?.value)}
+                  />
+                )}
+              />
+            </FormItem>
+            <FormItem
+              className="w-[calc(100%-30px)] md:w-[100%]"
+              invalid={Boolean(
+                errors.academicFormations?.[index]?.employmentSectorId
               )}
-            />
-          </FormItem>
-          <FormItem
-            className="w-[calc(100%-30px)] md:w-[100%]"
-            invalid={Boolean(errors.titleObtained)}
-            errorMessage={errors.titleObtained?.message}
-            label="Título Obtenido"
-          >
-            <Controller
-              name="titleObtained"
-              control={control}
-              render={({ field }) => (
-                <Input
-                  autoComplete="off"
-                  value={field.value}
-                  onChange={field.onChange}
-                  onBlur={field.onBlur}
-                />
+              errorMessage={
+                errors.academicFormations?.[index]?.employmentSectorId?.message
+              }
+              label="Área de Estudios"
+            >
+              <Controller
+                name={`academicFormations.${index}.employmentSectorId`}
+                control={control}
+                render={({ field }) => (
+                  <Select<Option>
+                    placeholder="Área de Estudios"
+                    {...field}
+                    options={professionOptions}
+                    value={professionOptions.filter(
+                      (option) => option.value === field.value
+                    )}
+                    onChange={(option) => field.onChange(option?.value)}
+                  />
+                )}
+              />
+            </FormItem>
+            <FormItem
+              className="w-[calc(100%-30px)] md:w-[100%]"
+              invalid={Boolean(
+                errors.academicFormations?.[index]?.academicStatusId
               )}
-            />
-          </FormItem>
-        </div>
-        <div className="grid md:grid-cols-2 gap-4">
-          <FormItem
-            label="Fecha de Inicio"
-            invalid={Boolean(errors.startDate)}
-            errorMessage={errors.startDate?.message}
-            className="w-[calc(100%-30px)] md:w-[100%]"
-          >
-            <Controller
-              name="startDate"
-              control={control}
-              render={({ field }) => (
-                <DatePicker
-                  {...field}
-                  value={field.value}
-                  onChange={(date) => field.onChange(date)}
-                />
+              errorMessage={
+                errors.academicFormations?.[index]?.academicStatusId?.message
+              }
+              label="Estado Actual"
+            >
+              <Controller
+                name={`academicFormations.${index}.academicStatusId`}
+                control={control}
+                render={({ field }) => (
+                  <Select<Option>
+                    placeholder="Estado Actual del Estudio"
+                    {...field}
+                    options={academicStatusOptions}
+                    value={academicStatusOptions.filter(
+                      (option) => option.value === field.value
+                    )}
+                    onChange={(option) => field.onChange(option?.value)}
+                  />
+                )}
+              />
+            </FormItem>
+            <FormItem
+              className="w-[calc(100%-30px)] md:w-[100%]"
+              invalid={Boolean(
+                errors.academicFormations?.[index]?.titleObtained
               )}
-            />
-          </FormItem>
-          <FormItem
-            label="Fecha de Finalización"
-            invalid={Boolean(errors.endDate)}
-            errorMessage={errors.endDate?.message}
-            className="w-[calc(100%-30px)] md:w-[100%]"
-          >
-            <Controller
-              name="endDate"
-              control={control}
-              render={({ field }) => (
-                <DatePicker
-                  {...field}
-                  value={field.value}
-                  onChange={(date) => field.onChange(date)}
+              errorMessage={
+                errors.academicFormations?.[index]?.titleObtained?.message
+              }
+              label="Título Obtenido"
+            >
+              <Controller
+                name={`academicFormations.${index}.titleObtained`}
+                control={control}
+                render={({ field }) => (
+                  <Input
+                    autoComplete="off"
+                    value={field.value}
+                    onChange={field.onChange}
+                    onBlur={field.onBlur}
+                  />
+                )}
+              />
+            </FormItem>
+            <FormItem
+              label="Fecha de Inicio"
+              invalid={Boolean(errors.academicFormations?.[index]?.startDate)}
+              errorMessage={
+                errors.academicFormations?.[index]?.startDate?.message
+              }
+              className="w-[calc(100%-30px)] md:w-[100%]"
+            >
+              <Controller
+                name={`academicFormations.${index}.startDate`}
+                control={control}
+                render={({ field }) => (
+                  <DatePicker
+                    {...field}
+                    value={field.value}
+                    onChange={(date) => field.onChange(date)}
+                  />
+                )}
+              />
+            </FormItem>
+            <FormItem
+              label="Fecha de Finalización"
+              invalid={Boolean(errors.academicFormations?.[index]?.endDate)}
+              errorMessage={
+                errors.academicFormations?.[index]?.endDate?.message
+              }
+              className="w-[calc(100%-30px)] md:w-[100%]"
+            >
+              <Controller
+                name={`academicFormations.${index}.endDate`}
+                control={control}
+                render={({ field }) => (
+                  <DatePicker
+                    {...field}
+                    value={field.value}
+                    onChange={(date) => field.onChange(date)}
+                  />
+                )}
+              />
+            </FormItem>
+            <div className="flex w-full justify-end items-center">
+              <Button
+                type="button"
+                className={
+                  'border-gray ring-1 ring-error text-error hover:border-error hover:bg-error hover:ring-error hover:text-white'
+                }
+                style={{
+                  width: '250px',
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  flexWrap: 'wrap',
+                  textWrap: 'wrap',
+                }}
+                onClick={() => remove(index)}
+              >
+                Eliminar Formación Académica
+              </Button>
+              <FormItem>
+                <Controller
+                  name={`academicFormations.${index}.id`}
+                  control={control}
+                  render={({ field }) => <Input {...field} type="hidden" />}
                 />
-              )}
-            />
-          </FormItem>
-        </div>
+              </FormItem>
+            </div>
+          </Card>
+        ))}
+        <Button
+          type="button"
+          onClick={() => append({} as ProfileSchema)}
+          style={{ marginTop: '10px' }}
+        >
+          Agregar Formación Académica
+        </Button>
         <div className="flex justify-end">
           <Button variant="solid" type="submit" loading={isSubmitting}>
             Guardar

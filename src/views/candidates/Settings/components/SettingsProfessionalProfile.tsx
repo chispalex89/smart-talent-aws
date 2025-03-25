@@ -1,26 +1,20 @@
 import { useMemo, useEffect, useState } from 'react';
 import Button from '@/components/ui/Button';
-import Upload from '@/components/ui/Upload';
 import Input from '@/components/ui/Input';
-import Select, { Option as DefaultOption } from '@/components/ui/Select';
-import Avatar from '@/components/ui/Avatar';
+import Select from '@/components/ui/Select';
+import Notification from '@/components/ui/Notification';
 import { Form, FormItem } from '@/components/ui/Form';
-import NumericInput from '@/components/shared/NumericInput';
-import { countryList } from '@/constants/countries.constant';
 import { components } from 'react-select';
 import sleep from '@/utils/sleep';
 import useSWR from 'swr';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm, Controller } from 'react-hook-form';
 import { z } from 'zod';
-import { HiOutlineUser } from 'react-icons/hi';
-import { TbPlus } from 'react-icons/tb';
-import type { ZodType } from 'zod';
-import type { GetSettingsProfileResponse } from '../types';
-import { City, ProfessionalData, User } from '@prisma/client';
-import { Alert, DatePicker, Switcher } from '@/components/ui';
+import { ProfessionalData, User } from '@prisma/client';
 import { useCatalogContext } from '../../../../context/catalogContext';
+import { toast } from '@/components/ui';
 import apiService from '../../../../services/apiService';
+import { useUserContext } from '../../../../context/userContext';
 
 type ProfessionalDataSchema = Omit<
   ProfessionalData,
@@ -49,12 +43,6 @@ type UserSchema = Omit<
 
 type ProfileSchema = ProfessionalDataSchema & UserSchema;
 
-type CountryOption = {
-  label: string;
-  dialCode: string;
-  value: string;
-};
-
 type Option = {
   value: number;
   label: string;
@@ -64,116 +52,41 @@ type Option = {
 const { Control } = components;
 
 const validationSchema = z.object({
-  firstName: z.string().min(1, { message: 'Nombre requerido' }),
-  middleName: z.string().optional(),
-  lastName: z.string().min(1, { message: 'Apellido requerido' }),
-  secondLastName: z.string().optional(),
-  email: z.string().email({ message: 'Email invalido' }),
-  marriedLastName: z.string().optional(),
-  documentId: z
-    .string()
-    .min(1, { message: 'Documento de Identificación requerido' }),
-  address: z.string().min(1, { message: 'Dirección requerida' }),
-  phone: z.string().optional().or(z.literal('')),
-  mobile: z.string().optional().or(z.literal('')),
-  availabilityToTravel: z.boolean(),
-  documentTypeId: z.number().min(1, { message: 'Tipo de documento requerido' }),
-  genderId: z.number().min(1, { message: 'Género requerido' }),
-  maritalStatusId: z.number().min(1, { message: 'Estado civil requerido' }),
-  countryOfResidencyId: z
+  lastAcademicLevelId: z
     .number()
-    .min(1, { message: 'País de residencia requerido' }),
-  driverLicenseId: z.number().optional(),
+    .int()
+    .nonnegative('Por favor seleccione un nivel académico.'),
+  professionId: z
+    .number()
+    .int()
+    .nonnegative('Por favor seleccione una profesión.'),
+  lastJobHierarchyId: z
+    .number()
+    .int()
+    .nonnegative('Por favor seleccione un cargo.'),
+  description: z.string().nonempty('Por favor ingrese una descripción.'),
 });
 
-const countryOptions: Option[] = [
-  {
-    value: 1,
-    label: 'Guatemala',
-    className: 'text-gray-900',
-  },
-];
-
-const maritalStatusOptions: Option[] = [
-  {
-    value: 1,
-    label: 'Soltero(a)',
-    className: 'text-gray-900',
-  },
-  {
-    value: 2,
-    label: 'Casado(a)',
-    className: 'text-gray-900',
-  },
-  {
-    value: 3,
-    label: 'Divorciado(a)',
-    className: 'text-gray-900',
-  },
-  {
-    value: 4,
-    label: 'Viudo(a)',
-    className: 'text-gray-900',
-  },
-];
-
-const documentTypeOptions: Option[] = [
-  {
-    value: 1,
-    label: 'DPI',
-    className: 'text-gray-900',
-  },
-  {
-    value: 2,
-    label: 'Pasaporte',
-    className: 'text-gray-900',
-  },
-  {
-    value: 3,
-    label: 'Licencia de Conducir',
-    className: 'text-gray-900',
-  },
-];
-
-const driverLicenseOptions: Option[] = [
-  {
-    value: 1,
-    label: 'Tipo A',
-    className: 'text-gray-900',
-  },
-  {
-    value: 2,
-    label: 'Tipo B',
-    className: 'text-gray-900',
-  },
-  {
-    value: 3,
-    label: 'Tipo C',
-    className: 'text-gray-900',
-  },
-  {
-    value: 4,
-    label: 'Tipo M',
-    className: 'text-gray-900',
-  },
-];
-
 const SettingsProfessionalProfile = () => {
-  const { data, mutate } = useSWR('/api/settings/profile/', () => {}, {
-    revalidateOnFocus: false,
-    revalidateIfStale: false,
-    revalidateOnReconnect: false,
-  });
+  const { user } = useUserContext();
 
-  const [stateId, setStateId] = useState<number | null>(null);
+  const { data, mutate } = useSWR(
+    `/applicant/${user?.id || 0}/applicant-data`,
+    (url) => apiService.get<any>(url),
+    {
+      revalidateOnFocus: false,
+      revalidateIfStale: false,
+      revalidateOnReconnect: false,
+    }
+  );
 
-  const {
-    academicLevels,
-    professions,
-    jobHierarchies,
-    softwareSkills,
-    states,
-  } = useCatalogContext();
+  useEffect(() => {
+    if (user) {
+      mutate();
+    }
+  }, [user]);
+
+  const { academicLevels, professions, jobHierarchies } = useCatalogContext();
 
   const academicLevelOptions = useMemo(() => {
     return academicLevels.map((academicLevel) => ({
@@ -210,15 +123,37 @@ const SettingsProfessionalProfile = () => {
 
   useEffect(() => {
     if (data) {
-      reset(data);
+      const { professionalData, ...rest } = data;
+      reset({ ...rest, ...professionalData[0] });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data]);
 
   const onSubmit = async (values: ProfileSchema) => {
-    await sleep(500);
-    if (data) {
-      mutate({ ...data, ...values }, false);
+    try {
+      const { professionalData } = data;
+      const professional = professionalData[0];
+      await apiService.put(`/professional-data/${professional?.id || 0}`, {
+        ...values,
+      });
+      toast.push(
+        <Notification type="success">
+          ¡Información profesional actualizada con éxito!
+        </Notification>,
+        {
+          placement: 'top-center',
+        }
+      );
+    } catch {
+      toast.push(
+        <Notification type="danger">
+          ¡Error al actualizar la información profesional!
+        </Notification>,
+        {
+          placement: 'top-center',
+        }
+      );
+    } finally {
+      mutate();
     }
   };
 
