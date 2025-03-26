@@ -14,7 +14,7 @@ import type { FooterPageContainerType } from '@/components/template/Footer';
 import { PiUserDuotone } from 'react-icons/pi';
 import { LayoutProps } from './LayoutProps.interface';
 
-const FrameLessSide = ({ children, navigationConfig }: LayoutProps) => {
+const FrameLessSide = ({ children, navigationConfig, user }: LayoutProps) => {
   const { isSticky } = useScrollTop();
 
   const { larger, smaller } = useResponsive();
@@ -22,6 +22,7 @@ const FrameLessSide = ({ children, navigationConfig }: LayoutProps) => {
   return (
     <LayoutBase
       adaptiveCardActive
+      user={user}
       type={LAYOUT_FRAMELESS_SIDE}
       className="app-layout-frameless-side flex flex-auto flex-col bg-gray-950"
       pageContainerReassemble={({
@@ -91,15 +92,16 @@ const FrameLessSide = ({ children, navigationConfig }: LayoutProps) => {
                   {smaller.lg && (
                     <MobileNav navigationConfig={navigationConfig} />
                   )}
-                  {larger.lg && (
-                    <SideNavToggle />
-                  )}
+                  {larger.lg && <SideNavToggle />}
                 </>
               }
               headerEnd={
                 <>
                   <UserProfileDropdown
                     hoverable={false}
+                    userName={user.userName}
+                    avatar={user.avatar}
+                    email={user.email}
                     dropdownItemList={[
                       {
                         label: 'Perfil',

@@ -13,7 +13,7 @@ import type { FooterPageContainerType } from '@/components/template/Footer';
 import { PiUserDuotone } from 'react-icons/pi';
 import { LayoutProps } from './LayoutProps.interface';
 
-const ContentOverlay = ({ children, navigationConfig }: LayoutProps) => {
+const ContentOverlay = ({ children, navigationConfig, user }: LayoutProps) => {
   const { isSticky } = useScrollTop();
 
   const { larger, smaller } = useResponsive();
@@ -21,6 +21,7 @@ const ContentOverlay = ({ children, navigationConfig }: LayoutProps) => {
   return (
     <LayoutBase
       type={LAYOUT_CONTENT_OVERLAY}
+      user={user}
       className="app-layout-content-overlay flex flex-auto flex-col min-h-screen"
       pageContainerReassemble={({
         children,
@@ -118,6 +119,9 @@ const ContentOverlay = ({ children, navigationConfig }: LayoutProps) => {
               <>
                 <UserProfileDropdown
                   hoverable={false}
+                  userName={user.userName}
+                  avatar={user.avatar}
+                  email={user.email}
                   dropdownItemList={[
                     {
                       label: 'Perfil',

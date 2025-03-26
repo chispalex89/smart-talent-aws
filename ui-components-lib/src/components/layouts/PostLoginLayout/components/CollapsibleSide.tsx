@@ -11,11 +11,12 @@ import { PiUserDuotone } from 'react-icons/pi';
 import { LayoutProps } from './LayoutProps.interface';
 
 
-const CollapsibleSide = ({ children, navigationConfig }: LayoutProps) => {
+const CollapsibleSide = ({ children, navigationConfig, user }: LayoutProps) => {
   const { larger, smaller } = useResponsive();
 
   return (
     <LayoutBase
+      user={user}
       type={LAYOUT_COLLAPSIBLE_SIDE}
       className="app-layout-collapsible-side flex flex-auto flex-col"
     >
@@ -36,6 +37,9 @@ const CollapsibleSide = ({ children, navigationConfig }: LayoutProps) => {
               <>
                 <ModeSwitcher />
                 <UserProfileDropdown
+                  userName={user.userName}
+                  avatar={user.avatar}
+                  email={user.email}
                   hoverable={false}
                   dropdownItemList={[
                     {

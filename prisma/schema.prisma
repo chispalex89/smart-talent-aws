@@ -17,8 +17,8 @@ model User {
   email           String      @unique
   loginId         String      @unique
   status          String
-  password        String
-  isDeleted       Boolean     @map("is_deleted")
+  profileImage    String?     @map("profile_image")
+  isDeleted       Boolean     @default(false) @map("is_deleted")
   created_at      DateTime    @default(now())
   updated_at      DateTime?   @updatedAt
   created_by      String
@@ -146,7 +146,7 @@ model Company {
   phone                       String
   description                 String
   active                      Boolean
-  isDeleted                   Boolean                    @map("is_deleted")
+  isDeleted                   Boolean                    @default(false) @map("is_deleted")
   countryId                   Int                        @map("country_id")
   employmentSectorId          Int                        @map("employment_sector_id")
   created_at                  DateTime                   @default(now())
@@ -257,7 +257,7 @@ model AcademicData {
   employmentSectorId Int                @map("employment_sector_id")
   titleObtained      String             @map("title_obtained")
   academicStatusId   Int                @map("academic_status_id")
-  isDeleted          Boolean            @map("is_deleted")
+  isDeleted          Boolean            @default(false) @map("is_deleted")
   created_at         DateTime           @default(now())
   updated_at         DateTime?          @updatedAt
   status             String
@@ -288,6 +288,7 @@ model JobExperienceData {
   referenceEmail  String?   @map("reference_email")
   jobDescription  String    @map("job_description")
   status          String
+  isDeleted       Boolean   @default(false) @map("is_deleted")
 
   applicantId Int       @map("applicant_id")
   applicant   Applicant @relation(fields: [applicantId], references: [id])
@@ -434,7 +435,7 @@ model Role {
   updated_at       DateTime?        @updatedAt
   created_by       String
   updated_by       String?
-  isDeleted        Boolean          @map("is_deleted")
+  isDeleted        Boolean          @default(false) @map("is_deleted")
   role_permissions RolePermission[]
   user_roles       UserRole[]
 
@@ -450,7 +451,7 @@ model UserRole {
   updated_at   DateTime? @updatedAt
   created_by   String
   updated_by   String?
-  isDeleted    Boolean   @map("is_deleted")
+  isDeleted    Boolean   @default(false) @map("is_deleted")
   role         Role      @relation(fields: [roleId], references: [id])
   user         User      @relation(fields: [userId], references: [id])
 
@@ -465,7 +466,7 @@ model RolePermission {
   updated_at   DateTime?  @updatedAt
   created_by   String
   updated_by   String?
-  isDeleted    Boolean    @map("is_deleted")
+  isDeleted    Boolean    @default(false) @map("is_deleted")
   permissions  Permission @relation(fields: [permissionId], references: [id])
   role         Role       @relation(fields: [roleId], references: [id])
 
@@ -481,7 +482,7 @@ model Permission {
   updated_at       DateTime?        @updatedAt
   created_by       String
   updated_by       String?
-  isDeleted        Boolean          @map("is_deleted")
+  isDeleted        Boolean          @default(false) @map("is_deleted")
   role_permissions RolePermission[]
 
   @@map("permission")
@@ -495,7 +496,7 @@ model DocumentType {
   updated_at    DateTime?      @updatedAt
   created_by    String
   updated_by    String?
-  isDeleted     Boolean        @map("is_deleted")
+  isDeleted     Boolean        @default(false) @map("is_deleted")
   personal_data PersonalData[]
 
   @@map("document_type")
@@ -509,7 +510,7 @@ model Gender {
   updated_at    DateTime?      @updatedAt
   created_by    String
   updated_by    String?
-  isDeleted     Boolean        @map("is_deleted")
+  isDeleted     Boolean        @default(false) @map("is_deleted")
   personal_data PersonalData[]
 
   @@map("gender")
@@ -523,7 +524,7 @@ model MaritalStatus {
   updated_at    DateTime?      @updatedAt
   created_by    String
   updated_by    String?
-  isDeleted     Boolean        @map("is_deleted")
+  isDeleted     Boolean        @default(false) @map("is_deleted")
   job           JobOffer[]
   personal_data PersonalData[]
 
@@ -538,7 +539,7 @@ model Country {
   updated_at      DateTime?        @updatedAt
   created_by      String
   updated_by      String?
-  isDeleted       Boolean          @map("is_deleted")
+  isDeleted       Boolean          @default(false) @map("is_deleted")
   companies       Company[]
   Job_Offer       JobOffer[]
   job_preferences JobPreferences[]
@@ -556,7 +557,7 @@ model State {
   updated_at      DateTime?        @updatedAt
   created_by      String
   updated_by      String?
-  isDeleted       Boolean          @map("is_deleted")
+  isDeleted       Boolean          @default(false) @map("is_deleted")
   cities          City[]
   job             JobOffer[]
   job_preferences JobPreferences[]
@@ -574,7 +575,7 @@ model City {
   updated_at      DateTime?        @updatedAt
   created_by      String
   updated_by      String?
-  isDeleted       Boolean          @map("is_deleted")
+  isDeleted       Boolean          @default(false) @map("is_deleted")
   state           State            @relation(fields: [stateId], references: [id])
   job             JobOffer[]
   job_preferences JobPreferences[]
@@ -591,7 +592,7 @@ model DriverLicense {
   updated_at    DateTime?      @updatedAt
   created_by    String
   updated_by    String?
-  isDeleted     Boolean        @map("is_deleted")
+  isDeleted     Boolean        @default(false) @map("is_deleted")
   personal_data PersonalData[]
 
   @@map("driver_license")
@@ -605,7 +606,7 @@ model AcademicLevel {
   updated_at        DateTime?          @updatedAt
   created_by        String
   updated_by        String?
-  isDeleted         Boolean            @map("is_deleted")
+  isDeleted         Boolean            @default(false) @map("is_deleted")
   job               JobOffer[]
   professional_data ProfessionalData[]
   AcademicData      AcademicData[]
@@ -621,7 +622,7 @@ model Profession {
   updated_at        DateTime?          @updatedAt
   created_by        String
   updated_by        String?
-  isDeleted         Boolean            @map("is_deleted")
+  isDeleted         Boolean            @default(false) @map("is_deleted")
   Job_Offer         JobOffer[]
   professional_Data ProfessionalData[]
 
@@ -636,7 +637,7 @@ model JobHierarchy {
   updated_at        DateTime?          @updatedAt
   created_by        String
   updated_by        String?
-  isDeleted         Boolean            @map("is_deleted")
+  isDeleted         Boolean            @default(false) @map("is_deleted")
   job               JobOffer[]
   job_preferences   JobPreferences[]
   professional_data ProfessionalData[]
@@ -652,7 +653,7 @@ model EmploymentStatus {
   updated_at      DateTime?        @updatedAt
   created_by      String
   updated_by      String?
-  isDeleted       Boolean          @map("is_deleted")
+  isDeleted       Boolean          @default(false) @map("is_deleted")
   job_preferences JobPreferences[]
 
   @@map("employment_status")
@@ -666,7 +667,7 @@ model EmploymentSector {
   updated_at      DateTime?        @updatedAt
   created_by      String
   updated_by      String?
-  isDeleted       Boolean          @map("is_deleted")
+  isDeleted       Boolean          @default(false) @map("is_deleted")
   companies       Company[]
   job             JobOffer[]
   job_preferences JobPreferences[]
@@ -683,7 +684,7 @@ model SalaryRange {
   updated_at      DateTime?        @updatedAt
   created_by      String
   updated_by      String?
-  isDeleted       Boolean          @map("is_deleted")
+  isDeleted       Boolean          @default(false) @map("is_deleted")
   job_offer       JobOffer[]
   job_preferences JobPreferences[]
 
@@ -698,7 +699,7 @@ model WorkShift {
   updated_at      DateTime?        @updatedAt
   created_by      String
   updated_by      String?
-  isDeleted       Boolean          @map("is_deleted")
+  isDeleted       Boolean          @default(false) @map("is_deleted")
   job_offer       JobOffer[]
   job_preferences JobPreferences[]
 
@@ -713,7 +714,7 @@ model ContractType {
   updated_at      DateTime?        @updatedAt
   created_by      String
   updated_by      String?
-  isDeleted       Boolean          @map("is_deleted")
+  isDeleted       Boolean          @default(false) @map("is_deleted")
   job_preferences JobPreferences[]
   job_Offer       JobOffer[]
 
@@ -728,7 +729,7 @@ model GenderPreference {
   updated_at  DateTime?  @updatedAt
   created_by  String
   updated_by  String?
-  isDeleted   Boolean    @map("is_deleted")
+  isDeleted   Boolean    @default(false) @map("is_deleted")
   job         JobOffer[]
 
   @@map("gender_preference")
@@ -744,7 +745,7 @@ model MembershipType {
   updated_at  DateTime?    @updatedAt
   created_by  String
   updated_by  String?
-  isDeleted   Boolean      @map("is_deleted")
+  isDeleted   Boolean      @default(false) @map("is_deleted")
   features    String[]
   membership  Membership[]
 
@@ -759,7 +760,7 @@ model SoftwareSkills {
   updated_at         DateTime?            @updatedAt
   created_by         String
   updated_by         String?
-  isDeleted          Boolean              @map("is_deleted")
+  isDeleted          Boolean              @default(false) @map("is_deleted")
   SoftwareSkillsData SoftwareSkillsData[]
 
   @@map("software_skill")
@@ -773,7 +774,7 @@ model Language {
   updated_at         DateTime?            @updatedAt
   created_by         String
   updated_by         String?
-  isDeleted          Boolean              @map("is_deleted")
+  isDeleted          Boolean              @default(false) @map("is_deleted")
   LanguageSkillsData LanguageSkillsData[]
 
   @@map("language")
@@ -787,7 +788,7 @@ model SkillLevel {
   updated_at         DateTime?            @updatedAt
   created_by         String
   updated_by         String?
-  isDeleted          Boolean              @map("is_deleted")
+  isDeleted          Boolean              @default(false) @map("is_deleted")
   LanguageSkillsData LanguageSkillsData[]
   SoftwareSkillsData SoftwareSkillsData[]
 
@@ -802,7 +803,7 @@ model OtherSkills {
   updated_at  DateTime? @updatedAt
   created_by  String
   updated_by  String?
-  isDeleted   Boolean   @map("is_deleted")
+  isDeleted   Boolean   @default(false) @map("is_deleted")
 
   @@map("other_skills")
 }
@@ -815,7 +816,7 @@ model AcademicDataStatus {
   updated_at   DateTime?      @updatedAt
   created_by   String
   updated_by   String?
-  isDeleted    Boolean        @map("is_deleted")
+  isDeleted    Boolean        @default(false) @map("is_deleted")
   AcademicData AcademicData[]
 
   @@map("academic_data_status")

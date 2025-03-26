@@ -39,7 +39,17 @@ class ApiService {
       body: JSON.stringify(data),
     });
   }
+
+  async put<T>(path: string, data: Record<string, unknown>): Promise<T>;
+  async put<T>(path: string, data: FormData): Promise<T>;
   async put<T>(path: string, data: unknown) {
+    if (data instanceof FormData) {
+      return fetch(`${this.baseUrl}${path}`, {
+        method: 'PUT',
+        body: data,
+      }).then((res) => res.json() as Promise<T>);
+    }
+
     return fetch(`${this.baseUrl}${path}`, {
       method: 'PUT',
       headers: {
@@ -48,7 +58,16 @@ class ApiService {
       body: JSON.stringify(data),
     }).then((res) => res.json() as Promise<T>);
   }
+
+  async patch<T>(path: string, data: Record<string, unknown>): Promise<T>;
+  async patch<T>(path: string, data: FormData): Promise<T>;
   async patch<T>(path: string, data: unknown) {
+    if (data instanceof FormData) {
+      return fetch(`${this.baseUrl}${path}`, {
+        method: 'PATCH',
+        body: data,
+      }).then((res) => res.json() as Promise<T>);
+    }
     return fetch(`${this.baseUrl}${path}`, {
       method: 'PATCH',
       headers: {

@@ -9,13 +9,14 @@ import type { CommonProps } from '@/@types/common';
 import { PiUserDuotone } from 'react-icons/pi';
 import { LayoutProps } from './LayoutProps.interface';
 
-const StackedSide = ({ children, navigationConfig }: LayoutProps) => {
+const StackedSide = ({ children, navigationConfig, user }: LayoutProps) => {
   const { larger, smaller } = useResponsive();
 
   return (
     <LayoutBase
       type={LAYOUT_STACKED_SIDE}
       className="app-layout-stacked-side flex flex-auto flex-col"
+      user={user}
     >
       <div className="flex flex-auto min-w-0">
         {larger.lg && <StackedSideNav navigationConfig={navigationConfig} />}
@@ -33,6 +34,9 @@ const StackedSide = ({ children, navigationConfig }: LayoutProps) => {
               <>
                 <UserProfileDropdown
                   hoverable={false}
+                  userName={user.userName}
+                  avatar={user.avatar}
+                  email={user.email}
                   dropdownItemList={[
                     {
                       label: 'Perfil',

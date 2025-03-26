@@ -10,13 +10,14 @@ import type { CommonProps } from '@/@types/common';
 import { PiUserDuotone } from 'react-icons/pi';
 import { LayoutProps } from './LayoutProps.interface';
 
-const TopBarClassic = ({ children, navigationConfig }: LayoutProps) => {
+const TopBarClassic = ({ children, navigationConfig, user }: LayoutProps) => {
   const { larger, smaller } = useResponsive();
 
   return (
     <LayoutBase
       type={LAYOUT_TOP_BAR_CLASSIC}
       className="app-layout-top-bar-classic flex flex-auto flex-col min-h-screen"
+      user={user}
     >
       <div className="flex flex-auto min-w-0">
         <div className="flex flex-col flex-auto min-h-screen min-w-0 relative w-full">
@@ -42,6 +43,9 @@ const TopBarClassic = ({ children, navigationConfig }: LayoutProps) => {
               <>
                 <UserProfileDropdown
                   hoverable={false}
+                  userName={user.userName}
+                  avatar={user.avatar}
+                  email={user.email}
                   dropdownItemList={[
                     {
                       label: 'Perfil',

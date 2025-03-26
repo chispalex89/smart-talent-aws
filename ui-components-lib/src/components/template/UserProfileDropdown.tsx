@@ -8,7 +8,6 @@ import { Link, useNavigate } from 'react-router-dom';
 import { PiUserDuotone, PiSignOutDuotone } from 'react-icons/pi';
 import { JSX } from 'react';
 
-
 type DropdownList = {
   label: string;
   path: string;
@@ -16,13 +15,17 @@ type DropdownList = {
 };
 
 export interface UserDropdownProps {
+  avatar?: string;
+  userName?: string;
+  email?: string;
   dropdownItemList: DropdownList[];
 }
 
 const _UserDropdown = (
-  { dropdownItemList }: UserDropdownProps = { dropdownItemList: [] },
+  { dropdownItemList, avatar, userName, email }: UserDropdownProps = {
+    dropdownItemList: [],
+  }
 ) => {
-  const { avatar, userName, email } = useSessionUser((state) => state.user);
   const navigate = useNavigate();
 
   const handleSignOut = () => {
@@ -49,9 +52,9 @@ const _UserDropdown = (
           <Avatar {...avatarProps} />
           <div>
             <div className="font-bold text-gray-900 dark:text-gray-100">
-              {userName || 'Anonymous'}
+              {userName || 'Usuario no registrado'}
             </div>
-            <div className="text-xs">{email || 'No email available'}</div>
+            <div className="text-xs">{email || 'Email no disponible'}</div>
           </div>
         </div>
       </Dropdown.Item>
@@ -81,7 +84,7 @@ const _UserDropdown = (
 };
 
 const UserDropdown = withHeaderItem<UserDropdownProps & WithHeaderItemProps>(
-  _UserDropdown,
+  _UserDropdown
 );
 
 export default UserDropdown;

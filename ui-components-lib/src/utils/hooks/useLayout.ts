@@ -17,10 +17,17 @@ export type PageContainerReassembleProps = {
     PageContainerFooter: typeof PageContainerFooter
 } & PageContainerProps
 
+export type UserLayoutProps = {
+  email?: string;
+  avatar?: string;
+  userName?: string;
+};
+
 export interface LayoutContextProps {
-    type: LayoutType
-    adaptiveCardActive?: boolean
-    pageContainerReassemble?: (props: PageContainerReassembleProps) => ReactNode
+  type: LayoutType;
+  adaptiveCardActive?: boolean;
+  pageContainerReassemble?: (props: PageContainerReassembleProps) => ReactNode;
+  user: UserLayoutProps;
 }
 
 export const LayoutContext = createContext<LayoutContextProps | undefined>(

@@ -4,10 +4,9 @@ import type { CommonProps } from '@/@types/common';
 import { useAuth } from '@/auth';
 import { useThemeStore } from '@/store/themeStore';
 import PostLoginLayout from './PostLoginLayout';
-import PreLoginLayout from './PreLoginLayout';
 import { LayoutProps } from './PostLoginLayout/components/LayoutProps.interface';
 
-const Layout = ({ children, navigationConfig }: LayoutProps) => {
+const Layout = ({ children, navigationConfig, user }: LayoutProps) => {
   const layoutType = useThemeStore((state) => state.layout.type);
   return (
     <Suspense
@@ -20,6 +19,7 @@ const Layout = ({ children, navigationConfig }: LayoutProps) => {
       <PostLoginLayout
         layoutType={layoutType}
         navigationConfig={navigationConfig}
+        user={user}
       >
         {children}
       </PostLoginLayout>

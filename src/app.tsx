@@ -11,7 +11,7 @@ import { getCurrentUser } from 'aws-amplify/auth';
 import navigationConfigByRole from './config/navigation.config';
 
 const App: FC = () => {
-  const { setAuthUser, role } = useUserContext();
+  const { setAuthUser, role, user } = useUserContext();
 
   useEffect(() => {
     getCurrentUser().then((user) => {
@@ -23,7 +23,13 @@ const App: FC = () => {
     <Theme>
       <BrowserRouter>
         <CatalogContextProvider>
-          <Layouts navigationConfig={navigationConfigByRole(role)}>
+          <Layouts navigationConfig={navigationConfigByRole(role)}
+            user={{
+              avatar: user?.profileImage || '',
+              email: user?.email,
+              userName: `${user?.firstName} ${user?.lastName}`
+            }}
+          >
             <Views />
           </Layouts>
         </CatalogContextProvider>

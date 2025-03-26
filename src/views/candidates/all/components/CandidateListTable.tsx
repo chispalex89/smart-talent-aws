@@ -30,24 +30,31 @@ import {
   nameFormat,
 } from '../../../../helpers/textConverter';
 import { BsCloudDownload, BsStar } from 'react-icons/bs';
-import { PiArchive, PiFloppyDisk, PiWarning } from 'react-icons/pi';
+import {
+  PiArchive,
+  PiFloppyDisk,
+  PiUserDuotone,
+  PiWarning,
+} from 'react-icons/pi';
 
 const statusColor: Record<string, string> = {
   active: 'bg-emerald-200 dark:bg-emerald-200 text-gray-900 dark:text-gray-900',
   inactive: 'bg-red-200 dark:bg-red-200 text-gray-900 dark:text-gray-900',
 };
 
+const statusMap: Record<string, string> = {
+  active: 'Activo',
+  inactive: 'Inactivo',
+};
+
 const NameColumn = ({ row }: { row: Candidate }) => {
   return (
     <div className="flex items-center">
-      {/* TODO: add image url */}
-      <Avatar
-        size={40}
-        shape="circle"
-        src={
-          'https://tengai.io/hs-fs/hubfs/avatar-images/Avatar-round-NO-BG.png'
-        }
-      />
+      {row.user.profileImage ? (
+        <Avatar size={40} shape="circle" src={row.user.profileImage} />
+      ) : (
+        <PiUserDuotone />
+      )}
       <Link
         className={`hover:text-primary ml-2 rtl:mr-2 font-semibold text-gray-900 dark:text-gray-100`}
         to={`/concepts/customers/customer-details/${row.id}`}
@@ -147,20 +154,22 @@ const CandidateListTable = ({
           return (
             <div className="flex items-center">
               <Tag className={statusColor[row.user.status]}>
-                <span className="capitalize">{row.user.status}</span>
+                <span className="capitalize">{statusMap[row.user.status]}</span>
               </Tag>
             </div>
           );
         },
       },
       {
-        header: 'Fecha de Aplicación',
+        header: 'Última Actualización de Perfil',
         accessorKey: 'totalSpending',
         cell: (props) => {
           const row = props.row.original;
           return (
             <span className="font-semibold">
-              {dayjs(row.created_at).locale('es').format('DD/MM/YYYY')}
+              {dayjs(row.updated_at || row.created_at)
+                .locale('es')
+                .format('DD/MM/YYYY')}
             </span>
           );
         },
@@ -212,13 +221,11 @@ const CandidateListTable = ({
     return (
       <div className="grid md:grid-cols-4 gap-4">
         <div className="flex items-center gap-2">
-          <Avatar
-            size={200}
-            shape="square"
-            src={
-              'https://tengai.io/hs-fs/hubfs/avatar-images/Avatar-round-NO-BG.png'
-            }
-          />
+          {row.original.user.profileImage ? (
+            <Avatar size={200} shape="square" src={row.original.user.profileImage} />
+          ) : (
+            <PiUserDuotone />
+          )}
         </div>
         <div className="flex flex-col flex-start gap-2 md:col-span-2">
           <h4>{nameFormat(row.original.user)}</h4>
@@ -232,43 +239,36 @@ const CandidateListTable = ({
             </span>
           </div>
           <span className="text-md font-semibold">
-            {
-              // TODO: description
-              'Descripción'
-            }
+            {row.original.professionalData[0]?.description || ''}
           </span>
-          <span className="text-md font-semibold">Área de trabajo:</span>
+          <span className="text-md font-semibold">
+            Área de trabajo: {row.original.professionalData[0].profession.name}
+          </span>
           <span className="text-md font-semibold">
             Edad:{' '}
-            {
-              // TODO: calculate age
-            }
+            {row.original.personalData[0]?.dateOfBirth
+              ? calculateAge(row.original.personalData[0].dateOfBirth)
+              : ''}
           </span>
           <span className="text-md font-semibold">
-            Sexo:{' '}
-            {
-              // TODO: add gender
-              // row.original.user.gender
-            }
+            Sexo: {row.original.personalData[0]?.gender.name}
           </span>
-          <span className="text-md font-semibold">
+          {/* <span className="text-md font-semibold">
             Rango Salarial:{' '}
             {
               // TODO: add salary range
             }
-          </span>
+          </span> */}
           <span className="text-md font-semibold">
             Ubicación:{' '}
-            {
-              // TODO: add location (city, state)
-            }
+            {`${row.original.personalData[0]?.address} ${row.original.personalData[0]?.zone ? `Zona ${row.original.personalData[0]?.zone}` : ''}, ${row.original.personalData[0]?.city?.name}, ${row.original.personalData[0]?.city?.state?.name || ''}, ${row.original.personalData[0]?.city?.state?.country?.name || ''}`}
           </span>
-          <span className="text-md font-semibold">
+          {/* <span className="text-md font-semibold">
             Jornada:{' '}
             {
               // TODO: add work shift
             }
-          </span>
+          </span> */}
         </div>
         <div className="grid md:grid-cols-2 gap-4 items-center">
           <Button

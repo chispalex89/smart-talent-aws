@@ -279,13 +279,53 @@ const SettingsProfile = () => {
     }
   };
 
+  const uploadFile = async (file: File) => {
+    const formData = new FormData();
+    formData.append('profileImage', file); // Key must match 'profileImage'
+    try {
+      await apiService.patch(`/user/${user?.id}/profile`, formData);
+      toast.push(
+        <Notification type="success">
+          Foto de perfil actualizada
+        </Notification>
+      )
+    } catch {
+      toast.push(
+        <Notification type="danger">
+          ¡Error al actualizar la foto de perfil!
+        </Notification>
+      );
+    } finally {
+      mutate();
+    }
+  };
+
+  const removeFile = async (fileName: string) => {
+    try {
+      await apiService.patch(`/user/${user?.id}/profile/remove-profile-picture`, {
+        profileImage: fileName,
+      });
+      toast.push(
+        <Notification type="success">Foto de perfil eliminada</Notification>
+      );
+    } catch {
+      toast.push(
+        <Notification type="danger">
+          ¡Error al actualizar la foto de perfil!
+        </Notification>
+      );
+    } finally {
+      mutate();
+    }
+  }
+
   return (
     <>
       <h4 className="mb-8">Datos Personales</h4>
       <Form onSubmit={handleSubmit(onSubmit)}>
         <div className="mb-8">
           <Controller
-            name="img"
+            name="profileImage"
             control={control}
             render={({ field }) => (
               <div className="flex items-center gap-4">
@@ -293,7 +333,7 @@ const SettingsProfile = () => {
                   size={90}
                   className="border-4 border-white bg-gray-100 text-gray-300 shadow-lg"
                   icon={<HiOutlineUser />}
-                  src={field.value}
+                  src={field.value || ''}
                 />
                 <div className="flex items-center gap-2">
                   <Upload
@@ -302,6 +342,7 @@ const SettingsProfile = () => {
                     beforeUpload={beforeUpload}
                     onChange={(files) => {
                       if (files.length > 0) {
+                        uploadFile(files[0]);
                         field.onChange(URL.createObjectURL(files[0]));
                       }
                     }}
@@ -312,17 +353,18 @@ const SettingsProfile = () => {
                       type="button"
                       icon={<TbPlus />}
                     >
-                      Upload Image
+                      Subir Foto
                     </Button>
                   </Upload>
                   <Button
                     size="sm"
                     type="button"
                     onClick={() => {
+                      removeFile(field.value);
                       field.onChange('');
                     }}
                   >
-                    Remove
+                    Quitar Foto
                   </Button>
                 </div>
               </div>

@@ -35,12 +35,15 @@ const PostLoginLayout = ({
   layoutType,
   children,
   navigationConfig,
+  user,
 }: PostLoginLayoutProps) => {
   const AppLayout = layouts[layoutType] ?? layouts[Object.keys(layouts)[0]];
 
   return (
     <Suspense fallback={<Loading type="cover" loading={true} />}>
-      <AppLayout navigationConfig={navigationConfig}>{children}</AppLayout>
+      <AppLayout navigationConfig={navigationConfig}
+      user={user}
+      >{children}</AppLayout>
     </Suspense>
   );
 };
