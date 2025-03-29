@@ -17,6 +17,7 @@ import ApplicantDashboard from './dashboards/ApplicantDashboard';
 import ApplicantSettings from './candidates/Settings';
 import Logout from './auth/logout';
 import ChangePassword from './auth/changePassword';
+import JobOfferSearch from './job/JobSearch';
 
 const renderRoutes = (role: string | null) => {
   if (role === 'Recruiter') {
@@ -57,6 +58,7 @@ const renderRoutes = (role: string | null) => {
         <Route path="/home" element={<ApplicantDashboard />} />
         <Route path="/profile" element={<ApplicantSettings />} />
         <Route path="/account" element={<ChangePassword />} />
+        <Route path="/job/search" element={<JobOfferSearch />} />
         <Route path="/logout" element={<Logout />} />
         <Route path="/" element={<ApplicantDashboard />} />
       </Routes>

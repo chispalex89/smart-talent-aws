@@ -1,24 +1,16 @@
 import { useMemo, useEffect, useState } from 'react';
 import Button from '@/components/ui/Button';
-import Upload from '@/components/ui/Upload';
 import Input from '@/components/ui/Input';
-import Select, { Option as DefaultOption } from '@/components/ui/Select';
+import Select from '@/components/ui/Select';
 import Notification from '@/components/ui/Notification';
 import { Form, FormItem } from '@/components/ui/Form';
-import NumericInput from '@/components/shared/NumericInput';
-import { countryList } from '@/constants/countries.constant';
 import { components } from 'react-select';
-import sleep from '@/utils/sleep';
 import useSWR from 'swr';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm, Controller, useFieldArray } from 'react-hook-form';
 import { z } from 'zod';
-import { HiOutlineUser } from 'react-icons/hi';
-import { TbPlus } from 'react-icons/tb';
-import type { ZodType } from 'zod';
-import type { GetSettingsProfileResponse } from '../types';
-import { City, AcademicData, User } from '@prisma/client';
-import { Alert, Card, DatePicker, Switcher, toast } from '@/components/ui';
+import { AcademicData, User } from '@prisma/client';
+import { Card, DatePicker, toast } from '@/components/ui';
 import { useCatalogContext } from '../../../../context/catalogContext';
 import apiService from '../../../../services/apiService';
 import { useUserContext } from '../../../../context/userContext';
@@ -138,9 +130,12 @@ const SettingsAcademicFormation = () => {
     reset,
     formState: { errors, isSubmitting },
     control,
+    getValues,
   } = useForm<AcademicFormationsSchema>({
     resolver: zodResolver(validationSchema),
   });
+
+  const [formationsToRemove, setFormationsToRemove] = useState([] as number[]);
 
   const { fields, append, remove } = useFieldArray({
     control,
@@ -174,7 +169,14 @@ const SettingsAcademicFormation = () => {
           applicantId: id,
         });
       });
-      const results = await Promise.allSettled(promises);
+
+      const removePromises = formationsToRemove.map((id) => {
+        return apiService.delete(`/academic-data/${id}`);
+      });
+      const results = await Promise.allSettled([
+        ...promises,
+        ...removePromises,
+      ]);
 
       const hasErrors = results.some((result) => result.status === 'rejected');
 
@@ -377,6 +379,13 @@ const SettingsAcademicFormation = () => {
               />
             </FormItem>
             <div className="flex w-full justify-end items-center">
+              <FormItem>
+                <Controller
+                  name={`academicFormations.${index}.id`}
+                  control={control}
+                  render={({ field }) => <Input type="hidden" {...field} />}
+                />
+              </FormItem>
               <Button
                 type="button"
                 className={
@@ -390,23 +399,27 @@ const SettingsAcademicFormation = () => {
                   flexWrap: 'wrap',
                   textWrap: 'wrap',
                 }}
-                onClick={() => remove(index)}
+                onClick={() => {
+                  setFormationsToRemove([
+                    ...formationsToRemove,
+                    getValues().academicFormations[index].id,
+                  ]);
+                  remove(index);
+                }}
               >
                 Eliminar Formación Académica
               </Button>
-              <FormItem>
-                <Controller
-                  name={`academicFormations.${index}.id`}
-                  control={control}
-                  render={({ field }) => <Input {...field} type="hidden" />}
-                />
-              </FormItem>
             </div>
           </Card>
         ))}
         <Button
           type="button"
-          onClick={() => append({} as ProfileSchema)}
+          onClick={() => {
+            if (formationsToRemove.length) {
+              setFormationsToRemove(formationsToRemove.splice(-1));
+            }
+            append({} as ProfileSchema);
+          }}
           style={{ marginTop: '10px' }}
         >
           Agregar Formación Académica

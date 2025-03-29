@@ -66,6 +66,7 @@ module.exports = {
         error: 'var(--error)',
         'error-subtle': 'var(--error-subtle)',
         success: 'var(--success)',
+        'success-mild': 'var(--success-mild)',
         'success-subtle': 'var(--success-subtle)',
         info: 'var(--info)',
         'info-subtle': 'var(--info-subtle)',

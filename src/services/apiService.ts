@@ -30,7 +30,17 @@ class ApiService {
       },
     }).then((res) => res.json() as Promise<T>);
   }
-  async post(path: string, data: unknown) {
+
+  async post<T>(path: string, data: Record<string, unknown>): Promise<T>;
+  async post<T>(path: string, data: FormData): Promise<T>;
+  async post<T>(path: string, data: unknown) {
+    if (data instanceof FormData) {
+      return fetch(`${this.baseUrl}${path}`, {
+        method: 'POST',
+        body: data,
+      }).then((res) => res.json() as Promise<T>);
+    }
+
     return fetch(`${this.baseUrl}${path}`, {
       method: 'POST',
       headers: {

@@ -1,29 +1,30 @@
 {
-    "nav": {
-        "home": "Dashboard",
-        "job": {
-            "job": "Empleos",
-            "jobOffers": "Ofertas de Empleo",
-            "createJob": "Publicar Oferta de Empleo"
-        },
-        "candidates": {
-            "candidates": "Candidatos",
-            "favorite": "Favoritos",
-            "all": "Buscar Candidatos"
-        },
-        "dashboard": "Crear nueva convocatoria",
-        "membership": {
-            "membership": "Membresía",
-            "pricing": "Membresías",
-            "myMembership": "Mi Membresía"
-        },
-        "archive": {
-            "archive": "Archivo",
-            "jobOffers": "Ofertas de Empleo",
-            "candidates": "Candidatos"
-        },
-        "cv": "Mi Curriculum",
-        "account": "Mi Cuenta",
-        "logout": "Cerrar Sesión"
-    }
+  "nav": {
+    "home": "Dashboard",
+    "job": {
+      "job": "Empleos",
+      "jobOffers": "Ofertas de Empleo",
+      "createJob": "Publicar Oferta de Empleo",
+      "search": "Buscar Empleo"
+    },
+    "candidates": {
+      "candidates": "Candidatos",
+      "favorite": "Favoritos",
+      "all": "Buscar Candidatos"
+    },
+    "dashboard": "Crear nueva convocatoria",
+    "membership": {
+      "membership": "Membresía",
+      "pricing": "Membresías",
+      "myMembership": "Mi Membresía"
+    },
+    "archive": {
+      "archive": "Archivo",
+      "jobOffers": "Ofertas de Empleo",
+      "candidates": "Candidatos"
+    },
+    "cv": "Mi Curriculum",
+    "account": "Mi Cuenta",
+    "logout": "Cerrar Sesión"
+  }
 }

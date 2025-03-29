@@ -122,7 +122,7 @@ model ProfessionalData {
   id                  Int           @id @default(autoincrement())
   applicantId         Int           @map("applicant_id")
   description         String
-  resume_url          String?
+  resumeUrl           String?       @map("resume_url")
   lastAcademicLevelId Int           @map("last_academic_level_id")
   professionId        Int           @map("profession_id")
   lastJobHierarchyId  Int           @map("last_job_hierarchy_id")
@@ -147,6 +147,7 @@ model Company {
   description                 String
   active                      Boolean
   isDeleted                   Boolean                    @default(false) @map("is_deleted")
+  logoUrl                     String?                    @map("logo_url")
   countryId                   Int                        @map("country_id")
   employmentSectorId          Int                        @map("employment_sector_id")
   created_at                  DateTime                   @default(now())

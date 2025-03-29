@@ -382,7 +382,10 @@ const SettingsKnowledge = () => {
                 className="mt-8"
                 icon={<TbTrash />}
                 onClick={() => {
-                  setDeletedLanguages([...deletedLanguages, getValues().languages[index].id]);
+                  setDeletedLanguages([
+                    ...deletedLanguages,
+                    getValues().languages[index].id,
+                  ]);
                   removeLanguage(index);
                 }}
               />
@@ -390,7 +393,12 @@ const SettingsKnowledge = () => {
           ))}
           <Button
             type="button"
-            onClick={() => appendLanguage({} as LanguageSkillsDataSchema)}
+            onClick={() => {
+              if (deletedLanguages.length) {
+                setDeletedLanguages(deletedLanguages.splice(-1));
+              }
+              appendLanguage({} as LanguageSkillsDataSchema);
+            }}
           >
             Agregar Idioma
           </Button>
@@ -469,7 +477,12 @@ const SettingsKnowledge = () => {
           ))}
           <Button
             type="button"
-            onClick={() => appendSoftware({} as SoftwareSkillsDataSchema)}
+            onClick={() => {
+              if (deletedSoftwareSkills.length) {
+                setDeletedLanguages(deletedSoftwareSkills.splice(-1));
+              }
+              appendSoftware({} as SoftwareSkillsDataSchema);
+            }}
           >
             Agregar Programa de Computadora
           </Button>

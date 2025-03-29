@@ -158,6 +158,16 @@ const navigationConfigByRole = (role: string): NavigationTree[] => {
           type: NAV_ITEM_TYPE_ITEM,
         },
         {
+          key: 'job.search',
+          path: '/job/search',
+          title: 'Job Search',
+          translateKey: 'nav.job.search',
+          icon: 'search',
+          authority: [],
+          subMenu: [],
+          type: NAV_ITEM_TYPE_ITEM,
+        },
+        {
           key: 'logout',
           path: '/logout',
           title: 'Logout',
@@ -166,7 +176,7 @@ const navigationConfigByRole = (role: string): NavigationTree[] => {
           authority: [],
           subMenu: [],
           type: NAV_ITEM_TYPE_ITEM,
-        }
+        },
       ];
     default:
       return [];

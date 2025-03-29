@@ -14,7 +14,7 @@ import { z } from 'zod';
 import { HiOutlineUser } from 'react-icons/hi';
 import { TbPlus } from 'react-icons/tb';
 import { PersonalData, User } from '@prisma/client';
-import { Alert, DatePicker, Switcher, toast } from '@/components/ui';
+import { Alert, Card, DatePicker, Switcher, toast } from '@/components/ui';
 import { useUserContext } from '../../../../context/userContext';
 import apiService from '../../../../services/apiService';
 import { yearsBeforeToday } from '../../../../helpers/math';
@@ -215,6 +215,25 @@ const SettingsProfile = () => {
     return valid;
   };
 
+  const beforeResumeUpload = (files: FileList | null) => {
+    let valid: string | boolean = true;
+
+    const allowedFileType = [
+      'application/msword',
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+      'application/pdf',
+    ];
+    if (files) {
+      for (const file of files) {
+        if (!allowedFileType.includes(file.type)) {
+          valid = 'Please upload a .pdf or .docx file!';
+        }
+      }
+    }
+
+    return valid;
+  };
+
   const {
     handleSubmit,
     reset,
@@ -285,10 +304,8 @@ const SettingsProfile = () => {
     try {
       await apiService.patch(`/user/${user?.id}/profile`, formData);
       toast.push(
-        <Notification type="success">
-          Foto de perfil actualizada
-        </Notification>
-      )
+        <Notification type="success">Foto de perfil actualizada</Notification>
+      );
     } catch {
       toast.push(
         <Notification type="danger">
@@ -300,11 +317,39 @@ const SettingsProfile = () => {
     }
   };
 
+  const uploadResume = async (file: File) => {
+    const formData = new FormData();
+    formData.append('resume', file); // Key must match 'profileImage'
+    try {
+      const { professionalData } = data;
+      const professional = professionalData[0];
+
+      await apiService.post(
+        `/professional-data/${professional?.id || 0}/upload`,
+        formData
+      );
+      toast.push(
+        <Notification type="success">Curriculum actualizado</Notification>
+      );
+    } catch {
+      toast.push(
+        <Notification type="danger">
+          ¡Error al actualizar el curriculum!
+        </Notification>
+      );
+    } finally {
+      mutate();
+    }
+  };
+
   const removeFile = async (fileName: string) => {
     try {
-      await apiService.patch(`/user/${user?.id}/profile/remove-profile-picture`, {
-        profileImage: fileName,
-      });
+      await apiService.patch(
+        `/user/${user?.id}/profile/remove-profile-picture`,
+        {
+          profileImage: fileName,
+        }
+      );
       toast.push(
         <Notification type="success">Foto de perfil eliminada</Notification>
       );
@@ -317,13 +362,13 @@ const SettingsProfile = () => {
     } finally {
       mutate();
     }
-  }
+  };
 
   return (
     <>
       <h4 className="mb-8">Datos Personales</h4>
       <Form onSubmit={handleSubmit(onSubmit)}>
-        <div className="mb-8">
+        <div className="mb-8 grid md:grid-cols-2">
           <Controller
             name="profileImage"
             control={control}
@@ -360,7 +405,7 @@ const SettingsProfile = () => {
                     size="sm"
                     type="button"
                     onClick={() => {
-                      removeFile(field.value);
+                      removeFile(field.value ?? '');
                       field.onChange('');
                     }}
                   >
@@ -370,6 +415,43 @@ const SettingsProfile = () => {
               </div>
             )}
           />
+          <Card bodyClass="flex flex-row items-center justify-center gap-5">
+            <Upload
+              showList={false}
+              uploadLimit={1}
+              beforeUpload={beforeResumeUpload}
+              onChange={(files) => {
+                if (files.length > 0) {
+                  uploadResume(files[0]);
+                }
+              }}
+            >
+              <Button variant="solid" size="sm" type="button" icon={<TbPlus />}>
+                Subir Curriculum
+              </Button>
+            </Upload>
+            {data?.professionalData?.[0]?.resumeUrl && (
+              <>
+                <Button
+                  onClick={() => {
+                    window.open(data.professionalData[0].resumeUrl);
+                  }}
+                >
+                  Descargar
+                </Button>
+                <Button
+                  size="sm"
+                  type="button"
+                  onClick={() => {
+                    removeFile(field.value ?? '');
+                    field.onChange('');
+                  }}
+                >
+                  Quitar Curriculum
+                </Button>
+              </>
+            )}
+          </Card>
         </div>
         <div className="grid md:grid-cols-3 gap-4">
           <FormItem
