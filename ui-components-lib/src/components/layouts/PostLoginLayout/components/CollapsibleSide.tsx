@@ -10,7 +10,6 @@ import ModeSwitcher from '@/components/template/ThemeConfigurator/ModeSwitcher';
 import { PiUserDuotone } from 'react-icons/pi';
 import { LayoutProps } from './LayoutProps.interface';
 
-
 const CollapsibleSide = ({ children, navigationConfig, user }: LayoutProps) => {
   const { larger, smaller } = useResponsive();
 
@@ -45,7 +44,12 @@ const CollapsibleSide = ({ children, navigationConfig, user }: LayoutProps) => {
                     {
                       label: 'Perfil',
                       icon: <PiUserDuotone />,
-                      path: '/profile/company',
+                      path:
+                        user.role === 'Admin'
+                          ? '/profile/company'
+                          : user.role === 'Recruiter'
+                            ? '/profile/company'
+                            : '/profile/applicant',
                     },
                   ]}
                 />

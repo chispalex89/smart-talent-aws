@@ -108,39 +108,8 @@ const JobListTable = ({
     tableData,
     isLoading,
     setTableData,
-    mutate,
   } = useJobOfferList();
 
-  const updateReceiveResumesByEmail = async (job: Job, checked: boolean) => {
-    try {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { id, jobApplicants, ...rest } = job;
-      const updatedJob: Omit<JobOffer, 'id'> = {
-        ...rest,
-        receivesResumesByEmail: checked,
-      };
-      await apiService.post(`/job-offer`, updatedJob);
-      toast.push(
-        <Notification type="success">
-          ¡Oferta de Empleo Actualizada!
-        </Notification>,
-        {
-          placement: 'top-center',
-        }
-      );
-      mutate();
-    } catch (error) {
-      console.error(error);
-      toast.push(
-        <Notification type="danger">
-          ¡Error al actualizar el empleo!
-        </Notification>,
-        {
-          placement: 'top-center',
-        }
-      );
-    }
-  };
 
   const columns: ColumnDef<Job>[] = useMemo(
     () => [

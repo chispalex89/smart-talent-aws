@@ -27,7 +27,8 @@ const App: FC = () => {
             user={{
               avatar: user?.profileImage || '',
               email: user?.email,
-              userName: `${user?.firstName} ${user?.lastName}`
+              userName: `${user?.firstName} ${user?.lastName}`,
+              role: role,
             }}
           >
             <Views />

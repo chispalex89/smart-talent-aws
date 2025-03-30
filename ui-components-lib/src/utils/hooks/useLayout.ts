@@ -21,6 +21,7 @@ export type UserLayoutProps = {
   email?: string;
   avatar?: string;
   userName?: string;
+  role?: string;
 };
 
 export interface LayoutContextProps {

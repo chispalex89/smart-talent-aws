@@ -30,15 +30,17 @@ const JobSearch = () => {
 
   const onPageSelect = ({ value }: Option) => {
     setPageSize(value);
+    setPage(1);
     setTableData({
       ...tableData,
-      pageIndex: page,
+      pageIndex: 1,
       pageSize: value,
     });
   };
 
   const onPaginationChange = (val: number) => {
     setPage(val);
+    console.log(val);
     setTableData({
       ...tableData,
       pageIndex: page,
@@ -139,18 +141,6 @@ const JobSearch = () => {
             </Card>
           </Card>
         ))}
-        {/* {jobOfferList.map((offer) => (
-          <Card>{JSON.stringify(offer)}</Card>
-        ))}
-        {jobOfferList.map((offer) => (
-          <Card>{JSON.stringify(offer)}</Card>
-        ))}
-        {jobOfferList.map((offer) => (
-          <Card>{JSON.stringify(offer)}</Card>
-        ))}
-        {jobOfferList.map((offer) => (
-          <Card>{JSON.stringify(offer)}</Card>
-        ))} */}
       </div>
       {renderPagination()}
     </>
