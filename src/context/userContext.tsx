@@ -5,18 +5,38 @@ import {
 } from 'aws-amplify/auth';
 import React, { useEffect } from 'react';
 import apiService from '../services/apiService';
-import { Permission, Recruiter, Role, User, UserRole } from '@prisma/client';
+import {
+  Company,
+  Membership,
+  MembershipType,
+  Permission,
+  Recruiter,
+  Role,
+  User,
+  UserRole,
+} from '@prisma/client';
 
 export type UserRoleWithDetails = UserRole & {
   role: Role;
   user: User;
 };
 
+export type RecruiterWithDetails = Recruiter & {
+  user: User;
+  company: Company & {
+    Membership: Array<
+      Membership & {
+        membership_type: MembershipType;
+      }
+    >;
+  };
+};
+
 export interface IUserContext {
   user: User | null;
   setUser: (user: User | null) => void;
-  recruiter: Recruiter | null;
-  setRecruiter: (recruiter: Recruiter | null) => void;
+  recruiter: RecruiterWithDetails | null;
+  setRecruiter: (recruiter: RecruiterWithDetails | null) => void;
   refetchUser: () => Promise<void>;
   authUser: AuthUser | null;
   setAuthUser: (authUser: AuthUser | null) => void;
@@ -25,6 +45,7 @@ export interface IUserContext {
   permissions: Permission[];
   setPermissions: (permissions: Permission[]) => void;
   userAttributes: FetchUserAttributesOutput | null;
+  membershipType: string | null;
 }
 
 export const UserContext = React.createContext<IUserContext | null>(null);
@@ -34,7 +55,13 @@ export const UserContextProvider: React.FC<{
 }> = (props) => {
   const [authUser, setAuthUser] = React.useState<AuthUser | null>(null);
   const [user, setUser] = React.useState<User | null>(null);
-  const [recruiter, setRecruiter] = React.useState<Recruiter | null>(null);
+  const [recruiter, setRecruiter] = React.useState<RecruiterWithDetails | null>(
+    null
+  );
+  const [membershipType, setMembershipType] = React.useState<string | null>(
+    null
+  );
+
   const [role, setRole] = React.useState<string>('');
   const [permissions, setPermissions] = React.useState<Permission[]>([]);
   const [userAttributes, setUserAttributes] =
@@ -48,7 +75,7 @@ export const UserContextProvider: React.FC<{
   };
 
   const fetchRecruiter = async () => {
-    const recruiter = await apiService.get<Recruiter>(
+    const recruiter = await apiService.get<RecruiterWithDetails>(
       `/user/${user?.id}/recruiter`
     );
     setRecruiter(recruiter);
@@ -101,6 +128,14 @@ export const UserContextProvider: React.FC<{
     }
   }, [user, role]);
 
+  useEffect(() => {
+    if (recruiter) {
+      setMembershipType(
+        recruiter.company?.Membership[0]?.membership_type?.name
+      );
+    }
+  }, [recruiter]);
+
   return (
     <UserContext.Provider
       value={{
@@ -116,6 +151,7 @@ export const UserContextProvider: React.FC<{
         userAttributes,
         recruiter,
         setRecruiter,
+        membershipType,
       }}
     >
       {props.children}

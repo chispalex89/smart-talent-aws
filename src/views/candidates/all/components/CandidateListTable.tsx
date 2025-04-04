@@ -224,7 +224,7 @@ const CandidateListTable = ({
           {row.original.user.profileImage ? (
             <Avatar size={200} shape="square" src={row.original.user.profileImage} />
           ) : (
-            <PiUserDuotone />
+            <PiUserDuotone size={200}/>
           )}
         </div>
         <div className="flex flex-col flex-start gap-2 md:col-span-2">

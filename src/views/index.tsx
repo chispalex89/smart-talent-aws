@@ -27,8 +27,37 @@ import BackOfficeRoleList from './backOffice/components/roles/list';
 import BackOfficePermissionList from './backOffice/components/permissions/list';
 import BackOfficeCompanyList from './backOffice/components/companies/list';
 
-const renderRoutes = (role: string | null) => {
+const renderRoutes = (role: string | null, membershipType: string | null) => {
   if (role === 'Recruiter') {
+    if (!membershipType || membershipType === 'Bronce') {
+      <Routes>
+        <Route path="/" element={<BusinessDashboard />} />
+        <Route path="/home" element={<BusinessDashboard />} />
+        <Route path="/job">
+          <Route path="/job/create" element={<JobCreate />} />
+          <Route path="/job/edit/:id" element={<JobCreate />} />
+          <Route path="/job/my-jobs" element={<JobList />} />
+        </Route>
+        <Route path="/candidates">
+          <Route
+            path="/candidates/favorite"
+            element={<FavoriteCandidateList />}
+          />
+        </Route>
+        <Route path="/membership">
+          <Route path="/membership/plans" element={<Pricing />} />
+        </Route>
+        <Route path="/profile">
+          <Route path="/profile/company" element={<Settings />} />
+        </Route>
+        <Route path="/archive">
+          <Route path="/archive/jobOffers" element={<ArchivedJobList />} />
+          {/* <Route path="/archive/candidates" element={<ArchivedCandidateList />} /> */}
+        </Route>
+        <Route path="/logout" element={<Logout />} />
+        <Route path="/" element={<BusinessDashboard />} />
+      </Routes>;
+    }
     return (
       <Routes>
         <Route path="/" element={<BusinessDashboard />} />
@@ -218,7 +247,7 @@ const renderRoutes = (role: string | null) => {
 };
 
 const Views = () => {
-  const { role,  } = useUserContext();
+  const { role, membershipType } = useUserContext();
   const [userType, setUserType] = useState<string | null>(null);
 
   useEffect(() => {
@@ -229,7 +258,7 @@ const Views = () => {
 
   return (
     <Suspense fallback={<Loading loading={true} className="w-full" />}>
-      <PageContainer>{renderRoutes(userType)}</PageContainer>
+      <PageContainer>{renderRoutes(userType, membershipType)}</PageContainer>
     </Suspense>
   );
 };
