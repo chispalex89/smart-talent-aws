@@ -19,6 +19,8 @@ import Logout from './auth/logout';
 import ChangePassword from './auth/changePassword';
 import JobOfferSearch from './job/JobSearch';
 
+import NewClient from './auth/newClient';
+
 import BackOfficeDashboard from './backOffice/components/dashboard';
 import BackOfficeUserList from './backOffice/components/users/list';
 import BackOfficeRoleList from './backOffice/components/roles/list';
@@ -196,6 +198,17 @@ const renderRoutes = (role: string | null) => {
       </Routes>
     );
   }
+
+  if (role === null) {
+    return (
+      <Routes>
+        <Route path="/" element={<NewClient />} />
+        <Route path="/home" element={<NewClient />} />
+        <Route path="/logout" element={<Logout />} />
+      </Routes>
+    );
+  }
+
   return (
     <Routes>
       <Route path="/" />
@@ -205,7 +218,7 @@ const renderRoutes = (role: string | null) => {
 };
 
 const Views = () => {
-  const { role } = useUserContext();
+  const { role,  } = useUserContext();
   const [userType, setUserType] = useState<string | null>(null);
 
   useEffect(() => {

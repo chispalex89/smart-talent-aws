@@ -38,7 +38,15 @@ class ApiService {
       return fetch(`${this.baseUrl}${path}`, {
         method: 'POST',
         body: data,
-      }).then((res) => res.json() as Promise<T>);
+      }).then((res) => {
+        if (res.status > 199 && res.status < 300) {
+          if (res.status === 204) {
+            return {} as T;
+          }
+          return res.json() as Promise<T>;
+        }
+        throw new Error(`Error: ${res.status} ${res.statusText}`);
+      });
     }
 
     return fetch(`${this.baseUrl}${path}`, {

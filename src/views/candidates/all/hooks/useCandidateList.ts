@@ -40,7 +40,6 @@ export default function useCandidateList() {
     query: tableData.query ? tableData.query : undefined,
 
     ...filterDataWithoutEmptyValues,
-    companyId: 1,
   });
 
   const { data, error, isLoading, mutate } = useSWR(

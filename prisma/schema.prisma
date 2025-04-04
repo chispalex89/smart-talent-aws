@@ -40,6 +40,8 @@ model Admin {
   phone2     String?
   ext2       String?
   userId     Int       @map("user_id")
+  status     String
+  isDeleted  Boolean   @default(false) @map("is_deleted")
   created_at DateTime  @default(now())
   updated_at DateTime? @updatedAt
   created_by String
@@ -53,6 +55,8 @@ model Recruiter {
   id                     Int            @id @default(autoincrement())
   userId                 Int            @map("user_id")
   companyId              Int            @map("company_id")
+  status                 String
+  isDeleted              Boolean        @default(false) @map("is_deleted")
   created_at             DateTime       @default(now())
   updated_at             DateTime?      @updatedAt
   created_by             String
@@ -67,6 +71,8 @@ model Recruiter {
 model Applicant {
   id                        Int                        @id @default(autoincrement())
   userId                    Int                        @map("user_id")
+  status                    String
+  isDeleted                 Boolean                    @default(false) @map("is_deleted")
   created_at                DateTime                   @default(now())
   updated_at                DateTime?                  @updatedAt
   created_by                String
@@ -88,32 +94,32 @@ model Applicant {
 }
 
 model PersonalData {
-  id                   Int           @id @default(autoincrement())
-  documentId           String        @map("document_id")
+  id                   Int            @id @default(autoincrement())
+  documentId           String         @map("document_id")
   address              String
   phone                String?
   mobile               String?
-  dateOfBirth          DateTime      @map("date_of_birth")
-  availabilityToTravel Boolean       @map("availability_to_travel")
-  documentTypeId       Int           @map("document_type_id")
-  genderId             Int           @map("gender_id")
-  maritalStatusId      Int           @map("marital_status_id")
-  countryOfResidencyId Int           @map("country_of_residency_id")
-  stateId              Int           @map("state_id")
-  cityId               Int           @map("city_id")
-  zone                 String        @map("zone")
-  driverLicenseId      Int           @map("driver_license_id")
-  applicantId          Int           @map("applicant_id")
-  created_at           DateTime      @default(now())
-  updated_at           DateTime?     @updatedAt
+  dateOfBirth          DateTime       @map("date_of_birth")
+  availabilityToTravel Boolean        @map("availability_to_travel")
+  documentTypeId       Int            @map("document_type_id")
+  genderId             Int            @map("gender_id")
+  maritalStatusId      Int            @map("marital_status_id")
+  countryOfResidencyId Int            @map("country_of_residency_id")
+  stateId              Int            @map("state_id")
+  cityId               Int            @map("city_id")
+  zone                 String         @map("zone")
+  driverLicenseId      Int?           @map("driver_license_id")
+  applicantId          Int            @map("applicant_id")
+  created_at           DateTime       @default(now())
+  updated_at           DateTime?      @updatedAt
   created_by           String
   updated_by           String?
-  applicant            Applicant     @relation(fields: [applicantId], references: [id])
-  city                 City          @relation(fields: [cityId], references: [id])
-  document_type        DocumentType  @relation(fields: [documentTypeId], references: [id])
-  driver_license       DriverLicense @relation(fields: [driverLicenseId], references: [id])
-  gender               Gender        @relation(fields: [genderId], references: [id])
-  marital_status       MaritalStatus @relation(fields: [maritalStatusId], references: [id])
+  applicant            Applicant      @relation(fields: [applicantId], references: [id])
+  city                 City           @relation(fields: [cityId], references: [id])
+  document_type        DocumentType   @relation(fields: [documentTypeId], references: [id])
+  driver_license       DriverLicense? @relation(fields: [driverLicenseId], references: [id])
+  gender               Gender         @relation(fields: [genderId], references: [id])
+  marital_status       MaritalStatus  @relation(fields: [maritalStatusId], references: [id])
 
   @@map("personal_data")
 }
@@ -141,11 +147,12 @@ model ProfessionalData {
 model Company {
   id                          Int                        @id @default(autoincrement())
   name                        String
+  legalName                   String                     @map("legal_name")
   taxId                       String                     @map("tax_id")
   website                     String?
   phone                       String
   description                 String
-  active                      Boolean
+  status                      String
   isDeleted                   Boolean                    @default(false) @map("is_deleted")
   logoUrl                     String?                    @map("logo_url")
   countryId                   Int                        @map("country_id")

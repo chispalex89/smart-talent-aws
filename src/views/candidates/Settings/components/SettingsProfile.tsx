@@ -18,6 +18,7 @@ import { Alert, Card, DatePicker, Switcher, toast } from '@/components/ui';
 import { useUserContext } from '../../../../context/userContext';
 import apiService from '../../../../services/apiService';
 import { yearsBeforeToday } from '../../../../helpers/math';
+import { useCatalogContext } from '../../../../context/catalogContext';
 
 type PersonalDataSchema = Omit<
   PersonalData,
@@ -45,12 +46,6 @@ type UserSchema = Omit<
 >;
 
 type ProfileSchema = PersonalDataSchema & UserSchema;
-
-type CountryOption = {
-  label: string;
-  dialCode: string;
-  value: string;
-};
 
 type Option = {
   value: number;
@@ -104,85 +99,42 @@ const validationSchema = z.object({
   driverLicenseId: z.number().optional(),
 });
 
-const genderOptions: Option[] = [
-  {
-    value: 1,
-    label: 'Masculino',
-    className: 'text-gray-900',
-  },
-  {
-    value: 2,
-    label: 'Femenino',
-    className: 'text-gray-900',
-  },
-];
-
-const maritalStatusOptions: Option[] = [
-  {
-    value: 1,
-    label: 'Soltero(a)',
-    className: 'text-gray-900',
-  },
-  {
-    value: 2,
-    label: 'Casado(a)',
-    className: 'text-gray-900',
-  },
-  {
-    value: 3,
-    label: 'Divorciado(a)',
-    className: 'text-gray-900',
-  },
-  {
-    value: 4,
-    label: 'Viudo(a)',
-    className: 'text-gray-900',
-  },
-];
-
-const documentTypeOptions: Option[] = [
-  {
-    value: 1,
-    label: 'DPI',
-    className: 'text-gray-900',
-  },
-  {
-    value: 2,
-    label: 'Pasaporte',
-    className: 'text-gray-900',
-  },
-  {
-    value: 3,
-    label: 'Licencia de Conducir',
-    className: 'text-gray-900',
-  },
-];
-
-const driverLicenseOptions: Option[] = [
-  {
-    value: 1,
-    label: 'Tipo A',
-    className: 'text-gray-900',
-  },
-  {
-    value: 2,
-    label: 'Tipo B',
-    className: 'text-gray-900',
-  },
-  {
-    value: 3,
-    label: 'Tipo C',
-    className: 'text-gray-900',
-  },
-  {
-    value: 4,
-    label: 'Tipo M',
-    className: 'text-gray-900',
-  },
-];
-
 const SettingsProfile = () => {
   const { user } = useUserContext();
+  const { driverLicenseTypes, documentTypes, maritalStatuses, genders } =
+    useCatalogContext();
+
+  const driverLicenseOptions = useMemo(() => {
+    return driverLicenseTypes.map((driverLicense) => ({
+      label: driverLicense.name,
+      value: driverLicense.id,
+      className: 'text-gray-900',
+    }));
+  }, [driverLicenseTypes]);
+
+  const maritalStatusOptions = useMemo(() => {
+    return maritalStatuses.map((maritalStatuses) => ({
+      label: maritalStatuses.name,
+      value: maritalStatuses.id,
+      className: 'text-gray-900',
+    }));
+  }, [maritalStatuses]);
+
+  const genderOptions = useMemo(() => {
+    return genders.map((genders) => ({
+      label: genders.name,
+      value: genders.id,
+      className: 'text-gray-900',
+    }));
+  }, [genders]);
+
+  const documentTypeOptions = useMemo(() => {
+    return documentTypes.map((documentType) => ({
+      label: documentType.name,
+      value: documentType.id,
+      className: 'text-gray-900',
+    }));
+  }, [documentTypes]);
 
   const { data, mutate } = useSWR(
     `/applicant/${user?.id || 0}/applicant-data`,

@@ -17,6 +17,7 @@ import { useEffect, type ReactNode } from 'react';
 import type { JobFormSchema } from './types';
 import type { CommonProps } from '@/@types/common';
 import PublishJobOffer from '../components/PublishJobOffer';
+import { useUserContext } from '../../../context/userContext';
 
 type JobFormProps = {
   children: ReactNode;
@@ -82,6 +83,7 @@ const validationSchema = z.object({
 
 const JobForm = (props: JobFormProps) => {
   const { children, defaultValues } = props;
+  const { recruiter } = useUserContext();
 
   const { getTopGapValue } = useLayoutGap();
 
@@ -112,7 +114,7 @@ const JobForm = (props: JobFormProps) => {
       requiredExperience ? Number(requiredExperience) : null
     );
     setValue('vacancies', Number(getValues('vacancies')));
-    setValue('companyId', 1);
+    setValue('companyId', recruiter?.companyId ?? 0);
     handleSubmit(onSubmit)();
   };
 

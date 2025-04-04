@@ -3,8 +3,11 @@ import { useJobListStore } from '../store/jobOfferListStore';
 import type { GetJobOffersResponse } from '../types';
 import qs from 'qs';
 import apiService from '../../../../services/apiService';
+import { useUserContext } from '../../../../context/userContext';
 
 export default function useJobOfferList() {
+    const { recruiter } = useUserContext();
+  
   const { tableData, filterData, setTableData, setFilterData } =
     useJobListStore((state) => state);
 
@@ -24,7 +27,7 @@ export default function useJobOfferList() {
       name: tableData.query ? tableData.query : undefined,
       
     ...filterDataWithoutEmptyValues,
-    companyId: 1,
+    companyId: recruiter?.companyId,
   });
 
   const { data, error, isLoading, mutate } = useSWR(
