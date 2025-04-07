@@ -12,6 +12,43 @@
       "favorite": "Favoritos",
       "all": "Buscar Candidatos"
     },
+    "users": {
+      "users": "Usuarios",
+      "all": "Buscar Usuarios",
+      "roles": "Roles",
+      "permissions": "Permisos"
+    },
+    "companies": {
+      "companies": "Empresas / Clientes",
+      "list": "Buscar Empresas",
+      "users": "Usuarios de Empresa"
+    },
+    "configurations": {
+      "configurations": "Configuraciones",
+      "roles": "Roles",
+      "permissions": "Permisos",
+      "documentTypes": "Documentos de Identificación",
+      "genders": "Géneros",
+      "maritalStatus": "Estados Civiles",
+      "countries": "Países",
+      "states": "Departamentos",
+      "cities": "Municipios",
+      "driverLicenses": "Tipos de Conducir",
+      "academicLevels": "Niveles Académicos",
+      "professions": "Profesiones",
+      "jobHierarchies": "Jerarquías Laborales",
+      "employmentStatus": "Estados Laborales",
+      "employmentSectors": "Sectores Laborales",
+      "salaryRanges": "Rangos Salariales",
+      "workShifts": "Turnos Laborales",
+      "contractTypes": "Tipos de Contrato",
+      "genderPreferences": "Preferencias de Género",
+      "softwares": "Software",
+      "languages": "Idiomas",
+      "skillLevels": "Niveles de Habilidad",
+      "otherSkills": "Otras Habilidades",
+      "academicDataStatuses": "Estados de Historial Académico"
+    },
     "dashboard": "Crear nueva convocatoria",
     "membership": {
       "membership": "Membresía",

@@ -341,7 +341,6 @@ const navigationConfigByRole = (
             },
           ],
         },
-
         {
           key: 'companies',
           path: '',
@@ -392,16 +391,6 @@ const navigationConfigByRole = (
               authority: [],
               subMenu: [],
             },
-            {
-              key: 'edit',
-              path: '/candidates/{id}/edit',
-              title: 'Edit Candidate',
-              translateKey: 'nav.candidates.edit',
-              icon: 'edit',
-              type: NAV_ITEM_TYPE_ITEM,
-              authority: [],
-              subMenu: [],
-            },
           ],
         },
         {
@@ -413,6 +402,16 @@ const navigationConfigByRole = (
           type: NAV_ITEM_TYPE_COLLAPSE,
           authority: [],
           subMenu: [
+            {
+              key: 'membershipPlans',
+              path: 'configurations/membershipPlans',
+              title: 'Membership Plans',
+              translateKey: 'nav.configurations.membershipPlans',
+              icon: 'membershipPlans',
+              type: NAV_ITEM_TYPE_ITEM,
+              authority: [],
+              subMenu: [],
+            },
             {
               key: 'roles',
               path: '/configurations/roles',

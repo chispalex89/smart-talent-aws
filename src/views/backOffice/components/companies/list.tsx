@@ -67,6 +67,11 @@ const UserList = () => {
         cell: (info) => info.row.original.recruiters[0]?.user?.email ?? 'Sin email registrado',
       },
       {
+        accessorKey: 'membership',
+        header: 'Tipo de membresía',
+        cell: (info) => info.row.original.Membership[0]?.membership_type?.name ?? 'Bronce',
+      },
+      {
         accessorKey: 'isDeleted',
         header: 'Estado',
         cell: (info) =>
