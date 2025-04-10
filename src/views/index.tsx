@@ -26,6 +26,27 @@ import BackOfficeUserList from './backOffice/components/users/list';
 import BackOfficeRoleList from './backOffice/components/roles/list';
 import BackOfficePermissionList from './backOffice/components/permissions/list';
 import BackOfficeCompanyList from './backOffice/components/companies/list';
+import BackOfficeDocumentTypeList from './backOffice/components/document-types/list';
+import BackOfficeGenderList from './backOffice/components/genders/list';
+import BackOfficeGenderPreferenceList from './backOffice/components/gender-preferences/list';
+import BackOfficeMaritalStatusList from './backOffice/components/marital-statuses/list';
+import BackOfficeCountryList from './backOffice/components/countries/list';
+import BackOfficeStateList from './backOffice/components/states/list';
+import BackOfficeCityList from './backOffice/components/cities/list';
+import BackOfficeDriverLicenseList from './backOffice/components/driver-licenses/list';
+import BackOfficeAcademicLevelList from './backOffice/components/academic-levels/list';
+import BackOfficeAcademicDataStatusList from './backOffice/components/academic-data-statuses/list';
+import BackOfficeProfessionList from './backOffice/components/professions/list';
+import BackOfficeJobHierarchy from './backOffice/components/job-hierarchies/list';
+import BackOfficeEmploymentStatusList from './backOffice/components/employment-statuses/list';
+import BackOfficeEmploymentSectorList from './backOffice/components/employment-sectors/list';
+import BackOfficeSalaryRangeList from './backOffice/components/salary-ranges/list';
+import BackOfficeContractTypeList from './backOffice/components/contract-types/list';
+import BackOfficeWorkShiftList from './backOffice/components/working-shifts/list';
+import BackOfficeSoftwareList from './backOffice/components/software-skills/list';
+import BackOfficeLanguageList from './backOffice/components/languages/list';
+import BackOfficeSkillLevelList from './backOffice/components/skill-levels/list';
+import BackOfficeOtherSkillList from './backOffice/components/other-skills/list';
 
 const renderRoutes = (role: string | null, membershipType: string | null) => {
   if (role === 'Recruiter') {
@@ -131,95 +152,96 @@ const renderRoutes = (role: string | null, membershipType: string | null) => {
         <Route path="/configurations">
           <Route
             path="/configurations/roles"
-            element={<BackOfficeDashboard />}
+            element={<BackOfficeRoleList />}
           />
           <Route
             path="/configurations/permissions"
-            element={<BackOfficeDashboard />}
+            element={<BackOfficePermissionList />}
           />
           <Route
             path="/configurations/documentTypes"
-            element={<BackOfficeDashboard />}
+            element={<BackOfficeDocumentTypeList />}
           />
           <Route
             path="/configurations/genders"
-            element={<BackOfficeDashboard />}
-          />
-          <Route
-            path="/configurations/maritalStatus"
-            element={<BackOfficeDashboard />}
-          />
-          <Route
-            path="/configurations/countries"
-            element={<BackOfficeDashboard />}
-          />
-          <Route
-            path="/configurations/states"
-            element={<BackOfficeDashboard />}
-          />
-          <Route
-            path="/configurations/cities"
-            element={<BackOfficeDashboard />}
-          />
-          <Route
-            path="/configurations/driverLicenses"
-            element={<BackOfficeDashboard />}
-          />
-          <Route
-            path="/configurations/academicLevels"
-            element={<BackOfficeDashboard />}
-          />
-          <Route
-            path="/configurations/professions"
-            element={<BackOfficeDashboard />}
-          />
-          <Route
-            path="/configurations/jobHierarchies"
-            element={<BackOfficeDashboard />}
-          />
-          <Route
-            path="/configurations/employmentStatus"
-            element={<BackOfficeDashboard />}
-          />
-          <Route
-            path="/configurations/employmentSectors"
-            element={<BackOfficeDashboard />}
-          />
-          <Route
-            path="/configurations/salaryRanges"
-            element={<BackOfficeDashboard />}
-          />
-          <Route
-            path="/configurations/workShifts"
-            element={<BackOfficeDashboard />}
-          />
-          <Route
-            path="/configurations/contractTypes"
-            element={<BackOfficeDashboard />}
+            element={<BackOfficeGenderList />}
           />
           <Route
             path="/configurations/genderPreferences"
-            element={<BackOfficeDashboard />}
+            element={<BackOfficeGenderPreferenceList />}
+          />
+          <Route
+            path="/configurations/maritalStatus"
+            element={<BackOfficeMaritalStatusList />}
+          />
+          <Route
+            path="/configurations/countries"
+            element={<BackOfficeCountryList />}
+          />
+          <Route
+            path="/configurations/states"
+            element={<BackOfficeStateList />}
+          />
+          <Route
+            path="/configurations/cities"
+            element={<BackOfficeCityList />}
+          />
+          <Route
+            path="/configurations/driverLicenses"
+            element={<BackOfficeDriverLicenseList />}
+          />
+          <Route
+            path="/configurations/academicLevels"
+            element={<BackOfficeAcademicLevelList />}
+          />
+
+          <Route
+            path="/configurations/academicDataStatuses"
+            element={<BackOfficeAcademicDataStatusList />}
+          />
+          <Route
+            path="/configurations/professions"
+            element={<BackOfficeProfessionList />}
+          />
+          <Route
+            path="/configurations/jobHierarchies"
+            element={<BackOfficeJobHierarchy />}
+          />
+          <Route
+            path="/configurations/employmentStatus"
+            element={<BackOfficeEmploymentStatusList />}
+          />
+          <Route
+            path="/configurations/employmentSectors"
+            element={<BackOfficeEmploymentSectorList />}
+          />
+          <Route
+            path="/configurations/salaryRanges"
+            element={<BackOfficeSalaryRangeList />}
+          />
+          <Route
+            path="/configurations/workShifts"
+            element={<BackOfficeWorkShiftList />}
+          />
+          <Route
+            path="/configurations/contractTypes"
+            element={<BackOfficeContractTypeList />}
           />
           <Route
             path="/configurations/software"
-            element={<BackOfficeDashboard />}
+            element={<BackOfficeSoftwareList />}
           />
           <Route
             path="/configurations/languages"
-            element={<BackOfficeDashboard />}
+            element={<BackOfficeLanguageList />}
           />
           <Route
             path="/configurations/skillLevels"
-            element={<BackOfficeDashboard />}
+            element={<BackOfficeSkillLevelList />}
           />
           <Route
             path="/configurations/otherSkills"
-            element={<BackOfficeDashboard />}
-          />
-          <Route
-            path="/configurations/academicDataStatuses"
-            element={<BackOfficeDashboard />}
+            element={<BackOfficeOtherSkillList />}
           />
         </Route>
 
@@ -247,7 +269,7 @@ const renderRoutes = (role: string | null, membershipType: string | null) => {
 };
 
 const Views = () => {
-  const { role, membershipType } = useUserContext();
+  const { user, role, membershipType } = useUserContext();
   const [userType, setUserType] = useState<string | null>(null);
 
   useEffect(() => {
@@ -256,11 +278,11 @@ const Views = () => {
     }
   }, [role]);
 
-  return (
+  return user ?(
     <Suspense fallback={<Loading loading={true} className="w-full" />}>
       <PageContainer>{renderRoutes(userType, membershipType)}</PageContainer>
     </Suspense>
-  );
+  ) : <></>;
 };
 
 export default Views;

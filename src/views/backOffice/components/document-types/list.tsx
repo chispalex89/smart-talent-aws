@@ -4,14 +4,14 @@ import DataTable, {
   ColumnDef,
   OnSortParam,
 } from '@/components/shared/DataTable';
-import { useCompanyList } from '../../hooks';
-import { Card } from '@/components/ui';
+import { useDocumentTypeList } from '../../hooks';
 import { renderIsDeletedToggle } from '../../../../helpers/renderActiveToggle';
-import { CompanyWithUsers } from '../../../../types/company';
+import { Card } from '@/components/ui';
+import { DocumentType } from '@prisma/client';
 
-const CompanyList = () => {
+const DocumentTypeList = () => {
   const { list, total, tableData, isLoading, setTableData, mutate } =
-    useCompanyList();
+    useDocumentTypeList();
 
   const handlePaginationChange = (page: number) => {
     const newTableData = cloneDeep(tableData);
@@ -34,40 +34,17 @@ const CompanyList = () => {
     setTableData(newTableData);
   };
 
-  const columns: ColumnDef<CompanyWithUsers>[] = useMemo(
+  const columns: ColumnDef<DocumentType>[] = useMemo(
     () => [
       {
         accessorKey: 'name',
-        header: 'Nombre de la empresa',
-        cell: (info) => (
-          <>
-            <div className="flex items-center gap-2">
-              {info.row.original.logoUrl && (
-                <img
-                  src={info.row.original.logoUrl ?? ''}
-                  alt="user"
-                  className="w-8 h-8 rounded-full"
-                />
-              )}
-              {info.row.original.logoUrl ? null : (
-                <div className="w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center text-white">
-                  {info.row.original.name?.[0]?.toUpperCase() ?? ''}
-                </div>
-              )}
-              <span>{info.getValue() as string}</span>
-            </div>
-          </>
-        ),
+        header: 'Documentos de Identificación',
+        cell: (info) => info.getValue(),
       },
       {
-        accessorKey: 'email',
-        header: 'Email del Usuario Principal',
-        cell: (info) => info.row.original.recruiters[0]?.user?.email ?? 'Sin email registrado',
-      },
-      {
-        accessorKey: 'membership',
-        header: 'Tipo de membresía',
-        cell: (info) => info.row.original.Membership[0]?.membership_type?.name ?? 'Bronce',
+        accessorKey: 'description',
+        header: 'Descripción',
+        cell: (info) => info.getValue(),
       },
       {
         accessorKey: 'isDeleted',
@@ -119,4 +96,4 @@ const CompanyList = () => {
   );
 };
 
-export default CompanyList;
+export default DocumentTypeList;

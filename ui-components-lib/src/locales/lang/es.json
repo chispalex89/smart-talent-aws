@@ -25,6 +25,7 @@
     },
     "configurations": {
       "configurations": "Configuraciones",
+      "membershipPlans": "Planes de Membresía",
       "roles": "Roles",
       "permissions": "Permisos",
       "documentTypes": "Documentos de Identificación",
@@ -33,11 +34,11 @@
       "countries": "Países",
       "states": "Departamentos",
       "cities": "Municipios",
-      "driverLicenses": "Tipos de Conducir",
+      "driverLicenses": "Licencias de Conducir",
       "academicLevels": "Niveles Académicos",
       "professions": "Profesiones",
       "jobHierarchies": "Jerarquías Laborales",
-      "employmentStatus": "Estados Laborales",
+      "employmentStatus": "Estados de Empleabilidad",
       "employmentSectors": "Sectores Laborales",
       "salaryRanges": "Rangos Salariales",
       "workShifts": "Turnos Laborales",
@@ -47,7 +48,7 @@
       "languages": "Idiomas",
       "skillLevels": "Niveles de Habilidad",
       "otherSkills": "Otras Habilidades",
-      "academicDataStatuses": "Estados de Historial Académico"
+      "academicDataStatuses": "Finalización de Estudios"
     },
     "dashboard": "Crear nueva convocatoria",
     "membership": {
