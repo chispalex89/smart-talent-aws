@@ -113,8 +113,8 @@ function _Select<
                         state.isDisabled && 'opacity-50 cursor-not-allowed',
                         (() => {
                             const classes: string[] = [
-                                'bg-gray-100 dark:bg-gray-700',
-                            ]
+                              'border-blue-500 dark:bg-gray-700',
+                            ];
 
                             const { isFocused } = state
 

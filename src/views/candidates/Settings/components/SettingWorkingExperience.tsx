@@ -525,6 +525,7 @@ const SettingsWorkingExperience = () => {
         ))}
         <Button
           type="button"
+          variant="solid"
           onClick={() => {
             append({} as ProfileSchema);
             countryOptionList.push(countriesOptions);

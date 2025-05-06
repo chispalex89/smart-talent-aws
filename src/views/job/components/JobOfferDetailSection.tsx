@@ -108,9 +108,6 @@ const JobOfferDetailsSection = ({
         </FormItem>
       </div>
       <div className="grid md:grid-cols-2 gap-5">
-        {
-          //fecha de contratacion
-        }
         <FormItem
           label="Fecha de Publicación"
           invalid={Boolean(errors.publicationDate)}
@@ -128,9 +125,6 @@ const JobOfferDetailsSection = ({
             )}
           />
         </FormItem>
-        {
-          //fecha de publicacion
-        }
         <FormItem
           label="Fecha de Contratación"
           invalid={Boolean(errors.hiringDate)}
@@ -144,9 +138,6 @@ const JobOfferDetailsSection = ({
             )}
           />
         </FormItem>
-        {
-          //profesion
-        }
         <FormItem
           label="Profesión"
           invalid={Boolean(errors.professionId)}

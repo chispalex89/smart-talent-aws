@@ -393,6 +393,7 @@ const SettingsKnowledge = () => {
           ))}
           <Button
             type="button"
+            variant="solid"
             onClick={() => {
               if (deletedLanguages.length) {
                 setDeletedLanguages(deletedLanguages.splice(-1));
@@ -477,6 +478,7 @@ const SettingsKnowledge = () => {
           ))}
           <Button
             type="button"
+            variant="solid"
             onClick={() => {
               if (deletedSoftwareSkills.length) {
                 setDeletedLanguages(deletedSoftwareSkills.splice(-1));

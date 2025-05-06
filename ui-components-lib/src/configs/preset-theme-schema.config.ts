@@ -93,6 +93,23 @@ const orangeTheme: ThemeVariables = {
     },
 }
 
+const smartTalentTheme: ThemeVariables = {
+  light: {
+    primary: '#5994FF',
+    primaryDeep: '#3D4490',
+    primaryMild: '#83C3FF',
+    primarySubtle: '#FFD027',
+    neutral: '#fff',
+  },
+  dark: {
+    primary: '#2a85ff',
+    primaryDeep: '#3D4490',
+    primaryMild: '#83C3FF',
+    primarySubtle: '#FFD027',
+    neutral: '#B9D0DB',
+  },
+};
+
 const presetThemeSchemaConfig: Record<string, ThemeVariables> = {
     default: defaultTheme,
     light: defaultTheme,
@@ -100,6 +117,7 @@ const presetThemeSchemaConfig: Record<string, ThemeVariables> = {
     green: greenTheme,
     purple: purpleTheme,
     orange: orangeTheme,
+    smartTalent: smartTalentTheme,
 }
 
 export default presetThemeSchemaConfig

@@ -151,6 +151,10 @@ const renderRoutes = (role: string | null, membershipType: string | null) => {
         </Route>
         <Route path="/configurations">
           <Route
+            path="/configurations/membershipPlans"
+            element={<BackOfficeDashboard />}
+          />
+          <Route
             path="/configurations/roles"
             element={<BackOfficeRoleList />}
           />

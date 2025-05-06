@@ -65,7 +65,7 @@ const ActionColumn = ({
           className="cursor-pointer p-2"
           onClick={() => handleRepublish(row.uuid)}
         >
-          <TbRefresh />
+          <TbRefresh color="#0CAF60" />
         </span>
       </Tooltip>
       <Tooltip wrapperClass="flex" title="Restaurar">
@@ -73,12 +73,12 @@ const ActionColumn = ({
           className="cursor-pointer p-2"
           onClick={() => handleArchive(row.uuid)}
         >
-          <TbArchiveOff />
+          <TbArchiveOff color="#FFD027" />
         </span>
       </Tooltip>
       <Tooltip wrapperClass="flex" title="Editar">
         <span className={`cursor-pointer p-2`} onClick={onEdit}>
-          <TbEdit />
+          <TbEdit color="#3D4490" />
         </span>
       </Tooltip>
       <Tooltip wrapperClass="flex" title="Eliminar">
@@ -86,7 +86,7 @@ const ActionColumn = ({
           className="cursor-pointer p-2 hover:text-red-500"
           onClick={() => handleDelete(row.uuid)}
         >
-          <TbTrash />
+          <TbTrash color="red" />
         </span>
       </Tooltip>
     </div>

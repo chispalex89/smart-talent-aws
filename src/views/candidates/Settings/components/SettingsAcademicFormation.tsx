@@ -414,6 +414,7 @@ const SettingsAcademicFormation = () => {
         ))}
         <Button
           type="button"
+          variant="solid"
           onClick={() => {
             if (formationsToRemove.length) {
               setFormationsToRemove(formationsToRemove.splice(-1));

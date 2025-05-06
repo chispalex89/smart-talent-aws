@@ -1,8 +1,7 @@
 .input {
   @apply border
-    border-gray-100 
+    border-blue-500 
     dark:border-gray-700
-    bg-gray-100 
     dark:bg-gray-700 
     rounded-xl 
     w-full 

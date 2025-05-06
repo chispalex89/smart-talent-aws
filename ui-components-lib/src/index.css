@@ -1,1 +1,26 @@
 @import "./assets/styles/app.css";
+
+.amplify-button--primary {
+  background-color: #5994FF;
+  border-radius: 5px;
+}
+
+.amplify-tabs__item {
+  color: #3D4490;
+}
+
+.amplify-tabs__item--active {
+  color: #5994FF;
+  border-color: #5994FF;
+}
+
+.amplify-button {
+  color: #5994FF;
+}
+
+.amplify-button:hover {
+  background-color: #83C3FF;
+}
+.amplify-button--primary {
+  color: #fff;
+}

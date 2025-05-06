@@ -83,7 +83,7 @@ const JobOfferListTableFilter = () => {
 
   return (
     <>
-      <Button icon={<TbFilter />} onClick={() => setFilterIsOpen(true)}>
+      <Button variant='default' icon={<TbFilter />} onClick={() => setFilterIsOpen(true)}>
         Filtrar
       </Button>
       <Drawer

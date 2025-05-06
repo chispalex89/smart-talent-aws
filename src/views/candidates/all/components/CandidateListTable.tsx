@@ -242,7 +242,7 @@ const CandidateListTable = ({
             {row.original.professionalData[0]?.description || ''}
           </span>
           <span className="text-md font-semibold">
-            Área de trabajo: {row.original.professionalData[0].profession.name}
+            Área de trabajo: {row.original.professionalData[0]?.profession?.name}
           </span>
           <span className="text-md font-semibold">
             Edad:{' '}
@@ -253,22 +253,10 @@ const CandidateListTable = ({
           <span className="text-md font-semibold">
             Sexo: {row.original.personalData[0]?.gender.name}
           </span>
-          {/* <span className="text-md font-semibold">
-            Rango Salarial:{' '}
-            {
-              // TODO: add salary range
-            }
-          </span> */}
           <span className="text-md font-semibold">
             Ubicación:{' '}
             {`${row.original.personalData[0]?.address} ${row.original.personalData[0]?.zone ? `Zona ${row.original.personalData[0]?.zone}` : ''}, ${row.original.personalData[0]?.city?.name}, ${row.original.personalData[0]?.city?.state?.name || ''}, ${row.original.personalData[0]?.city?.state?.country?.name || ''}`}
           </span>
-          {/* <span className="text-md font-semibold">
-            Jornada:{' '}
-            {
-              // TODO: add work shift
-            }
-          </span> */}
         </div>
         <div className="grid md:grid-cols-2 gap-4 items-center">
           <Button

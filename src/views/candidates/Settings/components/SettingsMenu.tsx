@@ -4,17 +4,11 @@ import { useSettingsStore } from '../store/settingsStore';
 import useQuery from '@/utils/hooks/useQuery';
 import {
   TbUserSquare,
-  TbLock,
-  TbBell,
-  TbFileDollar,
-  TbRefreshDot,
   TbHome2,
   TbFile,
-  TbBook,
   TbAward,
   TbChecklist,
   TbMessageLanguage,
-  TbSettings,
 } from 'react-icons/tb';
 import type { View } from '../types';
 import type { ReactNode } from 'react';
@@ -67,7 +61,9 @@ export const SettingsMenu = ({ onChange }: { onChange?: () => void }) => {
               key={menu.value}
               eventKey={menu.value}
               className={`mb-2 ${
-                currentView === menu.value ? 'bg-gray-100 dark:bg-gray-700' : ''
+                currentView === menu.value
+                  ? 'bg-[#B9D0DB] dark:bg-gray-700 dark:text-white'
+                  : ''
               }`}
               isActive={currentPath === menu.value}
               onSelect={() => handleSelect(menu.value)}

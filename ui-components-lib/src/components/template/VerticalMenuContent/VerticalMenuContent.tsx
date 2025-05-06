@@ -125,18 +125,18 @@ const VerticalMenuContent = (props: VerticalMenuContentProps) => {
     }
 
     return (
-        <Menu
-            className="px-4 pb-4"
-            sideCollapsed={collapsed}
-            defaultActiveKeys={activedRoute?.key ? [activedRoute.key] : []}
-            defaultExpandedKeys={defaulExpandKey}
-            defaultCollapseActiveKeys={
-                activedRoute?.parentKey ? [activedRoute.parentKey] : []
-            }
-        >
-            {renderNavigation(navigationTree, 0)}
-        </Menu>
-    )
+      <Menu
+        className="px-4 pb-4"
+        sideCollapsed={collapsed}
+        defaultActiveKeys={activedRoute?.key ? [activedRoute.key] : []}
+        defaultExpandedKeys={defaulExpandKey}
+        defaultCollapseActiveKeys={
+          activedRoute?.parentKey ? [activedRoute.parentKey] : []
+        }
+      >
+        {renderNavigation(navigationTree, 0)}
+      </Menu>
+    );
 }
 
 export default VerticalMenuContent

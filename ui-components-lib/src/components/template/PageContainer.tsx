@@ -129,61 +129,55 @@ const PageContainer = (props: PageContainerProps) => {
     const pageContainerGutterClass = `${PAGE_CONTAINER_GUTTER_X} ${PAGE_CONTAINER_GUTTER_Y}`
 
     return (
-        <>
-            {pageContainerReassemble ? (
-                pageContainerReassemble({
-                    pageContainerType,
-                    pageBackgroundType,
-                    pageContainerGutterClass,
-                    children,
-                    footer,
-                    header,
-                    defaultClass,
-                    pageContainerDefaultClass,
-                    PageContainerBody,
-                    PageContainerFooter,
-                    PageContainerHeader,
-                })
-            ) : (
-                <div
-                    className={classNames(
-                        defaultClass,
-                        pageBackgroundType === 'plain' &&
-                            'bg-white dark:bg-gray-900',
-                    )}
-                >
-                    <main className="h-full">
-                        <div
-                            className={classNames(
-                                pageContainerDefaultClass,
-                                pageContainerType !== 'gutterless' &&
-                                    pageContainerGutterClass,
-                                pageContainerType === 'contained' &&
-                                    'container mx-auto',
-                                !footer && 'pb-0 sm:pb-0 md:pb-0',
-                            )}
-                        >
-                            <PageContainerHeader
-                                {...header}
-                                gutterLess={pageContainerType === 'gutterless'}
-                            />
-                            <PageContainerBody
-                                pageContainerType={pageContainerType}
-                            >
-                                {children}
-                            </PageContainerBody>
-                        </div>
-                    </main>
-                    <PageContainerFooter
-                        footer={footer}
-                        pageContainerType={
-                            pageContainerType as FooterPageContainerType
-                        }
-                    />
-                </div>
+      <>
+        {pageContainerReassemble ? (
+          pageContainerReassemble({
+            pageContainerType,
+            pageBackgroundType,
+            pageContainerGutterClass,
+            children,
+            footer,
+            header,
+            defaultClass,
+            pageContainerDefaultClass,
+            PageContainerBody,
+            PageContainerFooter,
+            PageContainerHeader,
+          })
+        ) : (
+          <div
+            className={classNames(
+              defaultClass,
+              pageBackgroundType === 'plain' && 'bg-white dark:bg-gray-900'
             )}
-        </>
-    )
+          >
+            <main className="h-full bg-[rgb(128,173,255,0.6)] dark:bg-gray-900">
+              <div
+                className={classNames(
+                  pageContainerDefaultClass,
+                  pageContainerType !== 'gutterless' &&
+                    pageContainerGutterClass,
+                  pageContainerType === 'contained' && 'container mx-auto',
+                  !footer && 'pb-0 sm:pb-0 md:pb-0'
+                )}
+              >
+                <PageContainerHeader
+                  {...header}
+                  gutterLess={pageContainerType === 'gutterless'}
+                />
+                <PageContainerBody pageContainerType={pageContainerType}>
+                  {children}
+                </PageContainerBody>
+              </div>
+            </main>
+            <PageContainerFooter
+              footer={footer}
+              pageContainerType={pageContainerType as FooterPageContainerType}
+            />
+          </div>
+        )}
+      </>
+    );
 }
 
 export default PageContainer

@@ -31,7 +31,7 @@ const Logo = (props: LogoProps) => {
         >
             <img
                 className={imgClass}
-                src={`${LOGO_SRC_PATH}logo-${mode}-${type}.${mode === 'light' ? 'svg' : 'png'}`}
+                src={`${LOGO_SRC_PATH}logo-${mode}-${type}.svg`}
                 alt={`${APP_NAME} logo`}
             />
         </div>

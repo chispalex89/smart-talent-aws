@@ -76,7 +76,7 @@ const DashboardOverview = ({ data }: DashboardOverviewData) => {
         />
         <StatisticCard
           title="Empresas que han visto mi Perfil"
-          className="bg-purple-100 dark:bg-opacity-75"
+          className="bg-[#5994ff] dark:bg-opacity-75 text-white"
           value={data.resumeCheckedByCompany}
           icon={<TbCopyCheck />}
         />

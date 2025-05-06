@@ -355,7 +355,7 @@ function _DataTable<T>(
                 .map((row) => {
                   return (
                     <Fragment key={row.id}>
-                      <Tr key={row.id}>
+                      <Tr key={row.id} className="hover:bg-blue-100">
                         {row.getVisibleCells().map((cell) => {
                           return (
                             <Td
@@ -380,7 +380,7 @@ function _DataTable<T>(
                         })}
                       </Tr>
                       {row.getIsExpanded() && (
-                        <Tr>
+                        <Tr className="hover:bg-blue-100" key={row.id + 'expanded'}>
                           <Td colSpan={finalColumns.length + 1}>
                             {props.renderSubComponent?.(row as any)}
                           </Td>

@@ -107,12 +107,12 @@ const components = {
           padding={`${tokens.space.xl} 0 0 ${tokens.space.xl}`}
           level={3}
         >
-          Enter Information:
+          Ingrese su código de confirmación:
         </Heading>
       );
     },
     Footer() {
-      return <Text>Footer Information</Text>;
+      return <Text></Text>;
     },
   },
   SetupTotp: {
@@ -128,7 +128,7 @@ const components = {
       );
     },
     Footer() {
-      return <Text>Footer Information</Text>;
+      return <Text></Text>;
     },
   },
   ConfirmSignIn: {
@@ -144,7 +144,7 @@ const components = {
       );
     },
     Footer() {
-      return <Text>Footer Information</Text>;
+      return <Text></Text>;
     },
   },
   ForgotPassword: {
@@ -155,12 +155,13 @@ const components = {
           padding={`${tokens.space.xl} 0 0 ${tokens.space.xl}`}
           level={3}
         >
-          Enter Information:
+          Recuperar contraseña
         </Heading>
       );
     },
+    
     Footer() {
-      return <Text>Footer Information</Text>;
+      return <Text></Text>;
     },
   },
   ConfirmResetPassword: {

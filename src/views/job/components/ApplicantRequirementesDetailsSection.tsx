@@ -49,7 +49,7 @@ const CustomSelectOption = (props: OptionProps<CountryOption>) => {
 const applicantRequirements = ({
   control,
   errors,
-  watch
+  watch,
 }: jobOfferApplicantRequirements) => {
   const stateId = watch('stateId');
 
@@ -66,20 +66,18 @@ const applicantRequirements = ({
   const [checkedLanguage9, setCheckedLanguage9] = useState(false);
 
   const [cityOptions, setCityOptions] = useState(
-    [] as { label: string; value: number }[],
+    [] as { label: string; value: number }[]
   );
 
   useEffect(() => {
     if (stateId) {
-      apiService
-        .get<City[]>('/city', { stateId })
-        .then((data: City[]) => {
-          const cityOptions = data.map((city) => ({
-            label: city.name,
-            value: city.id,
-          }));
-          setCityOptions(cityOptions);
-        });
+      apiService.get<City[]>('/city', { stateId }).then((data: City[]) => {
+        const cityOptions = data.map((city) => ({
+          label: city.name,
+          value: city.id,
+        }));
+        setCityOptions(cityOptions);
+      });
     }
   }, [stateId]);
 
@@ -154,7 +152,7 @@ const applicantRequirements = ({
                   checked={field.value}
                   onChange={(e) => {
                     field.onChange(e);
-                    setChecked(e)
+                    setChecked(e);
                   }}
                 />
               )}
@@ -186,7 +184,7 @@ const applicantRequirements = ({
               <Select
                 options={minimumAcademicLevelOptions}
                 value={minimumAcademicLevelOptions.filter(
-                  (academicLevels) => academicLevels.value === field.value,
+                  (academicLevels) => academicLevels.value === field.value
                 )}
                 defaultValue={{ label: 'Seleccione una opción', value: 0 }}
                 placeholder="Seleccione una opción"
@@ -210,7 +208,7 @@ const applicantRequirements = ({
               <Select
                 options={languageOptions}
                 value={languageOptions.filter(
-                  (language) => language.value === field.value,
+                  (language) => language.value === field.value
                 )}
                 defaultValue={{ label: 'Seleccione una opción', value: 0 }}
                 placeholder="Seleccione una opción"
@@ -221,7 +219,7 @@ const applicantRequirements = ({
         </FormItem>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <FormItem>
+        <FormItem className="flex items-center justify-center">
           <Switcher
             className="w-14"
             defaultChecked={checkedLanguage}
@@ -243,7 +241,7 @@ const applicantRequirements = ({
               <Select
                 options={languageOptions}
                 value={languageOptions.filter(
-                  (language) => language.value === field.value,
+                  (language) => language.value === field.value
                 )}
                 defaultValue={{ label: 'Seleccione una opción', value: 0 }}
                 placeholder="Seleccione una opción"
@@ -265,7 +263,7 @@ const applicantRequirements = ({
               <Select
                 options={skillLevelsOptions}
                 value={skillLevelsOptions.filter(
-                  (skillLevel) => skillLevel.value === field.value,
+                  (skillLevel) => skillLevel.value === field.value
                 )}
                 defaultValue={{ label: 'Seleccione una opción', value: 0 }}
                 placeholder="Seleccione una opción"
@@ -277,7 +275,7 @@ const applicantRequirements = ({
         </FormItem>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <FormItem>
+        <FormItem className="flex items-center justify-center">
           <Switcher
             className="w-14"
             defaultChecked={checkedLanguage2}
@@ -301,7 +299,7 @@ const applicantRequirements = ({
               <Select
                 options={languageOptions}
                 value={languageOptions.filter(
-                  (language) => language.value === field.value,
+                  (language) => language.value === field.value
                 )}
                 defaultValue={{ label: 'Seleccione una opción', value: 0 }}
                 placeholder="Seleccione una opción"
@@ -323,7 +321,7 @@ const applicantRequirements = ({
               <Select
                 options={skillLevelsOptions}
                 value={skillLevelsOptions.filter(
-                  (skillLevel) => skillLevel.value === field.value,
+                  (skillLevel) => skillLevel.value === field.value
                 )}
                 defaultValue={{ label: 'Seleccione una opción', value: 0 }}
                 placeholder="Seleccione una opción"
@@ -367,7 +365,7 @@ const applicantRequirements = ({
                 <Select
                   options={skillLevelsOptions}
                   value={skillLevelsOptions.filter(
-                    (skillLevel) => skillLevel.value === field.value,
+                    (skillLevel) => skillLevel.value === field.value
                   )}
                   defaultValue={{ label: 'Seleccione una opción', value: 0 }}
                   placeholder="Seleccione una opción"
@@ -407,7 +405,7 @@ const applicantRequirements = ({
                 <Select
                   options={softwareSkillsOptions}
                   value={softwareSkillsOptions.filter(
-                    (softwareSkills) => softwareSkills.value === field.value,
+                    (softwareSkills) => softwareSkills.value === field.value
                   )}
                   defaultValue={{ label: 'Seleccione una opción', value: 0 }}
                   placeholder="Seleccione una opción"
@@ -448,7 +446,7 @@ const applicantRequirements = ({
                 <Select
                   options={skillLevelsOptions}
                   value={skillLevelsOptions.filter(
-                    (skillLevel) => skillLevel.value === field.value,
+                    (skillLevel) => skillLevel.value === field.value
                   )}
                   defaultValue={{ label: 'Seleccione una opción', value: 0 }}
                   placeholder="Seleccione una opción"
@@ -488,7 +486,7 @@ const applicantRequirements = ({
                 <Select
                   options={skillLevelsOptions}
                   value={skillLevelsOptions.filter(
-                    (skillLevel) => skillLevel.value === field.value,
+                    (skillLevel) => skillLevel.value === field.value
                   )}
                   defaultValue={{ label: 'Seleccione una opción', value: 0 }}
                   placeholder="Seleccione una opción"
@@ -529,7 +527,7 @@ const applicantRequirements = ({
                 <Select
                   options={skillLevelsOptions}
                   value={skillLevelsOptions.filter(
-                    (skillLevel) => skillLevel.value === field.value,
+                    (skillLevel) => skillLevel.value === field.value
                   )}
                   defaultValue={{ label: 'Seleccione una opción', value: 0 }}
                   placeholder="Seleccione una opción"
@@ -569,7 +567,7 @@ const applicantRequirements = ({
                 <Select
                   options={skillLevelsOptions}
                   value={skillLevelsOptions.filter(
-                    (skillLevel) => skillLevel.value === field.value,
+                    (skillLevel) => skillLevel.value === field.value
                   )}
                   defaultValue={{ label: 'Seleccione una opción', value: 0 }}
                   placeholder="Seleccione una opción"
@@ -635,7 +633,7 @@ const applicantRequirements = ({
             <Select
               options={countriesOptions}
               value={countriesOptions.filter(
-                (countries) => countries.value === field.value,
+                (countries) => countries.value === field.value
               )}
               defaultValue={{ label: 'Seleccione una opción', value: 0 }}
               placeholder="Seleccione una opción"
@@ -657,7 +655,7 @@ const applicantRequirements = ({
               <Select
                 options={stateOptions}
                 value={stateOptions.filter(
-                  (state) => state.value === field.value,
+                  (state) => state.value === field.value
                 )}
                 defaultValue={{ label: 'Seleccione una opción', value: 0 }}
                 placeholder="Seleccione una opción"
@@ -681,7 +679,8 @@ const applicantRequirements = ({
               <Select
                 options={cityOptions || ['choose a city']}
                 value={
-                  cityOptions?.filter((city) => city.value === field.value)  || []
+                  cityOptions?.filter((city) => city.value === field.value) ||
+                  []
                 }
                 defaultValue={{ label: 'Seleccione una opción', value: 0 }}
                 placeholder="Seleccione una opción"

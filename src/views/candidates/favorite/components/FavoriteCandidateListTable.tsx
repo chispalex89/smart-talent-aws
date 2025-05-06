@@ -63,7 +63,7 @@ const ActionColumn = ({
           className="cursor-pointer p-2 hover:text-red-500"
           onClick={onDelete}
         >
-          <TbTrash />
+          <TbTrash color="red" />
         </span>
       </Tooltip>
     </div>
