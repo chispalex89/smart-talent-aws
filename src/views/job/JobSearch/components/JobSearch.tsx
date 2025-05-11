@@ -26,11 +26,9 @@ const JobSearch = () => {
     mutate,
   } = useJobOfferList();
   const [pageSize, setPageSize] = useState(options[0].value);
-  const [page, setPage] = useState(1);
 
-  const onPageSelect = ({ value }: Option) => {
+  const onPageSizeSelect = ({ value }: Option) => {
     setPageSize(value);
-    setPage(1);
     setTableData({
       ...tableData,
       pageIndex: 1,
@@ -39,12 +37,10 @@ const JobSearch = () => {
   };
 
   const onPaginationChange = (val: number) => {
-    setPage(val);
-    console.log(val);
     setTableData({
       ...tableData,
-      pageIndex: page,
-      pageSize: val,
+      pageIndex: val,
+      pageSize,
     });
   };
 
@@ -65,7 +61,7 @@ const JobSearch = () => {
           defaultValue={options[0]}
           options={options}
           value={options.filter((option) => option.value === pageSize)}
-          onChange={(selected) => onPageSelect(selected as Option)}
+          onChange={(selected) => onPageSizeSelect(selected as Option)}
         />
       </div>
     </div>

@@ -30,7 +30,14 @@ export interface ButtonProps
   onClick?: (e: MouseEvent<HTMLButtonElement>) => void;
   shape?: TypeAttributes.Shape;
   size?: TypeAttributes.Size;
-  variant?: 'solid' | 'plain' | 'default' | 'success' | 'warning' | 'error';
+  variant?:
+    | 'solid'
+    | 'plain'
+    | 'default'
+    | 'success'
+    | 'warning'
+    | 'error'
+    | 'secondary';
   iconAlignment?: 'start' | 'end';
 }
 
@@ -164,15 +171,25 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>((props, ref) => {
     return getBtnColor(btn);
   };
 
-    const warningColor = () => {
-      const btn = {
-        bgColor: active ? `bg-warning-subtle` : `bg-warning`,
-        textColor: 'text-neutral',
-        hoverColor: active ? '' : `hover:bg-warning`,
-        activeColor: ``,
-      };
-      return getBtnColor(btn);
+  const warningColor = () => {
+    const btn = {
+      bgColor: active ? `bg-warning-subtle` : `bg-warning`,
+      textColor: 'text-neutral',
+      hoverColor: active ? '' : `hover:bg-warning`,
+      activeColor: ``,
     };
+    return getBtnColor(btn);
+  };
+
+  const secondaryColor = () => {
+    const btn = {
+      bgColor: active ? `bg-[#3D4490]` : `bg-[#3D4490]`,
+      textColor: 'text-neutral',
+      hoverColor: active ? '' : `hover:bg-[#7780C5]`,
+      activeColor: ``,
+    };
+    return getBtnColor(btn);
+  };
 
   const getBtnColor = ({
     bgColor,
@@ -195,6 +212,8 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>((props, ref) => {
         return defaultColor();
       case 'success':
         return successColor();
+      case 'secondary':
+        return secondaryColor();
       case 'error':
       case 'warning':
         return warningColor();

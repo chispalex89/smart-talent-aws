@@ -21,6 +21,7 @@ import { Form, FormItem } from '@/components/ui/Form';
 import { yearsBeforeToday } from '../../helpers/math';
 import NumericInput from '@/components/shared/NumericInput';
 import { useCatalogContext } from '../../context/catalogContext';
+import { validateNIT, validateCUI } from '../../helpers/idValidators';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useUserContext } from '../../context/userContext';
@@ -250,7 +251,19 @@ const NewClient = () => {
   });
 
   const onSubmitCompany = async (data: CompanyFormData) => {
-    console.log('Company data', data);
+    const isValidNit = validateNIT(data.taxId);
+    console.log('isValidNit', isValidNit);
+    if (!isValidNit) {
+      toast.push(
+        <Notification type="danger">
+          El NIT ingresado no es válido. Por favor, verifica el número.
+        </Notification>,
+        {
+          placement: 'top-center',
+        }
+      );
+      return;
+    }
     setCurrent(3);
     const formData = new FormData();
 
@@ -312,6 +325,19 @@ const NewClient = () => {
   };
 
   const onSubmitApplicant = async (data: ApplicantFormData) => {
+    const isValidCUI = validateCUI(data.documentId);
+    if (!isValidCUI) {
+      toast.push(
+        <Notification type="danger">
+          El número de documento ingresado no es válido. Por favor, verifica el
+          número.
+        </Notification>,
+        {
+          placement: 'top-center',
+        }
+      );
+      return;
+    }
     setCurrent(3);
     const user: Partial<User> = {
       firstName: userAttributes?.name,
@@ -333,7 +359,7 @@ const NewClient = () => {
       }
       setTimeout(async () => {
         await refetchUser();
-        navigate('/home');
+        navigate('/profile/applicant');
       }, 2000);
     } catch {
       toast.push(
@@ -409,6 +435,7 @@ const NewClient = () => {
               </Card>
               <Button
                 className="flex flex-col items-center justify-center gap-2 w-[280] h-[280]"
+                variant="secondary"
                 onClick={() => {
                   setUserType('applicant');
                   setCurrent(2);
@@ -446,6 +473,7 @@ const NewClient = () => {
               </Card>
               <Button
                 className="flex flex-col items-center justify-center gap-2 w-[280] h-[280]"
+                variant="secondary"
                 onClick={() => {
                   setUserType('employer');
                   setCurrent(2);
