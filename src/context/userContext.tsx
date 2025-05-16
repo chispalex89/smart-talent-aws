@@ -6,6 +6,7 @@ import {
 import React, { useEffect } from 'react';
 import apiService from '../services/apiService';
 import {
+  Applicant,
   Company,
   Membership,
   MembershipType,
@@ -32,11 +33,17 @@ export type RecruiterWithDetails = Recruiter & {
   };
 };
 
+export type ApplicantWithDetails = Applicant & {
+  user: User;
+};
+
 export interface IUserContext {
   user: User | null;
   setUser: (user: User | null) => void;
   recruiter: RecruiterWithDetails | null;
   setRecruiter: (recruiter: RecruiterWithDetails | null) => void;
+  applicant: ApplicantWithDetails | null;
+  setApplicant: (applicant: ApplicantWithDetails | null) => void;
   refetchUser: () => Promise<void>;
   authUser: AuthUser | null;
   setAuthUser: (authUser: AuthUser | null) => void;
@@ -56,6 +63,9 @@ export const UserContextProvider: React.FC<{
   const [authUser, setAuthUser] = React.useState<AuthUser | null>(null);
   const [user, setUser] = React.useState<User | null>(null);
   const [recruiter, setRecruiter] = React.useState<RecruiterWithDetails | null>(
+    null
+  );
+  const [applicant, setApplicant] = React.useState<ApplicantWithDetails | null>(
     null
   );
   const [membershipType, setMembershipType] = React.useState<string | null>(
@@ -79,6 +89,13 @@ export const UserContextProvider: React.FC<{
       `/user/${user?.id}/recruiter`
     );
     setRecruiter(recruiter);
+  };
+
+  const fetchApplicant = async () => {
+    const applicant = await apiService.get<ApplicantWithDetails>(
+      `/applicant/${user?.id}/applicant-data`
+    );
+    setApplicant(applicant);
   };
 
   const refetchUser = async () => {
@@ -122,8 +139,11 @@ export const UserContextProvider: React.FC<{
     if (user) {
       if (role === 'Recruiter') {
         fetchRecruiter();
+      } else if (role === 'Applicant') {
+        fetchApplicant();
       } else {
         setRecruiter(null);
+        setApplicant(null);
       }
     }
   }, [user, role]);
@@ -151,6 +171,8 @@ export const UserContextProvider: React.FC<{
         userAttributes,
         recruiter,
         setRecruiter,
+        applicant,
+        setApplicant,
         membershipType,
       }}
     >

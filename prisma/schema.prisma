@@ -214,6 +214,7 @@ model JobOffer {
   created_by                   String
   updated_by                   String?
   isDeleted                    Boolean            @default(false) @map("is_deleted")
+  zone                         String?            @map("zone")
   jobApplicants                JobApplicant[]
   company                      Company            @relation(fields: [companyId], references: [id])
   city                         City               @relation(fields: [cityId], references: [id])
@@ -422,9 +423,10 @@ model FavoriteJobOffer {
 model Membership {
   id               Int            @id @default(autoincrement())
   startDate        DateTime       @default(now()) @map("start_date")
-  expirationDate   DateTime       @map("expiration_date")
+  expirationDate   DateTime?      @map("expiration_date")
   membershipTypeId Int            @map("membership_type_id")
   companyId        Int            @map("company_id")
+  status           String
   created_at       DateTime       @default(now())
   updated_at       DateTime?      @updatedAt
   created_by       String

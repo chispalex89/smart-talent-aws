@@ -47,6 +47,7 @@ import BackOfficeSoftwareList from './backOffice/components/software-skills/list
 import BackOfficeLanguageList from './backOffice/components/languages/list';
 import BackOfficeSkillLevelList from './backOffice/components/skill-levels/list';
 import BackOfficeOtherSkillList from './backOffice/components/other-skills/list';
+import JobDetails from './job/JobDetails';
 
 const renderRoutes = (role: string | null, membershipType: string | null) => {
   if (role === 'Recruiter') {
@@ -118,7 +119,10 @@ const renderRoutes = (role: string | null, membershipType: string | null) => {
         <Route path="/home" element={<ApplicantDashboard />} />
         <Route path="/profile/applicant" element={<ApplicantSettings />} />
         <Route path="/account" element={<ChangePassword />} />
-        <Route path="/job/search" element={<JobOfferSearch />} />
+        <Route path="/job">
+          <Route path="/job/:uuid" element={<JobDetails />} />
+          <Route path="/job/search" element={<JobOfferSearch />} />
+        </Route>
         <Route path="/logout" element={<Logout />} />
         <Route path="/" element={<ApplicantDashboard />} />
       </Routes>

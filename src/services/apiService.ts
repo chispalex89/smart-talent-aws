@@ -35,27 +35,35 @@ class ApiService {
   async post<T>(path: string, data: FormData): Promise<T>;
   async post<T>(path: string, data: unknown) {
     if (data instanceof FormData) {
-      return fetch(`${this.baseUrl}${path}`, {
+      const res = await fetch(`${this.baseUrl}${path}`, {
         method: 'POST',
         body: data,
-      }).then((res) => {
-        if (res.status > 199 && res.status < 300) {
-          if (res.status === 204) {
-            return {} as T;
-          }
-          return res.json() as Promise<T>;
-        }
-        throw new Error(`Error: ${res.status} ${res.statusText}`);
       });
+
+      if (res.status > 199 && res.status < 300) {
+        if (res.status === 204) {
+          return {} as T;
+        }
+        return res.json() as Promise<T>;
+      }
+      throw new Error(`Error: ${res.status} ${res.statusText}`);
     }
 
-    return fetch(`${this.baseUrl}${path}`, {
+    const res = await fetch(`${this.baseUrl}${path}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(data),
     });
+
+    if (res.status > 199 && res.status < 300) {
+      if (res.status === 204) {
+        return {} as T;
+      }
+      return res.json() as Promise<T>;
+    }
+    throw new Error(`Error: ${res.status} ${res.statusText}`);
   }
 
   async put<T>(path: string, data: Record<string, unknown>): Promise<T>;

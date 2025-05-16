@@ -1,27 +1,22 @@
 import { useMemo } from 'react';
 import Avatar from '@/components/ui/Avatar';
 import Tag from '@/components/ui/Tag';
-import Tooltip from '@/components/ui/Tooltip';
 import DataTable from '@/components/shared/DataTable';
 import useCandidateList from '../hooks/useCandidateList';
 import { Link, useNavigate } from 'react-router-dom';
 import cloneDeep from 'lodash/cloneDeep';
-import { TbEye, TbTrash } from 'react-icons/tb';
 import type {
   OnSortParam,
   ColumnDef,
   Row,
-  ExpandedState,
 } from '@/components/shared/DataTable';
 import type { Candidate } from '../types';
 import type { TableQueries } from '@/@types/common';
 import dayjs from 'dayjs';
-import { Button, Card } from '@/components/ui';
+import { Button } from '@/components/ui';
 import {
   HiOutlineChevronDown,
   HiOutlineChevronRight,
-  HiOutlineMinusCircle,
-  HiOutlinePlusCircle,
   HiRefresh,
 } from 'react-icons/hi';
 import {
@@ -32,7 +27,6 @@ import {
 import { BsCloudDownload, BsStar } from 'react-icons/bs';
 import {
   PiArchive,
-  PiFloppyDisk,
   PiUserDuotone,
   PiWarning,
 } from 'react-icons/pi';
@@ -259,17 +253,6 @@ const CandidateListTable = ({
           </span>
         </div>
         <div className="grid md:grid-cols-2 gap-4 items-center">
-          <Button
-            variant="solid"
-            size="md"
-            className="flex items-center gap-2 max-w-[250px]"
-            customColorClass={() =>
-              'border-success ring-1 ring-success text-success hover:bg-success hover:ring-success hover:text-white bg-transparent'
-            }
-          >
-            <PiFloppyDisk />
-            Guardar
-          </Button>
           <Button
             variant="default"
             size="md"
