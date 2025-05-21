@@ -2,17 +2,17 @@
 import { useState, useEffect } from 'react';
 import Card from '@/components/ui/Card';
 import Button from '@/components/ui/Button';
-import Tag from '@/components/ui/Tag';
 import classNames from '@/utils/classNames';
 import isLastChild from '@/utils/isLastChild';
-import { TbCircleCheck, TbCircleCheckFilled, TbCalendar } from 'react-icons/tb';
+import { TbCircleCheckFilled, TbCalendar } from 'react-icons/tb';
 import dayjs from 'dayjs';
 import { Link } from 'react-router-dom';
-import type { Task } from '../types';
-import { JobOffer } from '@prisma/client';
+import { JobApplicant, JobOffer } from '@prisma/client';
+
+type JobApplied = JobApplicant & { job: JobOffer };
 
 type CurrentTasksProps = {
-  data: JobOffer[];
+  data: Array<JobApplied>;
 };
 
 export const labelClass: Record<string, string> = {
@@ -25,7 +25,7 @@ export const labelClass: Record<string, string> = {
 };
 
 const CurrentTasks = ({ data }: CurrentTasksProps) => {
-  const [tasks, setTasks] = useState<JobOffer[]>([]);
+  const [tasks, setTasks] = useState<JobApplied[]>([]);
 
   useEffect(() => {
     if (tasks.length === 0) {
@@ -69,13 +69,20 @@ const CurrentTasks = ({ data }: CurrentTasksProps) => {
               </button>
               <div>
                 <div className={'heading-text font-bold mb-1'}>
-                  {jobOffer.name}
+                  <Link
+                    to={`/job/${jobOffer.job.uuid}`}
+                    className="text-primary hover:underline"
+                  >
+                    {jobOffer.job.name}
+                  </Link>
                 </div>
                 <div className="flex items-center gap-2">
                   <div className="flex items-center gap-1">
                     <TbCalendar className="text-lg" />
-                    {jobOffer.publicationDate
-                      ? dayjs(jobOffer.publicationDate).format('DD/MMM/YYYY')
+                    {jobOffer.job.publicationDate
+                      ? dayjs(jobOffer.job.publicationDate).format(
+                          'DD/MMM/YYYY'
+                        )
                       : '-'}
                   </div>
                 </div>

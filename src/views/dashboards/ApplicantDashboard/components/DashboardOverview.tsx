@@ -66,7 +66,7 @@ const DashboardOverview = ({ data }: DashboardOverviewData) => {
           className="bg-yellow-100 dark:bg-opacity-75"
           value={data.favoriteJobOffers}
           icon={<TbStar />}
-          onClick={() => navigate('/candidates/favorite')}
+          onClick={() => navigate('/job/favorite')}
         />
         <StatisticCard
           title="Trabajos a los que he Aplicado"

@@ -1,44 +1,45 @@
 import Loading from '@/components/shared/Loading';
-import UpcomingSchedule from './components/UpcomingSchedule';
-import QuickActions from './components/TaskOverview';
 import CurrentTasks from './components/CurrentTasks';
-import Schedule from './components/Schedule';
 import DashboardOverview from './components/DashboardOverview';
-import RecentActivity from './components/RecentActivity';
-import useSWR from 'swr';
 import type { GetApplicantDashboardResponse } from './types';
-import useFetch from '../../../hooks/useFetch';
-import { GetJobOffersResponse } from '../../../views/job/JobList/types';
+import { GetJobApplicationsResponse, GetJobOffersResponse } from '../../../views/job/JobList/types';
 import { useUserContext } from '../../../context/userContext';
 import { useEffect, useState } from 'react';
 import apiService from '../../../services/apiService';
 
 const ProjectDashboard = () => {
-  const { data: jobs, loading: jobsLoading } = useFetch<GetJobOffersResponse>(
-    `job-applicant?pageIndex=1&pageSize=5&applicantId=${1}`
-  );
-
+  const { user, applicant } = useUserContext();
+  const [data, setData] = useState<GetApplicantDashboardResponse | null>(null);
   const [loading, setLoading] = useState(false);
-  const [data, setData] = useState<GetApplicantDashboardResponse>();
-  const { user } = useUserContext();
+  const [jobs, setJobs] = useState<GetJobApplicationsResponse | null>(null);
+
+  const fetchAppliedJobs = async () => {
+    const response = await apiService.get<GetJobApplicationsResponse>(
+      `/job-applicant?pageIndex=1&pageSize=5&applicantId=${applicant?.id}`
+    );
+    setJobs(response);
+    };
+
+  const fetchDashboard = async () => {
+      setLoading(true);
+      try {
+        const response = await apiService.get<GetApplicantDashboardResponse>(
+          `/dashboard/applicant/${applicant?.id}`
+        );
+        setData(response);
+      } catch (error) {
+        console.error('Error fetching dashboard data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
   useEffect(() => {
-    if (user) {
-      setLoading(true);
-      apiService
-        .get<GetApplicantDashboardResponse>(`/dashboard/applicant/${user.id}`)
-        .then((res) => {
-          setData(res);
-        })
-        .catch((err) => {
-          console.error(err);
-        })
-        .finally(() => {
-          setLoading(false);
-        });
+    if (applicant) {
+      fetchDashboard();
+      fetchAppliedJobs();
     }
-  }, [user]);
-
+  }, [applicant]);
   return (
     <Loading loading={loading}>
       {data && (

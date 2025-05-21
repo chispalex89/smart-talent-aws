@@ -18,7 +18,7 @@ import ApplicantSettings from './candidates/Settings';
 import Logout from './auth/logout';
 import ChangePassword from './auth/changePassword';
 import JobOfferSearch from './job/JobSearch';
-
+import CandidateDetails from './candidates/details';
 import NewClient from './auth/newClient';
 
 import BackOfficeDashboard from './backOffice/components/dashboard';
@@ -62,6 +62,10 @@ const renderRoutes = (role: string | null, membershipType: string | null) => {
         </Route>
         <Route path="/candidates">
           <Route
+            path="/candidates/details/:id"
+            element={<CandidateDetails />}
+          />
+          <Route
             path="/candidates/favorite"
             element={<FavoriteCandidateList />}
           />
@@ -90,6 +94,10 @@ const renderRoutes = (role: string | null, membershipType: string | null) => {
           <Route path="/job/my-jobs" element={<JobList />} />
         </Route>
         <Route path="/candidates">
+          <Route
+            path="/candidates/details/:id"
+            element={<CandidateDetails />}
+          />
           <Route
             path="/candidates/favorite"
             element={<FavoriteCandidateList />}
@@ -120,8 +128,10 @@ const renderRoutes = (role: string | null, membershipType: string | null) => {
         <Route path="/profile/applicant" element={<ApplicantSettings />} />
         <Route path="/account" element={<ChangePassword />} />
         <Route path="/job">
-          <Route path="/job/:uuid" element={<JobDetails />} />
+          <Route path="/job/my-jobs" element={<JobList />} />
+          <Route path="/job/favorite" element={<JobList />} />
           <Route path="/job/search" element={<JobOfferSearch />} />
+          <Route path="/job/:uuid" element={<JobDetails />} />
         </Route>
         <Route path="/logout" element={<Logout />} />
         <Route path="/" element={<ApplicantDashboard />} />
@@ -258,7 +268,7 @@ const renderRoutes = (role: string | null, membershipType: string | null) => {
     );
   }
 
-  if (role === null) {
+  if (role === '') {
     return (
       <Routes>
         <Route path="/" element={<NewClient />} />
@@ -286,11 +296,13 @@ const Views = () => {
     }
   }, [role]);
 
-  return user ?(
+  return user ? (
     <Suspense fallback={<Loading loading={true} className="w-full" />}>
       <PageContainer>{renderRoutes(userType, membershipType)}</PageContainer>
     </Suspense>
-  ) : <></>;
+  ) : (
+    <></>
+  );
 };
 
 export default Views;

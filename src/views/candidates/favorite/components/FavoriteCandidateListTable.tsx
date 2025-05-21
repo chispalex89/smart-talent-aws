@@ -32,7 +32,7 @@ const NameColumn = ({ row }: { row: FavoriteCandidate }) => {
       />
       <Link
         className={`hover:text-primary ml-2 rtl:mr-2 font-semibold text-gray-900 dark:text-gray-100`}
-        to={`/concepts/customers/customer-details/${row.id}`}
+        to={`/candidates/details/${row?.applicant?.userId}`}
       >
         {`${row.applicant.user.firstName} ${row.applicant.user.middleName ?? ''} ${row.applicant.user.lastName ?? ''} ${row.applicant.user.secondLastName ?? ''} ${row.applicant.user.marriedLastName ?? ''}`}
       </Link>
@@ -89,7 +89,7 @@ const FavoriteCandidateListTable = ({
   } = useFavoriteCandidateList();
 
   const handleViewDetails = (customer: FavoriteCandidate) => {
-    navigate(`/concepts/customers/customer-details/${customer.id}`);
+    navigate(`/candidates/details/${customer.applicant?.userId}`);
   };
 
   const columns: ColumnDef<FavoriteCandidate>[] = useMemo(

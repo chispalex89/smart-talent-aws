@@ -1,21 +1,23 @@
-import React, { useEffect, useState } from 'react';
+import React, { use, useEffect, useState } from 'react';
 import AdaptiveCard from '@/components/shared/AdaptiveCard';
 import Container from '@/components/shared/Container';
 import { Link, useParams } from 'react-router-dom';
 import useFetch from '../../../hooks/useFetch';
-import { toast } from '@/components/ui';
+import { toast, Tooltip } from '@/components/ui';
 import Notification from '@/components/ui/Notification';
 import { Avatar, Button, Card, Spinner } from '@/components/ui';
 import { JobOfferDetails } from './types';
 import { BsCheck2Circle, BsStar } from 'react-icons/bs';
 import { useUserContext } from '../../../context/userContext';
 import apiService from '../../../services/apiService';
-import { FavoriteJobOffer } from '@prisma/client';
+import { FavoriteJobOffer, JobApplicant } from '@prisma/client';
 
 const JobDetails = () => {
   const { applicant } = useUserContext();
   const { uuid } = useParams();
   const [favoriteId, setFavoriteId] = useState<number | null>(null);
+  const [appliedJobUuid, setAppliedJobUuid] = useState<string | null>(null);
+
   const {
     data: jobDetails,
     error,
@@ -31,22 +33,38 @@ const JobDetails = () => {
       const id = jobDetails.FavoriteJobOffer.find(
         (favorite) => favorite.applicantId === applicant?.id
       )?.id;
-      
+
       setFavoriteId(id ?? null);
     }
   }, [jobDetails]);
 
+  useEffect(() => {
+    if (jobDetails && applicant) {
+      apiService
+        .get<JobApplicant[]>(`/job-applicant?applicantId=${applicant?.id}`)
+        .then((response) => {
+          const uuid = response.find(
+            (job) => job.jobUuid === jobDetails.uuid
+          )?.jobUuid;
+          setAppliedJobUuid(uuid ?? null);
+        });
+    }
+  }, [jobDetails, applicant]);
+
   const handleFavorite = async (jobId: number) => {
     try {
-      const data = await apiService.post<FavoriteJobOffer>('/favorite-job-offer', {
-        applicantId: applicant?.id,
-        jobId,
-      });
+      const data = await apiService.post<FavoriteJobOffer>(
+        '/favorite-job-offer',
+        {
+          applicantId: applicant?.id,
+          jobId,
+        }
+      );
 
       if (!data) {
         throw new Error('No se pudo añadir la oferta a favoritos');
       }
-      
+
       setFavoriteId(data.id);
 
       toast.push(
@@ -95,6 +113,34 @@ const JobDetails = () => {
     }
   };
 
+  const handleApply = async () => {
+    try {
+      const response = await apiService.post('/job-applicant', {
+        applicantId: applicant!.id,
+        jobId: jobDetails!.id,
+        jobUuid: jobDetails!.uuid,
+      });
+
+      if (!response) {
+        throw new Error('No se pudo aplicar a la oferta');
+      }
+
+      toast.push(<Notification type="info">Aplicación enviada</Notification>, {
+        placement: 'top-center',
+      });
+    } catch (error) {
+      console.error(error);
+      toast.push(
+        <Notification type="danger">
+          Error al enviar la aplicación
+        </Notification>,
+        {
+          placement: 'top-center',
+        }
+      );
+    }
+  };
+
   return (
     <Container>
       <div>
@@ -126,14 +172,30 @@ const JobDetails = () => {
         </div>
         <div>
           <div className="flex flex-col items-end gap-2">
-            <Button
-              variant="success"
-              onClick={() => {}}
-              className="w-full flex flex-row items-center justify-center gap-1"
-            >
-              <BsCheck2Circle />
-              Aplicar
-            </Button>
+            {appliedJobUuid ? (
+              <Tooltip
+                wrapperClass="flex w-full"
+                title="Ya has aplicado a esta oferta"
+              >
+                <Button
+                  variant="success"
+                  disabled={true}
+                  className="w-full flex flex-row items-center justify-center gap-1"
+                >
+                  <BsCheck2Circle />
+                  Aplicar
+                </Button>
+              </Tooltip>
+            ) : (
+              <Button
+                variant="success"
+                onClick={() => handleApply()}
+                className="w-full flex flex-row items-center justify-center gap-1"
+              >
+                <BsCheck2Circle />
+                Aplicar
+              </Button>
+            )}
             {favoriteId ? (
               <Button
                 variant="solid"
