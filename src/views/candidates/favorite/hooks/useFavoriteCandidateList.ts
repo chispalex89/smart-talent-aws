@@ -1,8 +1,9 @@
 import useSWR from 'swr';
 import { useFavoriteCandidateListStore } from '../store/favoriteCandidateListStore';
 import type { GetFavoriteCustomersListResponse } from '../types';
-import type { TableQueries } from '@/@types/common';
 import apiService from '../../../../services/apiService';
+import { useUserContext } from '../../../../context/userContext';
+
 import qs from 'qs';
 
 export default function useFavoriteCandidateList() {
@@ -16,6 +17,8 @@ export default function useFavoriteCandidateList() {
     setFilterData,
   } = useFavoriteCandidateListStore((state) => state);
 
+  const { recruiter } = useUserContext();
+
   const filterDataWithoutEmptyValues = Object.entries(filterData).reduce(
     (prev, curr) => {
       if (curr[1].length > 0) {
@@ -26,7 +29,7 @@ export default function useFavoriteCandidateList() {
       }
       return prev;
     },
-    {},
+    {}
   );
 
   // Serialize the tableData and filterData into a query string
@@ -40,17 +43,18 @@ export default function useFavoriteCandidateList() {
     query: tableData.query ? tableData.query : undefined,
 
     ...filterDataWithoutEmptyValues,
+    companyId: recruiter?.companyId,
   });
 
   const { data, error, isLoading, mutate } = useSWR(
     `/company-favorite-applicant?${queryString}`,
     (url) =>
       apiService.get<GetFavoriteCustomersListResponse>(
-        `/company-favorite-applicant?${queryString}`,
+        `/company-favorite-applicant?${queryString}`
       ),
     {
       revalidateOnFocus: false,
-    },
+    }
   );
 
   const favoriteCandidateList = data?.list || [];

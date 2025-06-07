@@ -1,7 +1,6 @@
 import Container from '@/components/shared/Container';
 import AdaptiveCard from '@/components/shared/AdaptiveCard';
 import JobListTable from './components/JobListTable';
-import JobOfferListActionTools from './components/JobListActionTools';
 import JobOfferListTableTools from './components/JobListTableTools';
 import { useState } from 'react';
 import { toast } from '@/components/ui';

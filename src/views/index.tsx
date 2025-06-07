@@ -51,39 +51,6 @@ import JobDetails from './job/JobDetails';
 
 const renderRoutes = (role: string | null, membershipType: string | null) => {
   if (role === 'Recruiter') {
-    if (!membershipType || membershipType === 'Bronce') {
-      <Routes>
-        <Route path="/" element={<BusinessDashboard />} />
-        <Route path="/home" element={<BusinessDashboard />} />
-        <Route path="/job">
-          <Route path="/job/create" element={<JobCreate />} />
-          <Route path="/job/edit/:id" element={<JobCreate />} />
-          <Route path="/job/my-jobs" element={<JobList />} />
-        </Route>
-        <Route path="/candidates">
-          <Route
-            path="/candidates/details/:id"
-            element={<CandidateDetails />}
-          />
-          <Route
-            path="/candidates/favorite"
-            element={<FavoriteCandidateList />}
-          />
-        </Route>
-        <Route path="/membership">
-          <Route path="/membership/plans" element={<Pricing />} />
-        </Route>
-        <Route path="/profile">
-          <Route path="/profile/company" element={<Settings />} />
-        </Route>
-        <Route path="/archive">
-          <Route path="/archive/jobOffers" element={<ArchivedJobList />} />
-          {/* <Route path="/archive/candidates" element={<ArchivedCandidateList />} /> */}
-        </Route>
-        <Route path="/logout" element={<Logout />} />
-        <Route path="/" element={<BusinessDashboard />} />
-      </Routes>;
-    }
     return (
       <Routes>
         <Route path="/" element={<BusinessDashboard />} />
@@ -92,6 +59,7 @@ const renderRoutes = (role: string | null, membershipType: string | null) => {
           <Route path="/job/create" element={<JobCreate />} />
           <Route path="/job/edit/:id" element={<JobCreate />} />
           <Route path="/job/my-jobs" element={<JobList />} />
+          <Route path="/job/:uuid" element={<JobDetails />} />
         </Route>
         <Route path="/candidates">
           <Route
@@ -102,7 +70,9 @@ const renderRoutes = (role: string | null, membershipType: string | null) => {
             path="/candidates/favorite"
             element={<FavoriteCandidateList />}
           />
-          <Route path="/candidates/find" element={<CandidateList />} />
+          {(membershipType && membershipType !== 'Bronce') && (
+            <Route path="/candidates/find" element={<CandidateList />} />
+          )}
         </Route>
         <Route path="/membership">
           <Route path="/membership/plans" element={<Pricing />} />

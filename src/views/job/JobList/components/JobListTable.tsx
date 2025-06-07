@@ -4,7 +4,7 @@ import Tooltip from '@/components/ui/Tooltip';
 import DataTable from '@/components/shared/DataTable';
 import useJobOfferList from '../hooks/useJobOfferList';
 import cloneDeep from 'lodash/cloneDeep';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { TbTrash, TbEdit, TbArchiveFilled, TbRefresh } from 'react-icons/tb';
 import dayjs from 'dayjs';
 import { NumericFormat } from 'react-number-format';
@@ -149,7 +149,7 @@ const JobListTable = ({
         accessorKey: 'name',
         cell: (props) => {
           const row = props.row.original;
-          return <span className="font-semibold">{row.name}</span>;
+          return <Link to={`/job/${row.uuid}`}><span className="font-semibold">{row.name}</span></Link>;
         },
       },
       {

@@ -1,7 +1,7 @@
-import React, { use, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import AdaptiveCard from '@/components/shared/AdaptiveCard';
 import Container from '@/components/shared/Container';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import useFetch from '../../../hooks/useFetch';
 import { toast, Tooltip } from '@/components/ui';
 import Notification from '@/components/ui/Notification';
@@ -13,7 +13,8 @@ import apiService from '../../../services/apiService';
 import { FavoriteJobOffer, JobApplicant } from '@prisma/client';
 
 const JobDetails = () => {
-  const { applicant } = useUserContext();
+  const { applicant, recruiter } = useUserContext();
+  const navigate = useNavigate();
   const { uuid } = useParams();
   const [favoriteId, setFavoriteId] = useState<number | null>(null);
   const [appliedJobUuid, setAppliedJobUuid] = useState<string | null>(null);
@@ -28,7 +29,8 @@ const JobDetails = () => {
     if (
       jobDetails &&
       jobDetails.FavoriteJobOffer &&
-      jobDetails.FavoriteJobOffer.length > 0
+      jobDetails.FavoriteJobOffer.length > 0 &&
+      applicant?.id
     ) {
       const id = jobDetails.FavoriteJobOffer.find(
         (favorite) => favorite.applicantId === applicant?.id
@@ -36,7 +38,7 @@ const JobDetails = () => {
 
       setFavoriteId(id ?? null);
     }
-  }, [jobDetails]);
+  }, [jobDetails, applicant]);
 
   useEffect(() => {
     if (jobDetails && applicant) {
@@ -143,23 +145,44 @@ const JobDetails = () => {
 
   return (
     <Container>
-      <div>
-        <Link
-          to="/job/search"
-          className="flex items-center gap-2 text-blue-600 hover:underline mb-4 dark:text-blue-400 dark:hover:text-blue-300"
-        >
-          <svg width="24" height="24" fill="none" viewBox="0 0 24 24">
-            <path
-              d="M15 19l-7-7 7-7"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
-          Volver a empleos
-        </Link>
-      </div>
+      {applicant && (
+        <div>
+          <Link
+            to="/job/search"
+            className="flex items-center gap-2 text-blue-600 hover:underline mb-4 dark:text-blue-400 dark:hover:text-blue-300"
+          >
+            <svg width="24" height="24" fill="none" viewBox="0 0 24 24">
+              <path
+                d="M15 19l-7-7 7-7"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+            Volver a empleos
+          </Link>
+        </div>
+      )}
+      {recruiter && (
+        <div>
+          <Link
+            to="/job/my-jobs"
+            className="flex items-center gap-2 text-blue-600 hover:underline mb-4 dark:text-blue-400 dark:hover:text-blue-300"
+          >
+            <svg width="24" height="24" fill="none" viewBox="0 0 24 24">
+              <path
+                d="M15 19l-7-7 7-7"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+            Volver a empleos
+          </Link>
+        </div>
+      )}
       <Card bodyClass="flex flex-row items-center justify-between gap-2">
         <div className="flex flex-row items-center justify-between gap-2">
           <Avatar
@@ -172,53 +195,66 @@ const JobDetails = () => {
         </div>
         <div>
           <div className="flex flex-col items-end gap-2">
-            {appliedJobUuid ? (
-              <Tooltip
-                wrapperClass="flex w-full"
-                title="Ya has aplicado a esta oferta"
-              >
-                <Button
-                  variant="success"
-                  disabled={true}
-                  className="w-full flex flex-row items-center justify-center gap-1"
-                >
-                  <BsCheck2Circle />
-                  Aplicar
-                </Button>
-              </Tooltip>
-            ) : (
-              <Button
-                variant="success"
-                onClick={() => handleApply()}
-                className="w-full flex flex-row items-center justify-center gap-1"
-              >
-                <BsCheck2Circle />
-                Aplicar
-              </Button>
+            {applicant && (
+              <>
+                {appliedJobUuid ? (
+                  <Tooltip
+                    wrapperClass="flex w-full"
+                    title="Ya has aplicado a esta oferta"
+                  >
+                    <Button
+                      variant="success"
+                      disabled={true}
+                      className="w-full flex flex-row items-center justify-center gap-1"
+                    >
+                      <BsCheck2Circle />
+                      Aplicar
+                    </Button>
+                  </Tooltip>
+                ) : (
+                  <Button
+                    variant="success"
+                    onClick={() => handleApply()}
+                    className="w-full flex flex-row items-center justify-center gap-1"
+                  >
+                    <BsCheck2Circle />
+                    Aplicar
+                  </Button>
+                )}
+                {favoriteId ? (
+                  <Button
+                    variant="solid"
+                    size="md"
+                    customColorClass={() =>
+                      'border-warning ring-1 ring-warning text-warning hover:bg-warning hover:ring-warning hover:text-white bg-transparent'
+                    }
+                    className="flex items-center justify-center gap-2 w-[150px]"
+                    onClick={() => handleUnfavorite()}
+                  >
+                    <BsStar /> Quitar Favorito
+                  </Button>
+                ) : (
+                  <Button
+                    variant="solid"
+                    size="md"
+                    customColorClass={() =>
+                      'border-warning ring-1 ring-warning text-warning hover:bg-warning hover:ring-warning hover:text-white bg-transparent'
+                    }
+                    className="flex items-center justify-center gap-2 w-[150px]"
+                    onClick={() => handleFavorite(jobDetails?.id || 0)}
+                  >
+                    <BsStar /> Favorito
+                  </Button>
+                )}
+              </>
             )}
-            {favoriteId ? (
+            {recruiter && (
               <Button
+                onClick={() => navigate(`/job/edit/${jobDetails?.uuid}`)}
                 variant="solid"
-                size="md"
-                customColorClass={() =>
-                  'border-warning ring-1 ring-warning text-warning hover:bg-warning hover:ring-warning hover:text-white bg-transparent'
-                }
-                className="flex items-center justify-center gap-2 w-[150px]"
-                onClick={() => handleUnfavorite()}
+                className="text-blue-600 hover:underline dark:text-blue-400 dark:hover:text-blue-300"
               >
-                <BsStar /> Quitar Favorito
-              </Button>
-            ) : (
-              <Button
-                variant="solid"
-                size="md"
-                customColorClass={() =>
-                  'border-warning ring-1 ring-warning text-warning hover:bg-warning hover:ring-warning hover:text-white bg-transparent'
-                }
-                className="flex items-center justify-center gap-2 w-[150px]"
-                onClick={() => handleFavorite(jobDetails?.id || 0)}
-              >
-                <BsStar /> Favorito
+                Editar
               </Button>
             )}
           </div>

@@ -195,6 +195,7 @@ model JobOffer {
   vacancies                    Int
   hiringDate                   DateTime           @map("hiring_date")
   publicationDate              DateTime           @map("publication_date")
+  isPublished                  Boolean            @map("is_published")
   receivesResumesByEmail       Boolean            @map("receives_resumes_by_email")
   status                       String
   companyId                    Int                @map("company_id")
@@ -235,24 +236,26 @@ model JobOffer {
 }
 
 model JobApplicant {
-  id           Int       @id @default(autoincrement())
-  appliedAt    DateTime  @map("applied_at")
+  id           Int        @id @default(autoincrement())
+  appliedAt    DateTime   @map("applied_at")
   selected     Boolean
-  selectedAt   DateTime  @map("selected_at")
+  selectedAt   DateTime?  @map("selected_at")
   reviewed     Boolean
-  reviewedAt   DateTime  @map("reviewed_at")
-  applicantId  Int       @map("applicant_id")
-  jobUuid      String    @map("job_uuid")
-  jobId        Int       @map("job_id")
-  reviewedById Int       @map("reviewed_by_id")
-  selectedById Int       @map("selected_by_id")
-  created_at   DateTime  @default(now())
-  updated_at   DateTime? @updatedAt
+  reviewedAt   DateTime?  @map("reviewed_at")
+  applicantId  Int        @map("applicant_id")
+  jobUuid      String     @map("job_uuid")
+  jobId        Int        @map("job_id")
+  reviewedById Int?       @map("reviewed_by_id")
+  selectedById Int?       @map("selected_by_id")
+  created_at   DateTime   @default(now())
+  updated_at   DateTime?  @updatedAt
   created_by   String
   updated_by   String?
-  applicant    Applicant @relation(fields: [applicantId], references: [id])
-  job          JobOffer  @relation(fields: [jobId], references: [id])
-  reviewed_by  Recruiter @relation(fields: [reviewedById], references: [id])
+  isDeleted    Boolean    @default(false) @map("is_deleted")
+  status       String
+  applicant    Applicant  @relation(fields: [applicantId], references: [id])
+  job          JobOffer   @relation(fields: [jobId], references: [id])
+  reviewed_by  Recruiter? @relation(fields: [reviewedById], references: [id])
 
   @@map("job_applicant")
 }
