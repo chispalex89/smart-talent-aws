@@ -1,50 +1,27 @@
 import Container from '@/components/shared/Container';
 import AdaptiveCard from '@/components/shared/AdaptiveCard';
-import JobListTable from './components/JobListTable';
-import JobOfferListTableTools from './components/JobListTableTools';
+import ArchivedJobListTable from './components/ArchivedJobListTable';
+import JobOfferListTableTools from './components/ArchivedJobListTableTools';
 import { useState } from 'react';
 import { toast } from '@/components/ui';
 import Notification from '@/components/ui/Notification';
-import useJobOfferList from './hooks/useJobOfferList';
+import useJobOfferList from './hooks/useArchivedJobOfferList';
 import ConfirmDialog from '@/components/shared/ConfirmDialog';
 import apiService from '../../../services/apiService';
 
-const JobOfferList = () => {
-  const [deleteJobOfferConfirmationOpen, setDeleteJobOfferConfirmationOpen] =
-    useState(false);
+
+const ArchivedJobOfferList = () => {
+  
   const [archiveJobOfferConfirmationOpen, setArchiveJobOfferConfirmationOpen] =
     useState(false);
 
   const [uuid, setUuid] = useState('');
   const { mutate } = useJobOfferList();
-  const handleConfirmDelete = async () => {
-    try {
-      await apiService.delete(`/job-offer/${uuid}`);
-      toast.push(
-        <Notification type="info">Oferta de empleo eliminada</Notification>,
-        {
-          placement: 'top-center',
-        }
-      );
-    } catch (error) {
-      console.error(error);
-      toast.push(
-        <Notification type="danger">
-          Error al eliminar la oferta de empleo
-        </Notification>,
-        {
-          placement: 'top-center',
-        }
-      );
-    } finally {
-      handleCancel();
-      mutate();
-    }
-  };
 
-  const handleConfirmArchive = async () => {
+
+  const handleConfirmUnArchive = async () => {
     try {
-      await apiService.put(`/job-offer/${uuid}`, { status: 'active' });
+      await apiService.put(`/job-offer/${uuid}`, { status: 'Active' });
       toast.push(
         <Notification type="info">Oferta de empleo restaurada</Notification>,
         {
@@ -67,12 +44,9 @@ const JobOfferList = () => {
     }
   };
 
-  const handleDelete = (uuid: string) => {
-    setDeleteJobOfferConfirmationOpen(true);
-    setUuid(uuid);
-  };
 
-  const handleArchive = (uuid: string) => {
+
+  const handleUnArchive = (uuid: string) => {
     setArchiveJobOfferConfirmationOpen(true);
     setUuid(uuid);
   };
@@ -106,7 +80,6 @@ const JobOfferList = () => {
   };
 
   const handleCancel = () => {
-    setDeleteJobOfferConfirmationOpen(false);
     setArchiveJobOfferConfirmationOpen(false);
     setUuid('');
   };
@@ -117,25 +90,17 @@ const JobOfferList = () => {
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2">
             <h3>Mis Ofertas de Empleo Archivadas</h3>
           </div>
-          <JobOfferListTableTools />
-          <JobListTable
-            handleDelete={handleDelete}
-            handleArchive={handleArchive}
-            handleRepublish={handleRepublish}
+          <JobOfferListTableTools
+
+          />
+          <ArchivedJobListTable
+             
+            handleArchive={handleUnArchive}
           />
         </div>
       </AdaptiveCard>
-      <ConfirmDialog
-        isOpen={deleteJobOfferConfirmationOpen}
-        type="danger"
-        title="Eliminar Oferta de Empleo"
-        onClose={handleCancel}
-        onRequestClose={handleCancel}
-        onCancel={handleCancel}
-        onConfirm={handleConfirmDelete}
-      >
-        <p>¿Está seguro de eliminar la oferta de empleo?</p>
-      </ConfirmDialog>
+
+
       <ConfirmDialog
         isOpen={archiveJobOfferConfirmationOpen}
         type="danger"
@@ -143,7 +108,7 @@ const JobOfferList = () => {
         onClose={handleCancel}
         onRequestClose={handleCancel}
         onCancel={handleCancel}
-        onConfirm={handleConfirmArchive}
+        onConfirm={handleConfirmUnArchive}
       >
         <p>¿Está seguro de restaurar la oferta de empleo archivada?</p>
       </ConfirmDialog>
@@ -151,4 +116,4 @@ const JobOfferList = () => {
   );
 };
 
-export default JobOfferList;
+export default ArchivedJobOfferList;
