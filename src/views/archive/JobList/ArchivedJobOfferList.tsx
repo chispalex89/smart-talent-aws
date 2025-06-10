@@ -21,7 +21,7 @@ const ArchivedJobOfferList = () => {
 
   const handleConfirmUnArchive = async () => {
     try {
-      await apiService.put(`/job-offer/${uuid}`, { status: 'Active' });
+      await apiService.put(`/job-offer/${uuid}`, { status: 'active' });
       toast.push(
         <Notification type="info">Oferta de empleo restaurada</Notification>,
         {

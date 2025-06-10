@@ -57,7 +57,7 @@ const ActionColumn = ({
     navigate(`/job/edit/${row.uuid}`);
   };
 
-  // Add this handler for the restore button
+ 
   const onRestore = (e: React.MouseEvent) => {
     e.stopPropagation(); // Prevents parent click
     handleArchive(row.uuid);
@@ -68,7 +68,7 @@ const ActionColumn = ({
       <Tooltip wrapperClass="flex" title="Restaurar">
         <span
           className="cursor-pointer p-2"
-          onClick={onRestore} // <-- Add this
+          onClick={onRestore} 
         >
           <TbArchiveOff color="#FFD027" />
         </span>
