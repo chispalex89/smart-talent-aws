@@ -7,7 +7,7 @@ import Badge from '@/components/ui/Badge';
 import Select, { Option as DefaultOption } from '@/components/ui/Select';
 import { components } from 'react-select';
 import { Form, FormItem } from '@/components/ui/Form';
-import useJobOfferList from '../hooks/useJobOfferList';
+import useJobOfferList from '../hooks/useArchivedJobOfferList';
 import { TbFilter } from 'react-icons/tb';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';

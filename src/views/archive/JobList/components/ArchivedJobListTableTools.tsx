@@ -1,6 +1,5 @@
-import useJobOfferList from '../hooks/useJobOfferList';
+import useJobOfferList from '../hooks/useArchivedJobOfferList';
 import DebounceInput from '@/components/shared/DebounceInput';
-import JobOfferListTableFilter from './JobListTableFilter';
 import { TbSearch } from 'react-icons/tb';
 import cloneDeep from 'lodash/cloneDeep';
 import type { ChangeEvent } from 'react';

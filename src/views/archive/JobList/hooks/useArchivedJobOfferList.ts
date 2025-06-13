@@ -5,7 +5,7 @@ import qs from 'qs';
 import apiService from '../../../../services/apiService';
 import { useUserContext } from '../../../../context/userContext';
 
-export default function useJobOfferList() {
+export default function useArchivedJobOfferList() {
     const { recruiter } = useUserContext();
   
   const { tableData, filterData, setTableData, setFilterData } =
@@ -28,6 +28,7 @@ export default function useJobOfferList() {
       
     ...filterDataWithoutEmptyValues,
     companyId: recruiter?.companyId,
+    Status:  'Archived'
   });
 
   const { data, error, isLoading, mutate } = useSWR(
