@@ -1,13 +1,13 @@
-import Container from '@/components/shared/Container';
-import AdaptiveCard from '@/components/shared/AdaptiveCard';
-import JobListTable from './components/JobListTable';
-import JobOfferListTableTools from './components/JobListTableTools';
-import { useState } from 'react';
-import { toast } from '@/components/ui';
-import Notification from '@/components/ui/Notification';
-import useJobOfferList from './hooks/useJobOfferList';
-import ConfirmDialog from '@/components/shared/ConfirmDialog';
-import apiService from '../../../services/apiService';
+import Container from "@/components/shared/Container";
+import AdaptiveCard from "@/components/shared/AdaptiveCard";
+import JobListTable from "./components/JobListTable";
+import JobOfferListTableTools from "./components/JobListTableTools";
+import { useState } from "react";
+import { toast } from "@/components/ui";
+import Notification from "@/components/ui/Notification";
+import useJobOfferList from "./hooks/useJobOfferList";
+import ConfirmDialog from "@/components/shared/ConfirmDialog";
+import apiService from "../../../services/apiService";
 
 const AppliedJobOfferList = () => {
   const [deleteJobOfferConfirmationOpen, setDeleteJobOfferConfirmationOpen] =
@@ -15,7 +15,7 @@ const AppliedJobOfferList = () => {
   const [archiveJobOfferConfirmationOpen, setArchiveJobOfferConfirmationOpen] =
     useState(false);
 
-  const [uuid, setUuid] = useState('');
+  const [uuid, setUuid] = useState("");
   const { mutate } = useJobOfferList();
   const handleConfirmDelete = async () => {
     try {
@@ -23,7 +23,7 @@ const AppliedJobOfferList = () => {
       toast.push(
         <Notification type="info">Oferta de empleo eliminada</Notification>,
         {
-          placement: 'top-center',
+          placement: "top-center",
         }
       );
     } catch (error) {
@@ -33,7 +33,7 @@ const AppliedJobOfferList = () => {
           Error al eliminar la oferta de empleo
         </Notification>,
         {
-          placement: 'top-center',
+          placement: "top-center",
         }
       );
     } finally {
@@ -44,11 +44,11 @@ const AppliedJobOfferList = () => {
 
   const handleConfirmArchive = async () => {
     try {
-      await apiService.put(`/job-offer/${uuid}`, { status: 'archived' });
+      await apiService.put(`/job-offer/${uuid}`, { status: "archived" });
       toast.push(
         <Notification type="info">Oferta de empleo archivada</Notification>,
         {
-          placement: 'top-center',
+          placement: "top-center",
         }
       );
     } catch (error) {
@@ -58,7 +58,7 @@ const AppliedJobOfferList = () => {
           Error al archivar la oferta de empleo
         </Notification>,
         {
-          placement: 'top-center',
+          placement: "top-center",
         }
       );
     } finally {
@@ -80,13 +80,13 @@ const AppliedJobOfferList = () => {
   const handleRepublish = async (uuid: string) => {
     try {
       await apiService.put(`/job-offer/${uuid}`, {
-        status: 'active',
+        status: "active",
         publicationDate: new Date(),
       });
       toast.push(
         <Notification type="info">Oferta de empleo republicada</Notification>,
         {
-          placement: 'top-center',
+          placement: "top-center",
         }
       );
     } catch (error) {
@@ -96,7 +96,7 @@ const AppliedJobOfferList = () => {
           Error al republicar la oferta de empleo
         </Notification>,
         {
-          placement: 'top-center',
+          placement: "top-center",
         }
       );
     } finally {
@@ -108,7 +108,7 @@ const AppliedJobOfferList = () => {
   const handleCancel = () => {
     setDeleteJobOfferConfirmationOpen(false);
     setArchiveJobOfferConfirmationOpen(false);
-    setUuid('');
+    setUuid("");
   };
   return (
     <Container>
@@ -118,35 +118,9 @@ const AppliedJobOfferList = () => {
             <h3>Aplicaciones de Empleo</h3>
           </div>
           <JobOfferListTableTools />
-          <JobListTable
-            handleDelete={handleDelete}
-            handleArchive={handleArchive}
-            handleRepublish={handleRepublish}
-          />
+          <JobListTable />
         </div>
       </AdaptiveCard>
-      <ConfirmDialog
-        isOpen={deleteJobOfferConfirmationOpen}
-        type="danger"
-        title="Eliminar Oferta de Empleo"
-        onClose={handleCancel}
-        onRequestClose={handleCancel}
-        onCancel={handleCancel}
-        onConfirm={handleConfirmDelete}
-      >
-        <p>¿Está seguro de eliminar la oferta de empleo?</p>
-      </ConfirmDialog>
-      <ConfirmDialog
-        isOpen={archiveJobOfferConfirmationOpen}
-        type="danger"
-        title="Archivar Oferta de Empleo"
-        onClose={handleCancel}
-        onRequestClose={handleCancel}
-        onCancel={handleCancel}
-        onConfirm={handleConfirmArchive}
-      >
-        <p>¿Está seguro de archivar la oferta de empleo?</p>
-      </ConfirmDialog>
     </Container>
   );
 };

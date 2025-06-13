@@ -1,9 +1,8 @@
-import useJobOfferList from '../hooks/useJobOfferList';
-import DebounceInput from '@/components/shared/DebounceInput';
-import JobOfferListTableFilter from './JobListTableFilter';
-import { TbSearch } from 'react-icons/tb';
-import cloneDeep from 'lodash/cloneDeep';
-import type { ChangeEvent } from 'react';
+import useJobOfferList from "../hooks/useJobOfferList";
+import DebounceInput from "@/components/shared/DebounceInput";
+import { TbSearch } from "react-icons/tb";
+import cloneDeep from "lodash/cloneDeep";
+import type { ChangeEvent } from "react";
 
 const JobOfferListTableTools = () => {
   const { tableData, setTableData } = useJobOfferList();
@@ -13,11 +12,11 @@ const JobOfferListTableTools = () => {
     const newTableData = cloneDeep(tableData);
     newTableData.query = val;
     newTableData.pageIndex = 1;
-    if (typeof val === 'string' && val.length > 1) {
+    if (typeof val === "string" && val.length > 1) {
       setTableData(newTableData);
     }
 
-    if (typeof val === 'string' && val.length === 0) {
+    if (typeof val === "string" && val.length === 0) {
       setTableData(newTableData);
     }
   };
@@ -29,7 +28,6 @@ const JobOfferListTableTools = () => {
         suffix={<TbSearch className="text-lg" />}
         onChange={handleInputChange}
       />
-      <JobOfferListTableFilter />
     </div>
   );
 };
