@@ -142,6 +142,37 @@ const JobListTable = ({
     }
   };
 
+  const updatePublishStatus = async (job: Job, checked: boolean) => {
+    try {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { id, jobApplicants, ...rest } = job;
+      const updatedJob: Omit<JobOffer, 'id'> = {
+        ...rest,
+        isPublished: checked,
+      };
+      await apiService.post(`/job-offer`, updatedJob);
+      toast.push(
+        <Notification type="success">
+          ¡Oferta de Empleo Actualizada!
+        </Notification>,
+        {
+          placement: 'top-center',
+        }
+      );
+      mutate();
+    } catch (error) {
+      console.error(error);
+      toast.push(
+        <Notification type="danger">
+          ¡Error al actualizar el empleo!
+        </Notification>,
+        {
+          placement: 'top-center',
+        }
+      );
+    }
+  };
+
   const columns: ColumnDef<Job>[] = useMemo(
     () => [
       {
@@ -149,7 +180,11 @@ const JobListTable = ({
         accessorKey: 'name',
         cell: (props) => {
           const row = props.row.original;
-          return <Link to={`/job/${row.uuid}`}><span className="font-semibold">{row.name}</span></Link>;
+          return (
+            <Link to={`/job/${row.uuid}`}>
+              <span className="font-semibold">{row.name}</span>
+            </Link>
+          );
         },
       },
       {
@@ -184,15 +219,14 @@ const JobListTable = ({
         header: 'Status',
         accessorKey: 'status',
         cell: (props) => {
-          const { status } = props.row.original;
+          const { isPublished } = props.row.original;
           return (
-            <Tag className={jobOfferStatusColor[status].bgClass}>
-              <span
-                className={`capitalize font-semibold ${jobOfferStatusColor[status].textClass}`}
-              >
-                {jobOfferStatusColor[status].label}
-              </span>
-            </Tag>
+            <Switcher
+              checked={isPublished}
+              checkedContent="Publicado"
+              unCheckedContent="No Publicado"
+              onChange={(checked) => updatePublishStatus(props.row.original, checked)}
+            />
           );
         },
       },
