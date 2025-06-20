@@ -66,7 +66,7 @@ const DocumentStatusList = () => {
         mutate();
         toast.push(
           <Notification type="info">
-            Document type actualizado correctamente
+            Documento de identifcación actualizado correctamente
           </Notification>,
           {
             placement: 'top-center',
