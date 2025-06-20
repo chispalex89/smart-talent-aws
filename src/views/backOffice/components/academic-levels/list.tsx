@@ -38,14 +38,14 @@ const AcademicLevelList = () => {
       mutate();
       toast.push(
         <Notification type="info">
-          Nivel académico eliminada correctamente
+          Nivel académico eliminado correctamente
         </Notification>,
         {
           placement: 'top-center',
         }
       );
     } catch (error) {
-      console.error('Error deleting a driver license :', error);
+      console.error('Error deleting a academic state :', error);
       toast.push(
         <Notification type="danger">
           Error al eliminar el nivel académico
@@ -113,7 +113,7 @@ const AcademicLevelList = () => {
     () => [
       {
         accessorKey: 'name',
-        header: 'Departamento',
+        header: 'Nivel académico',
         cell: (info) => info.getValue(),
       },
       {

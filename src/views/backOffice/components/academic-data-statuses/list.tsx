@@ -4,7 +4,7 @@ import DataTable, {
   ColumnDef,
   OnSortParam,
 } from '@/components/shared/DataTable';
-import { useAcademicHistoryStatusList } from '../../hooks';
+import  { useAcademicHistoryStatusList } from '../../hooks';
 import { renderIsDeletedToggle } from '../../../../helpers/renderActiveToggle';
 import { Card, Drawer, toast } from '@/components/ui';
 import { AcademicDataStatus } from '@prisma/client';
@@ -12,8 +12,9 @@ import GenericForm from '../generic-form';
 import ActionTableColumn from '../generic-form/action-table-column';
 import apiService from '../../../../services/apiService';
 import Notification from '@/components/ui/Notification';
+import { D } from 'framer-motion/dist/types.d-O7VGXDJe';
 
-const AcademicDataList = () => {
+const AcademicDataStatusList = () => {
   const { list, total, tableData, isLoading, setTableData, mutate } =
     useAcademicHistoryStatusList();
 
@@ -21,43 +22,15 @@ const AcademicDataList = () => {
     {} as AcademicDataStatus
   );
   const [isDrawerOpen, setIsDrawerOpen] = React.useState(false);
-
   const handleEdit = (row: AcademicDataStatus) => {
-    setSelectedRow(row);
+  setSelectedRow(row);
     setIsDrawerOpen(true);
   };
 
   const handleStatusChange = async (
     row: AcademicDataStatus,
     isDeleted: boolean
-  ) => {
-    try {
-      const updatedRow = { ...row, isDeleted };
-      await apiService.put(`/academic-status/${row.id}`, updatedRow);
-      mutate();
-    } catch (error) {
-      console.error('Error updating academic data status:', error);
-      toast.push(
-        <Notification type="danger">
-          Error al actualizar el estado del historial académico
-        </Notification>,
-        {
-          placement: 'top-center',
-        }
-      );
-    } finally {
-      setSelectedRow({} as AcademicDataStatus);
-    }
-    setIsDrawerOpen(false);
-    toast.push(
-      <Notification type="info">
-        Estado de historial académico actualizado correctamente
-      </Notification>,
-      {
-        placement: 'top-center',
-      }
-    );
-  };
+  ) => {};
 
   const handleDelete = async (row: AcademicDataStatus) => {
     try {
@@ -65,17 +38,17 @@ const AcademicDataList = () => {
       mutate();
       toast.push(
         <Notification type="info">
-          Estado de historial académico eliminado correctamente
+          Estado académico eliminado correctamente
         </Notification>,
         {
           placement: 'top-center',
         }
       );
     } catch (error) {
-      console.error('Error deleting academic data status:', error);
+      console.error('Error deleting a academic state :', error);
       toast.push(
         <Notification type="danger">
-          Error al eliminar el estado del historial académico
+          Error al eliminar el estado académico
         </Notification>,
         {
           placement: 'top-center',
@@ -87,33 +60,33 @@ const AcademicDataList = () => {
     }
   };
 
-  const handleApply = async (updatedRow: AcademicDataStatus) => {
-    try {
-      await apiService.put(`/academic-status/${selectedRow.id}`, updatedRow);
-      mutate();
-      toast.push(
-        <Notification type="info">
-          Estado de historial académico actualizado correctamente
-        </Notification>,
-        {
-          placement: 'top-center',
-        }
-      );
-    } catch (error) {
-      console.error('Error updating academic data status:', error);
-      toast.push(
-        <Notification type="danger">
-          Error al actualizar el estado del historial académico
-        </Notification>,
-        {
-          placement: 'top-center',
-        }
-      );
-    } finally {
-      setIsDrawerOpen(false);
-      setSelectedRow({} as AcademicDataStatus);
-    }
-  };
+    const handleApply = async (updatedRow: AcademicDataStatus) => {
+      try {
+        await apiService.put(`/academic-status/${selectedRow.id}`, updatedRow);
+        mutate();
+        toast.push(
+          <Notification type="info">
+            Estado academico actualizado correctamente
+          </Notification>,
+          {
+            placement: 'top-center',
+          }
+        );
+      } catch (error) {
+        console.error('Error updating State:', error);
+        toast.push(
+          <Notification type="danger">
+            Error al actualizar el estado académico
+          </Notification>,
+          {
+            placement: 'top-center',
+          }
+        );
+      } finally {
+        setIsDrawerOpen(false);
+        setSelectedRow({} as AcademicDataStatus);
+      }
+    };
 
   const handlePaginationChange = (page: number) => {
     const newTableData = cloneDeep(tableData);
@@ -140,7 +113,7 @@ const AcademicDataList = () => {
     () => [
       {
         accessorKey: 'name',
-        header: 'Estado de Historial Académico',
+        header: 'Estado de historial académico',
         cell: (info) => info.getValue(),
       },
       {
@@ -152,9 +125,7 @@ const AcademicDataList = () => {
         accessorKey: 'isDeleted',
         header: 'Estado',
         cell: (info) =>
-          renderIsDeletedToggle(info.getValue() as boolean, (checked) =>
-            handleStatusChange(info.row.original as AcademicDataStatus, checked)
-          ),
+          renderIsDeletedToggle(info.getValue() as boolean, () => {}),
       },
       {
         accessorKey: 'created_at',
@@ -212,7 +183,7 @@ const AcademicDataList = () => {
       <Drawer
         isOpen={isDrawerOpen}
         onClose={() => setIsDrawerOpen(false)}
-        title="Detalles de Estado de Historial Académico"
+        title="Detalles del estado académico"
         closable={true}
       >
         <GenericForm
@@ -221,11 +192,11 @@ const AcademicDataList = () => {
           onCancel={() => setIsDrawerOpen(false)}
           submitButtonText="Guardar Cambios"
           cancelButtonText="Cancelar"
-          subTitle="Complete los detalles del estado de historial académico"
+          subTitle="Complete los detalles del estado académico"
         ></GenericForm>
       </Drawer>
     </>
   );
 };
 
-export default AcademicDataList;
+export default AcademicDataStatusList;
