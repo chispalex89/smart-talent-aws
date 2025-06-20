@@ -45,7 +45,7 @@ const GenderStatusList = () => {
         }
       );
     } catch (error) {
-      console.error('Error deleting gender status:', error);
+      console.error('Error deleting gender :', error);
       toast.push(
         <Notification type="danger">
           Error al eliminar el género
