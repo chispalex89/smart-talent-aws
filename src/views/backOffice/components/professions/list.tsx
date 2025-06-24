@@ -184,7 +184,7 @@ const ProfessionList = () => {
       <Drawer
         isOpen={isDrawerOpen}
         onClose={() => setIsDrawerOpen(false)}
-        title="Detalles del Documento de la profesión"
+        title="Detalles de la profesión"
         closable={true}
       >
         <GenericForm
