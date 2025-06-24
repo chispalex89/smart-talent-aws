@@ -45,7 +45,7 @@ const StateStatusList = () => {
         }
       );
     } catch (error) {
-      console.error('Error deleting gender :', error);
+      console.error('Error deleting state :', error);
       toast.push(
         <Notification type="danger">
           Error al eliminar el estado
@@ -113,7 +113,7 @@ const StateStatusList = () => {
     () => [
       {
         accessorKey: 'name',
-        header: 'Género',
+        header: 'Departamento',
         cell: (info) => info.getValue(),
       },
       {
