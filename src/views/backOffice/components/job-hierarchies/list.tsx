@@ -122,7 +122,7 @@ const JobHierarchyList = () => {
         cell: (info) => info.getValue(),
       },
       {
-        accessorKey: 'isDeleted',
+        accessorKey: 'status',
         header: 'Estado',
         cell: (info) =>
           renderIsDeletedToggle(info.getValue() as boolean, () => {}),

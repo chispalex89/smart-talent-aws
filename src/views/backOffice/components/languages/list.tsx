@@ -6,12 +6,87 @@ import DataTable, {
 } from '@/components/shared/DataTable';
 import { useLanguageSkillList } from '../../hooks';
 import { renderIsDeletedToggle } from '../../../../helpers/renderActiveToggle';
-import { Card } from '@/components/ui';
+import { Card, Drawer, toast } from '@/components/ui';
 import { Language } from '@prisma/client';
+import GenericForm from '../generic-form';
+import ActionTableColumn from '../generic-form/action-table-column';
+import apiService from '../../../../services/apiService';
+import Notification from '@/components/ui/Notification';
+import { D } from 'framer-motion/dist/types.d-O7VGXDJe';
 
 const LanguageList = () => {
   const { list, total, tableData, isLoading, setTableData, mutate } =
     useLanguageSkillList();
+
+  const [selectedRow, setSelectedRow] = React.useState<Language>(
+    {} as Language
+  );
+  const [isDrawerOpen, setIsDrawerOpen] = React.useState(false);
+  const handleEdit = (row: Language) => {
+    setSelectedRow(row);
+    setIsDrawerOpen(true);
+  };
+
+  const handleStatusChange = async (
+    row: Language,
+    isDeleted: boolean
+  ) => {};
+
+  const handleDelete = async (row: Language) => {
+    try {
+      await apiService.delete(`/language/${row.id}`);
+      mutate();
+      toast.push(
+        <Notification type="info">
+         Lenguaje eliminado correctamente
+        </Notification>,
+        {
+          placement: 'top-center',
+        }
+      );
+    } catch (error) {
+      console.error('Error deleting language:', error);
+      toast.push(
+        <Notification type="danger">
+          Error al eliminar el lenguaje
+        </Notification>,
+        {
+          placement: 'top-center',
+        }
+      );
+    } finally {
+      setSelectedRow({} as Language);
+      setIsDrawerOpen(false);
+    }
+  };
+
+    const handleApply = async (updatedRow: Language) => {
+      try {
+        await apiService.put(`/language/${selectedRow.id}`, updatedRow);
+        mutate();
+        toast.push(
+          <Notification type="info">
+            Language actualizado correctamente
+          </Notification>,
+          {
+            placement: 'top-center',
+          }
+        );
+      } catch (error) {
+        console.error('Error updating Language:', error);
+        toast.push(
+          <Notification type="danger">
+            Error al actualizar el estado del Language
+          </Notification>,
+          {
+            placement: 'top-center',
+          }
+        );
+      } finally {
+        setIsDrawerOpen(false);
+        setSelectedRow({} as Language);
+      }
+    };
 
   const handlePaginationChange = (page: number) => {
     const newTableData = cloneDeep(tableData);
@@ -38,7 +113,7 @@ const LanguageList = () => {
     () => [
       {
         accessorKey: 'name',
-        header: 'Idioma',
+        header: 'Tipo de Contrato',
         cell: (info) => info.getValue(),
       },
       {
@@ -72,28 +147,58 @@ const LanguageList = () => {
             day: '2-digit',
           }),
       },
+      {
+        id: 'actions',
+        header: 'Acciones',
+        cell: (info) => (
+          <ActionTableColumn
+            row={info.row.original as Language}
+            onEdit={handleEdit}
+            onDelete={handleDelete}
+          />
+        ),
+      },
+
     ],
     []
   );
 
   return (
-    <Card>
-      <DataTable
-        columns={columns}
-        data={list}
-        noData={!isLoading && list.length === 0}
-        loading={isLoading}
-        pagingData={{
-          total: total,
-          pageIndex: tableData.pageIndex as number,
-          pageSize: tableData.pageSize as number,
-        }}
-        onPaginationChange={handlePaginationChange}
-        onSelectChange={handleSelectChange}
-        onSort={handleSort}
-      />
-    </Card>
+    <>
+      <Card>
+        <DataTable
+          columns={columns}
+          data={list}
+          noData={!isLoading && list.length === 0}
+          loading={isLoading}
+          pagingData={{
+            total: total,
+            pageIndex: tableData.pageIndex as number,
+            pageSize: tableData.pageSize as number,
+          }}
+          onPaginationChange={handlePaginationChange}
+          onSelectChange={handleSelectChange}
+          onSort={handleSort}
+        />
+      </Card>
+      <Drawer
+        isOpen={isDrawerOpen}
+        onClose={() => setIsDrawerOpen(false)}
+        title="Detalles del idioma"
+        closable={true}
+      >
+        <GenericForm
+          initialValues={selectedRow as Language}          
+          onSubmit={(item) => handleApply(item)}
+          onCancel={() => setIsDrawerOpen(false)}
+          submitButtonText="Guardar Cambios"
+          cancelButtonText="Cancelar"
+          subTitle="Complete los detalles del idioma"
+        ></GenericForm>
+      </Drawer>
+    </>
   );
 };
 
 export default LanguageList;
+ 
