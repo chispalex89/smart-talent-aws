@@ -4,14 +4,89 @@ import DataTable, {
   ColumnDef,
   OnSortParam,
 } from '@/components/shared/DataTable';
-import { Role } from '@prisma/client';
-import { useRoleList } from '../../hooks';
+import  { useRoleList } from '../../hooks';
 import { renderIsDeletedToggle } from '../../../../helpers/renderActiveToggle';
-import { Card } from '@/components/ui';
+import { Card, Drawer, toast } from '@/components/ui';
+import { Role } from '@prisma/client';
+import GenericForm from '../generic-form';
+import ActionTableColumn from '../generic-form/action-table-column';
+import apiService from '../../../../services/apiService';
+import Notification from '@/components/ui/Notification';
+import { D } from 'framer-motion/dist/types.d-O7VGXDJe';
 
 const RoleList = () => {
   const { list, total, tableData, isLoading, setTableData, mutate } =
     useRoleList();
+
+  const [selectedRow, setSelectedRow] = React.useState<Role>(
+    {} as Role
+  );
+  const [isDrawerOpen, setIsDrawerOpen] = React.useState(false);
+  const handleEdit = (row: Role) => {
+    setSelectedRow(row);
+    setIsDrawerOpen(true);
+  };
+
+  const handleStatusChange = async (
+    row: Role,
+    isDeleted: boolean
+  ) => {};
+
+  const handleDelete = async (row: Role) => {
+    try {
+      await apiService.delete(`/role/${row.id}`);
+      mutate();
+      toast.push(
+        <Notification type="info">
+          Rol eliminado correctamente
+        </Notification>,
+        {
+          placement: 'top-center',
+        }
+      );
+    } catch (error) {
+      console.error('Error deleting rol:', error);
+      toast.push(
+        <Notification type="danger">
+          Error al eliminar el rol
+        </Notification>,
+        {
+          placement: 'top-center',
+        }
+      );
+    } finally {
+      setSelectedRow({} as Role);
+      setIsDrawerOpen(false);
+    }
+  };
+
+    const handleApply = async (updatedRow: Role) => {
+      try {
+        await apiService.put(`/role/${selectedRow.id}`, updatedRow);
+        mutate();
+        toast.push(
+          <Notification type="info">
+            Rol actualizado correctamente
+          </Notification>,
+          {
+            placement: 'top-center',
+          }
+        );
+      } catch (error) {
+        console.error('Error updating rol:', error);
+        toast.push(
+          <Notification type="danger">
+            Error al actualizar el rol
+          </Notification>,
+          {
+            placement: 'top-center',
+          }
+        );
+      } finally {
+        setIsDrawerOpen(false);
+        setSelectedRow({} as Role);
+      }
+    };
 
   const handlePaginationChange = (page: number) => {
     const newTableData = cloneDeep(tableData);
@@ -38,7 +113,7 @@ const RoleList = () => {
     () => [
       {
         accessorKey: 'name',
-        header: 'Título del rol',
+        header: 'Rol',
         cell: (info) => info.getValue(),
       },
       {
@@ -49,7 +124,8 @@ const RoleList = () => {
       {
         accessorKey: 'isDeleted',
         header: 'Estado',
-        cell: (info) => renderIsDeletedToggle(info.getValue() as boolean, () => {}),
+        cell: (info) =>
+          renderIsDeletedToggle(info.getValue() as boolean, () => {}),
       },
       {
         accessorKey: 'created_at',
@@ -71,27 +147,55 @@ const RoleList = () => {
             day: '2-digit',
           }),
       },
+      {
+        header: '',
+        id: 'action',
+        cell: (props) => (
+          <ActionTableColumn
+            row={props.row.original}
+            onEdit={handleEdit}
+            onDelete={handleDelete}
+          />
+        ),
+      },
     ],
     []
   );
 
   return (
-    <Card>
-      <DataTable
-        columns={columns}
-        data={list}
-        noData={!isLoading && list.length === 0}
-        loading={isLoading}
-        pagingData={{
-          total: total,
-          pageIndex: tableData.pageIndex as number,
-          pageSize: tableData.pageSize as number,
-        }}
-        onPaginationChange={handlePaginationChange}
-        onSelectChange={handleSelectChange}
-        onSort={handleSort}
-      />
-    </Card>
+    <>
+      <Card>
+        <DataTable
+          columns={columns}
+          data={list}
+          noData={!isLoading && list.length === 0}
+          loading={isLoading}
+          pagingData={{
+            total: total,
+            pageIndex: tableData.pageIndex as number,
+            pageSize: tableData.pageSize as number,
+          }}
+          onPaginationChange={handlePaginationChange}
+          onSelectChange={handleSelectChange}
+          onSort={handleSort}
+        />
+      </Card>
+      <Drawer
+        isOpen={isDrawerOpen}
+        onClose={() => setIsDrawerOpen(false)}
+        title="Detalles del rol"
+        closable={true}
+      >
+        <GenericForm
+          initialValues={selectedRow as Role}
+          onSubmit={(item) => handleApply(item)}
+          onCancel={() => setIsDrawerOpen(false)}
+          submitButtonText="Guardar Cambios"
+          cancelButtonText="Cancelar"
+          subTitle="Complete los detalles del rol"
+        ></GenericForm>
+      </Drawer>
+    </>
   );
 };
 

@@ -184,7 +184,7 @@ const GenderPreferenceStatusList = () => {
       <Drawer
         isOpen={isDrawerOpen}
         onClose={() => setIsDrawerOpen(false)}
-        title="Detalles del Género"
+        title="Detalles de Preferencia de género"
         closable={true}
       >
         <GenericForm
@@ -193,7 +193,7 @@ const GenderPreferenceStatusList = () => {
           onCancel={() => setIsDrawerOpen(false)}
           submitButtonText="Guardar Cambios"
           cancelButtonText="Cancelar"
-          subTitle="Complete los detalles de género"
+          subTitle="Complete los detalles de la preferencia de género"
         ></GenericForm>
       </Drawer>
     </>
