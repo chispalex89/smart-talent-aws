@@ -93,8 +93,8 @@ const BackOfficeDashboard = () => {
           />
         </Card>
         <Card className="bg-white p-4 rounded shadow">
-          <h2 className="text-lg font-semibold">Empleos Publicados</h2>
-          <p className="text-2xl">{data?.publishedJobOffers || 0}</p>
+          <h2 className="text-lg font-semibold">Empleos Totales</h2>
+          <p className="text-2xl">{data?.activeJobOffers || 0}</p>
           <Chart
             type="donut"
             series={[
