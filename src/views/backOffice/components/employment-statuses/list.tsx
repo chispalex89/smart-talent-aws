@@ -12,8 +12,7 @@ import GenericForm from '../generic-form';
 import ActionTableColumn from '../generic-form/action-table-column';
 import apiService from '../../../../services/apiService';
 import Notification from '@/components/ui/Notification';
-import { D } from 'framer-motion/dist/types.d-O7VGXDJe';
-import { Job } from 'src/views/archive/JobList/types';
+
  
 const EmploymentStatusesList = () => {
   const { list, total, tableData, isLoading, setTableData, mutate } =
