@@ -34,11 +34,6 @@ model User {
 
 model Admin {
   id         Int       @id @default(autoincrement())
-  position   String?
-  phone      String
-  ext        String?
-  phone2     String?
-  ext2       String?
   userId     Int       @map("user_id")
   status     String
   isDeleted  Boolean   @default(false) @map("is_deleted")
@@ -55,6 +50,12 @@ model Recruiter {
   id                     Int            @id @default(autoincrement())
   userId                 Int            @map("user_id")
   companyId              Int            @map("company_id")
+  position               String?
+  phone                  String?
+  ext                    String?
+  phone2                 String?
+  ext2                   String?
+  isAdmin                Boolean        @default(false) @map("is_admin")
   status                 String
   isDeleted              Boolean        @default(false) @map("is_deleted")
   created_at             DateTime       @default(now())

@@ -1,9 +1,4 @@
-export type View =
-  | 'profile'
-  | 'security'
-  | 'notification'
-  | 'billing'
-  | 'integration';
+export type View = 'profile' | 'security' | 'company' | 'billing';
 
 export type CreditCard = {
   cardHolderName: string;
@@ -16,16 +11,6 @@ export type CreditCard = {
 
 export type CreditCardInfo = { cardId: string } & CreditCard;
 
-export type Integration = {
-  id: string;
-  name: string;
-  desc: string;
-  img: string;
-  type: string;
-  active: boolean;
-  installed?: boolean;
-};
-
 export type GetSettingsProfileResponse = {
   id: string;
   name: string;
@@ -34,13 +19,6 @@ export type GetSettingsProfileResponse = {
   email: string;
   img: string;
   phone: string;
-};
-
-export type GetSettingsNotificationResponse = {
-  email: string[];
-  desktop: boolean;
-  unreadMessageBadge: boolean;
-  notifymeAbout: string;
 };
 
 export type GetSettingsBillingResponse = {
@@ -61,4 +39,13 @@ export type GetSettingsBillingResponse = {
   };
 };
 
-export type GetSettingsIntegrationResponse = Integration[];
+export type GetSettingsCompanyResponse = {
+  id: string;
+  name: string;
+  logo: string;
+  address: string;
+  phone: string;
+  email: string;
+  website: string;
+  description: string;
+};

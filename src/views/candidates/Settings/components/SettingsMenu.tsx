@@ -11,7 +11,7 @@ import {
   TbMessageLanguage,
 } from 'react-icons/tb';
 import type { View } from '../types';
-import type { ReactNode } from 'react';
+import { useEffect, type ReactNode } from 'react';
 
 const { MenuItem } = Menu;
 
@@ -45,12 +45,17 @@ export const SettingsMenu = ({ onChange }: { onChange?: () => void }) => {
 
   const { currentView, setCurrentView } = useSettingsStore();
 
-  const currentPath = query.get('category') || query.get('label') || 'inbox';
+  const currentPath = query.get('category') || 'profile';
 
   const handleSelect = (value: View) => {
     setCurrentView(value);
+    query.set('category', value);
     onChange?.();
   };
+
+  useEffect(() => {
+    setCurrentView(currentPath as View);
+  }, [currentPath]);
 
   return (
     <div className="flex flex-col justify-between h-full">

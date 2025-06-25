@@ -31,7 +31,7 @@ const StatisticCard = ({
       className={classNames(
         'rounded-2xl p-4 flex flex-col justify-center',
         onClick ? 'cursor-pointer' : '',
-        className,
+        className
       )}
       onClick={onClick}
     >
@@ -90,7 +90,15 @@ const DashboardOverview = ({ data }: DashboardOverviewData) => {
               <div className={classNames('heading-text font-bold mb-1')}>
                 Fecha de expiración:{' '}
                 {data.membership.expirationDate
-                  ? new Date(data.membership.expirationDate).toUTCString()
+                  ? new Date(data.membership.expirationDate).toLocaleString(
+                      'es-GT',
+                      {
+                        timeZone: 'America/Guatemala',
+                        year: 'numeric',
+                        month: '2-digit',
+                        day: '2-digit',
+                      }
+                    )
                   : 'Nunca'}
               </div>
             </div>

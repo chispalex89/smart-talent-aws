@@ -153,8 +153,9 @@ const AcademicDataStatusList = () => {
         cell: (props) => (
           <ActionTableColumn
             row={props.row.original}
+            onActivate={props.row.original.isDeleted ? () => {} : undefined}
             onEdit={handleEdit}
-            onDelete={handleDelete}
+            onDelete={props.row.original.isDeleted ? undefined : handleDelete}
           />
         ),
       },
