@@ -100,7 +100,7 @@ const renderRoutes = (role: string | null, membershipType: string | null) => {
         <Route path="/profile/applicant" element={<ApplicantSettings />} />
         <Route path="/account" element={<ChangePassword />} />
         <Route path="/job">
-          <Route path="/job/AppliedJobList" element={<AppliedJobOfferList />} />
+          <Route path="/job/my-jobs" element={<AppliedJobOfferList />} />
           <Route path="/job/favorite" element={<JobList />} />
           <Route path="/job/search" element={<JobOfferSearch />} />
           <Route path="/job/:uuid" element={<JobDetails />} />
