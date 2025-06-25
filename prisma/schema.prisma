@@ -90,6 +90,8 @@ model Applicant {
   academicData              AcademicData[]
   languageSkillsData        LanguageSkillsData[]
   softwareSkillsData        SoftwareSkillsData[]
+  applicantArchivedCompanies CompanyArchivedApplicant[]
+
 
   @@map("applicant")
 }
@@ -168,6 +170,7 @@ model Company {
   recruiters                  Recruiter[]
   jobOffers                   JobOffer[]
   Membership                  Membership[]
+  company_archived_applicants CompanyArchivedApplicant[]
 
   @@map("company")
 }
@@ -395,7 +398,20 @@ model JobPreferences {
 
   @@map("job_preference")
 }
+model CompanyArchivedApplicant{
+  id          Int       @id @default(autoincrement())
+  applicantId Int       @map("applicant_id")
+  companyId   Int       @map("company_id")
+  archived_at DateTime  @default(now()) @map("archived_at")
+  created_at  DateTime  @default(now())
+  updated_at  DateTime? @updatedAt
+  created_by  String
+  updated_by  String?
+  applicant   Applicant @relation(fields: [applicantId], references: [id])
+  company     Company   @relation(fields: [companyId], references: [id])
 
+  @@map("company_archived_applicant")
+}
 model CompanyFavoriteApplicant {
   id          Int       @id @default(autoincrement())
   applicantId Int       @map("applicant_id")
@@ -760,6 +776,7 @@ model MembershipType {
   created_by  String
   updated_by  String?
   isDeleted   Boolean      @default(false) @map("is_deleted")
+  status      String     @default("active")
   features    String[]
   membership  Membership[]
 
