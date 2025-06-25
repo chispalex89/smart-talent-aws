@@ -460,6 +460,7 @@ model Membership {
 
 model Role {
   id               Int              @id @default(autoincrement())
+  status           String           @default("active")
   name             String
   description      String
   created_at       DateTime         @default(now())
