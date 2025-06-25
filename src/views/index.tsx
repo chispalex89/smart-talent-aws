@@ -3,6 +3,7 @@ import Loading from '@/components/shared/Loading';
 import type { LayoutType } from '@/@types/theme';
 import { Route, Routes } from 'react-router-dom';
 import BusinessDashboard from './dashboards/BusinessDashboard';
+import AppliedJobOfferList from './job/AppliedJobList/JobOfferList';
 import JobList from './job/JobList';
 import JobCreate from './job/JobCreate';
 import FavoriteCandidateList from './candidates/favorite';
@@ -48,6 +49,7 @@ import BackOfficeLanguageList from './backOffice/components/languages/list';
 import BackOfficeSkillLevelList from './backOffice/components/skill-levels/list';
 import BackOfficeOtherSkillList from './backOffice/components/other-skills/list';
 import JobDetails from './job/JobDetails';
+import MembershipCard from './backOffice/components/membership-plans/membershipCards';
 
 const renderRoutes = (role: string | null, membershipType: string | null) => {
   if (role === 'Recruiter') {
@@ -98,7 +100,7 @@ const renderRoutes = (role: string | null, membershipType: string | null) => {
         <Route path="/profile/applicant" element={<ApplicantSettings />} />
         <Route path="/account" element={<ChangePassword />} />
         <Route path="/job">
-          <Route path="/job/my-jobs" element={<JobList />} />
+          <Route path="/job/AppliedJobList" element={<AppliedJobOfferList />} />
           <Route path="/job/favorite" element={<JobList />} />
           <Route path="/job/search" element={<JobOfferSearch />} />
           <Route path="/job/:uuid" element={<JobDetails />} />
@@ -136,7 +138,7 @@ const renderRoutes = (role: string | null, membershipType: string | null) => {
         <Route path="/configurations">
           <Route
             path="/configurations/membershipPlans"
-            element={<BackOfficeDashboard />}
+            element={<MembershipCard />}
           />
           <Route
             path="/configurations/roles"

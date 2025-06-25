@@ -73,6 +73,7 @@ const DashboardOverview = ({ data }: DashboardOverviewData) => {
           className="bg-emerald-100 dark:bg-opacity-75"
           value={data.jobOffers}
           icon={<TbCopyCheck />}
+          onClick={() => navigate('/job/AppliedJobList')}
         />
         <StatisticCard
           title="Empresas que han visto mi Perfil"
