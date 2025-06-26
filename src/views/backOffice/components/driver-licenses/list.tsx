@@ -25,11 +25,57 @@ const DriverLicenseStatusList = () => {
   setSelectedRow(row);
     setIsDrawerOpen(true);
   };
-
+  const handleActivate = async (row: DriverLicense) => {
+    try {
+      const updatedRow = { ...row, isDeleted: false};
+      await apiService.put(`/driver-license/${row.id}`, updatedRow);
+      mutate();
+      toast.push(
+        <Notification type="info">
+        Licencia de conducir reactivada correctamente
+        </Notification>,
+        {
+          placement: "top-center",
+        }
+      );
+    } catch (error) {
+      console.error("Error updating driver license:", error);
+      toast.push(
+        <Notification type="danger">
+          Error al actualizar la licencia de conducir
+        </Notification>,
+        {
+          placement: "top-center",
+        }
+      );
+    } finally {
+      setSelectedRow({} as DriverLicense);
+    }
+  };
   const handleStatusChange = async (
-    row: DriverLicense,
+    row: DriverLicense ,
     isDeleted: boolean
-  ) => {};
+  ) => {
+    try {
+      const updatedRow = { ...row, status: isDeleted ? "inactive" : "active" };
+      await apiService.put(`/driver-license/${row.id}`, updatedRow);
+      mutate();
+    } catch (error) {
+      console.error("Error updating driver license status:", error);
+      toast.push(
+        <Notification type="danger">
+          Error al actualizar el estado de la licencia de conducir
+        </Notification>,
+        {
+          placement: "top-center",
+        }
+      );
+    } finally {
+      setSelectedRow({} as DriverLicense);
+    }
+    setIsDrawerOpen(false);
+  };
+
 
   const handleDelete = async (row: DriverLicense) => {
     try {
@@ -119,12 +165,19 @@ const DriverLicenseStatusList = () => {
         accessorKey: 'description',
         header: 'Descripción',
         cell: (info) => info.getValue(),
-      },
+      },{
+        accessorKey: 'status',
+        header: 'Visible',
+        cell: (info) => renderIsDeletedToggle(
+          info.getValue() === 'active',
+        (checked)=> handleStatusChange(info.row.original as DriverLicense, checked), "Sí", "No"
+        )
+        },
       {
         accessorKey: 'isDeleted',
-        header: 'Estado',
+        header: 'Eliminado',
         cell: (info) =>
-          renderIsDeletedToggle(info.getValue() as boolean, () => {}),
+          (info.getValue() ? 'Inactivo' : 'Activo'),
       },
       {
         accessorKey: 'created_at',
@@ -153,7 +206,10 @@ const DriverLicenseStatusList = () => {
           <ActionTableColumn
             row={props.row.original}
             onEdit={handleEdit}
-            onDelete={handleDelete}
+            onDelete={props.row.original.isDeleted ? undefined : handleDelete}
+            onActivate={
+              props.row.original.isDeleted ? handleActivate : undefined
+            }
           />
         ),
       },

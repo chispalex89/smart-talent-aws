@@ -12,6 +12,7 @@ import GenericForm from '../generic-form';
 import ActionTableColumn from '../generic-form/action-table-column';
 import apiService from '../../../../services/apiService';
 import Notification from '@/components/ui/Notification';
+import { c } from 'framer-motion/dist/types.d-O7VGXDJe';
 
 const DocumentStatusList = () => {
   const { list, total, tableData, isLoading, setTableData, mutate } =
@@ -26,10 +27,56 @@ const DocumentStatusList = () => {
     setIsDrawerOpen(true);
   };
 
+    const handleActivate = async (row: DocumentType) => {
+    try {
+      const updatedRow = { ...row, isDeleted: false};
+      await apiService.put(`/document-type/${row.id}`, updatedRow);
+      mutate();
+      toast.push(
+        <Notification type="info">
+          Documento de identificación reactivado correctamente
+        </Notification>,
+        {
+          placement: "top-center",
+        }
+      );
+    } catch (error) {
+      console.error("Error updating document type:", error);
+      toast.push(
+        <Notification type="danger">
+          Error al actualizar el documento de identificación
+        </Notification>,
+        {
+          placement: "top-center",
+        }
+      );
+    } finally {
+      setSelectedRow({} as DocumentType);
+    }
+  };
   const handleStatusChange = async (
     row: DocumentType,
     isDeleted: boolean
-  ) => {};
+  ) => {
+    try {
+      const updatedRow = { ...row, status: isDeleted ? "inactive" : "active" };
+      await apiService.put(`/document-type/${row.id}`, updatedRow);
+      mutate();
+    } catch (error) {
+      console.error("Error updating document type:", error);
+      toast.push(
+        <Notification type="danger">
+          Error al actualizar el estado del documento de identificación
+        </Notification>,
+        {
+          placement: "top-center",
+        }
+      );
+    } finally {
+      setSelectedRow({} as DocumentType);
+    }
+    setIsDrawerOpen(false);
+  };
 
   const handleDelete = async (row: DocumentType) => {
     try {
@@ -119,13 +166,22 @@ const DocumentStatusList = () => {
         accessorKey: 'description',
         header: 'Descripción',
         cell: (info) => info.getValue(),
+      },      {
+         accessorKey: 'status',
+        header: 'Visible',
+        cell: (info) =>
+          renderIsDeletedToggle(
+            info.getValue() === 'active',
+            (checked) => handleStatusChange(info.row.original as DocumentType, checked)
+          ),
       },
       {
         accessorKey: 'isDeleted',
         header: 'Estado',
         cell: (info) =>
-          renderIsDeletedToggle(info.getValue() as boolean, () => {}),
+          (info.getValue() ? 'Inactivo' : 'Activo'),
       },
+
       {
         accessorKey: 'created_at',
         header: 'Fecha de creación',
@@ -153,7 +209,10 @@ const DocumentStatusList = () => {
           <ActionTableColumn
             row={props.row.original}
             onEdit={handleEdit}
-            onDelete={handleDelete}
+            onDelete={props.row.original.isDeleted ? undefined : handleDelete}
+            onActivate={
+              props.row.original.isDeleted ? handleActivate : undefined
+            }
           />
         ),
       },

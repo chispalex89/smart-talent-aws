@@ -6,7 +6,7 @@ import DataTable, {
 } from "@/components/shared/DataTable";
 import { useRoleList } from "../../hooks";
 import { renderIsDeletedToggle } from "../../../../helpers/renderActiveToggle";
-import { Card, Drawer, toast, Tooltip } from "@/components/ui";
+import { Card, Drawer, toast } from "@/components/ui";
 import { Role } from "@prisma/client";
 import GenericForm from "../generic-form";
 import ActionTableColumn from "../generic-form/action-table-column";
@@ -23,32 +23,26 @@ const RoleList = () => {
     setSelectedRow(row);
     setIsDrawerOpen(true);
   };
-const handleStatusChange = async (
-    row: Role,
-    isDeleted: boolean
-  ) => {
+  const handleStatusChange = async (row: Role, isDeleted: boolean) => {
     try {
       const updatedRow = { ...row, status: isDeleted ? "inactive" : "active" };
       await apiService.put(`/role/${row.id}`, updatedRow);
       mutate();
     } catch (error) {
-      console.error('Error updating role status:', error);
+      console.error("Error updating role status:", error);
       toast.push(
         <Notification type="danger">
           Error al actualizar el estado del rol
         </Notification>,
         {
-          placement: 'top-center',
+          placement: "top-center",
         }
       );
     } finally {
       setSelectedRow({} as Role);
     }
     setIsDrawerOpen(false);
-  
-    
   };
-
 
   const handleDelete = async (row: Role) => {
     try {
@@ -79,9 +73,7 @@ const handleStatusChange = async (
       await apiService.put(`/role/${row.id}`, updatedRow);
       mutate();
       toast.push(
-        <Notification type="info">
-          Rol reactivado correctamente
-        </Notification>,
+        <Notification type="info">Rol reactivado correctamente</Notification>,
         {
           placement: "top-center",
         }
@@ -160,7 +152,8 @@ const handleStatusChange = async (
         header: "Visible",
         cell: (info) =>
           renderIsDeletedToggle(info.getValue() === "active", (checked) =>
-            handleStatusChange(info.row.original as Role, checked)),
+            handleStatusChange(info.row.original as Role, checked)
+          ),
       },
       {
         accessorKey: "isDeleted",
@@ -196,7 +189,9 @@ const handleStatusChange = async (
             row={props.row.original}
             onEdit={handleEdit}
             onDelete={props.row.original.isDeleted ? undefined : handleDelete}
-            onActivate={props.row.original.isDeleted ? handleActivate : undefined}
+            onActivate={
+              props.row.original.isDeleted ? handleActivate : undefined
+            }
           />
         ),
       },

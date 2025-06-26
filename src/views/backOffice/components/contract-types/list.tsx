@@ -25,11 +25,56 @@ const ContractTypeList = () => {
     setSelectedRow(row);
     setIsDrawerOpen(true);
   };
-
+  const handleActivate = async (row: ContractType) => {
+    try {
+      const updatedRow = { ...row, isDeleted: false};
+      await apiService.put(`/contract-type/${row.id}`, updatedRow);
+      mutate();
+      toast.push(
+        <Notification type="info">
+         Tipo de contrato reactivado correctamente
+        </Notification>,
+        {
+          placement: "top-center",
+        }
+      );
+    } catch (error) {
+      console.error("Error updating contract type:", error);
+      toast.push(
+        <Notification type="danger">
+          Error al actualizar el tipo de contrato
+        </Notification>,
+        {
+          placement: "top-center",
+        }
+      );
+    } finally {
+      setSelectedRow({} as ContractType);
+    }
+  };
   const handleStatusChange = async (
     row: ContractType,
     isDeleted: boolean
-  ) => {};
+  ) => {
+    try {
+      const updatedRow = { ...row, status: isDeleted ? "inactive" : "active" };
+      await apiService.put(`/contract-type/${row.id}`, updatedRow);
+      mutate();
+    } catch (error) {
+      console.error("Error updating contract type:", error);
+      toast.push(
+        <Notification type="danger">
+          Error al actualizar el estado del tipo de contrato
+        </Notification>,
+        {
+          placement: "top-center",
+        }
+      );
+    } finally {
+      setSelectedRow({} as ContractType);
+    }
+    setIsDrawerOpen(false);
+  };
 
   const handleDelete = async (row: ContractType) => {
     try {
@@ -119,13 +164,21 @@ const ContractTypeList = () => {
         accessorKey: 'description',
         header: 'Descripción',
         cell: (info) => info.getValue(),
+      },{
+        accessorKey: 'status',
+        header: 'Visible',
+        cell: (info) =>
+          renderIsDeletedToggle(
+            info.getValue() === 'active',
+            (checked) =>handleStatusChange(info.row.original as ContractType, checked)
+          ),
+
       },
       {
         accessorKey: 'isDeleted',
         header: 'Estado',
         cell: (info) =>
-          renderIsDeletedToggle(info.getValue() as boolean, () => {}),
-      },
+          (info.getValue() ? 'Inactivo' : 'Activo')},
       {
         accessorKey: 'created_at',
         header: 'Fecha de creación',
@@ -149,11 +202,12 @@ const ContractTypeList = () => {
       {
         id: 'actions',
         header: 'Acciones',
-        cell: (info) => (
+        cell: (props) => (
           <ActionTableColumn
-            row={info.row.original as ContractType}
+            row={props.row.original}
             onEdit={handleEdit}
-            onDelete={handleDelete}
+            onDelete={props.row.original.isDeleted ? undefined : handleDelete}
+            onActivate={props.row.original.isDeleted ? handleActivate : undefined}
           />
         ),
       },
