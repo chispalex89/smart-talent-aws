@@ -44,7 +44,7 @@ const EmploymentStatusesList = () => {
         }
       );
     } catch (error) {
-      console.error('Error deleting job hierarchy:', error);
+      console.error('Error deleting employment status:', error);
       toast.push(
         <Notification type="danger">
           Error al eliminar el estado de trabajo
@@ -75,7 +75,7 @@ const EmploymentStatusesList = () => {
         console.error('Error updating employment status:', error);
         toast.push(
           <Notification type="danger">
-            Error al actualizar el estado del estado de trabajo
+            Error al actualizar el estado de trabajo
           </Notification>,
           {
             placement: 'top-center',

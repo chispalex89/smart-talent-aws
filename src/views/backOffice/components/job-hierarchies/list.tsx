@@ -36,7 +36,7 @@ const JobHierarchyList = () => {
       mutate();
       toast.push(
         <Notification type="info">
-         jerarquia de trabajo eliminada correctamente
+         Jerarquia de trabajo eliminada correctamente
         </Notification>,
         {
           placement: 'top-center',
@@ -182,7 +182,7 @@ const JobHierarchyList = () => {
       <Drawer
         isOpen={isDrawerOpen}
         onClose={() => setIsDrawerOpen(false)}
-        title="Detalles del Jerarquía de Trabajo"
+        title="Detalles de jerarquía de trabajo"
         closable={true}
       >
         <GenericForm

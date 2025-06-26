@@ -112,7 +112,7 @@ const StateStatusList = () => {
     () => [
       {
         accessorKey: 'name',
-        header: 'Departamento',
+        header: 'Estado',
         cell: (info) => info.getValue(),
       },
       {

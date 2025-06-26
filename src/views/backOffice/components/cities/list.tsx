@@ -122,7 +122,7 @@ const CityStatusList = () => {
       },
       {
         accessorKey: 'state',
-        header: 'Departamento',
+        header: 'Estado',
         cell: (info) => {
           const state = info.getValue();
           return state && typeof state === 'object' && 'name' in state
@@ -209,7 +209,7 @@ const CityStatusList = () => {
       <Drawer
         isOpen={isDrawerOpen}
         onClose={() => setIsDrawerOpen(false)}
-        title="Detalles del municipio"
+        title="Detalles de la ciudad"
         closable={true}
       >
         <GenericForm
@@ -218,7 +218,7 @@ const CityStatusList = () => {
           onCancel={() => setIsDrawerOpen(false)}
           submitButtonText="Guardar Cambios"
           cancelButtonText="Cancelar"
-          subTitle="Complete los detalles del municipio"
+          subTitle="Complete los detalles de la ciudad"
         ></GenericForm>
       </Drawer>
     </>

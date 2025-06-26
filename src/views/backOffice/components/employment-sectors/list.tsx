@@ -7,7 +7,7 @@ import DataTable, {
 import { useEmploymentSectorList } from '../../hooks';
 import { renderIsDeletedToggle } from '../../../../helpers/renderActiveToggle';
 import { Card } from '@/components/ui';
-import { EmploymentSector, JobHierarchy } from '@prisma/client';
+import { EmploymentSector } from '@prisma/client';
 
 const EmploymentSectorList = () => {
   const { list, total, tableData, isLoading, setTableData, mutate } =

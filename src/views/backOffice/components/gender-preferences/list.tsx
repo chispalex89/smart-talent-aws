@@ -38,7 +38,7 @@ const GenderPreferenceStatusList = () => {
       mutate();
       toast.push(
         <Notification type="info">
-          Género eliminado correctamente
+        Preferencia de género eliminado correctamente
         </Notification>,
         {
           placement: 'top-center',

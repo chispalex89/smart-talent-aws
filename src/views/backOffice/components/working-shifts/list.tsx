@@ -65,7 +65,7 @@ const WorkShiftList = () => {
         mutate();
         toast.push(
           <Notification type="info">
-            horario laboral actualizada correctamente
+            horario laboral actualizado correctamente
           </Notification>,
           {
             placement: 'top-center',
@@ -112,7 +112,7 @@ const WorkShiftList = () => {
     () => [
       {
         accessorKey: 'name',
-        header: 'Rango salarial',
+        header: 'Horario laboral',
         cell: (info) => info.getValue(),
       },
       {

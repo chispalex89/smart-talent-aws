@@ -37,7 +37,7 @@ const LanguageList = () => {
       mutate();
       toast.push(
         <Notification type="info">
-         Lenguaje eliminado correctamente
+         idioma eliminado correctamente
         </Notification>,
         {
           placement: 'top-center',
@@ -47,7 +47,7 @@ const LanguageList = () => {
       console.error('Error deleting language:', error);
       toast.push(
         <Notification type="danger">
-          Error al eliminar el lenguaje
+          Error al eliminar el idioma
         </Notification>,
         {
           placement: 'top-center',
@@ -65,7 +65,7 @@ const LanguageList = () => {
         mutate();
         toast.push(
           <Notification type="info">
-            Language actualizado correctamente
+            Idioma actualizado correctamente
           </Notification>,
           {
             placement: 'top-center',
@@ -75,7 +75,7 @@ const LanguageList = () => {
         console.error('Error updating Language:', error);
         toast.push(
           <Notification type="danger">
-            Error al actualizar el estado del Language
+            Error al actualizar el estado del idioma
           </Notification>,
           {
             placement: 'top-center',
@@ -112,7 +112,7 @@ const LanguageList = () => {
     () => [
       {
         accessorKey: 'name',
-        header: 'Tipo de Contrato',
+        header: 'Idioma',
         cell: (info) => info.getValue(),
       },
       {

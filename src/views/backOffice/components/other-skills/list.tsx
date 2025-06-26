@@ -37,7 +37,7 @@ const OtherSkillList = () => {
       mutate();
       toast.push(
         <Notification type="info">
-         Habilidad extra eliminado correctamente
+         Habilidad extra eliminada correctamente
         </Notification>,
         {
           placement: 'top-center',
@@ -47,7 +47,7 @@ const OtherSkillList = () => {
       console.error('Error deleting Other Skill:', error);
       toast.push(
         <Notification type="danger">
-          Error al eliminar el habilidad
+          Error al eliminar la habilidad extra
         </Notification>,
         {
           placement: 'top-center',
@@ -65,7 +65,7 @@ const OtherSkillList = () => {
         mutate();
         toast.push(
           <Notification type="info">
-            Habilidad extra actualizado correctamente
+            Habilidad extra actualizada correctamente
           </Notification>,
           {
             placement: 'top-center',

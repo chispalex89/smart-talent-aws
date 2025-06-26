@@ -37,7 +37,7 @@ const SoftwareSkillsList = () => {
       mutate();
       toast.push(
         <Notification type="info">
-         Programa informático eliminado correctamente
+        Habilidad de software eliminada correctamente
         </Notification>,
         {
           placement: 'top-center',
@@ -47,7 +47,7 @@ const SoftwareSkillsList = () => {
       console.error('Error deleting software skill:', error);
       toast.push(
         <Notification type="danger">
-          Error al eliminar el programa informático
+          Error al eliminar la habilidad de software
         </Notification>,
         {
           placement: 'top-center',
@@ -65,7 +65,7 @@ const SoftwareSkillsList = () => {
         mutate();
         toast.push(
           <Notification type="info">
-            Programa informático actualizado correctamente
+            habilidad en software actualizado correctamente
           </Notification>,
           {
             placement: 'top-center',
@@ -75,7 +75,7 @@ const SoftwareSkillsList = () => {
         console.error('Error updating software skill:', error);
         toast.push(
           <Notification type="danger">
-            Error al actualizar el estado del programa informático
+            Error al actualizar el estado de la habilidad de software
           </Notification>,
           {
             placement: 'top-center',
@@ -112,7 +112,7 @@ const SoftwareSkillsList = () => {
     () => [
       {
         accessorKey: 'name',
-        header: 'Tipo de Contrato',
+        header: 'Habilidad de software',
         cell: (info) => info.getValue(),
       },
       {
@@ -183,7 +183,7 @@ const SoftwareSkillsList = () => {
       <Drawer
         isOpen={isDrawerOpen}
         onClose={() => setIsDrawerOpen(false)}
-        title="Detalles del programa informático"
+        title="Detalles de la habilidad de software"
         closable={true}
       >
         <GenericForm
@@ -192,7 +192,7 @@ const SoftwareSkillsList = () => {
           onCancel={() => setIsDrawerOpen(false)}
           submitButtonText="Guardar Cambios"
           cancelButtonText="Cancelar"
-          subTitle="Complete los detalles del programa informático"
+          subTitle="Complete los detalles de la habilidad de software"
         ></GenericForm>
       </Drawer>
     </>

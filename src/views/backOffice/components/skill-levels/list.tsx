@@ -75,7 +75,7 @@ const SkillLevelList = () => {
         console.error('Error updating skill level:', error);
         toast.push(
           <Notification type="danger">
-            Error al actualizar el estado del nivel de hablidad
+            Error al actualizar el estado del nivel de habilidad
           </Notification>,
           {
             placement: 'top-center',

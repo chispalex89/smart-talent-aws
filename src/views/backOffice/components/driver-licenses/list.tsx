@@ -65,7 +65,7 @@ const DriverLicenseStatusList = () => {
         mutate();
         toast.push(
           <Notification type="info">
-            Driver license actualizado correctamente
+          Licencia de conducir actualizado correctamente
           </Notification>,
           {
             placement: 'top-center',
@@ -112,7 +112,7 @@ const DriverLicenseStatusList = () => {
     () => [
       {
         accessorKey: 'name',
-        header: 'Departamento',
+        header: 'Licencia de conducir',
         cell: (info) => info.getValue(),
       },
       {
