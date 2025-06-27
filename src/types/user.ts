@@ -1,5 +1,7 @@
 import {
   AcademicData,
+  AcademicDataStatus,
+  AcademicLevel,
   City,
   DocumentType,
   DriverLicense,
@@ -28,6 +30,11 @@ export type ApplicantPersonalData = PersonalData & {
   gender: Gender;
 };
 
+export type AcademicDataWithStatus = AcademicData & {
+  academic_level: AcademicLevel;
+  academic_status: AcademicDataStatus;
+};
+
 export type LanguageSkill = LanguageSkillsData & {
   language: Language;
   skillLevel: SkillLevel;
@@ -44,7 +51,7 @@ export type UserApplicant = User & {
   jobPreferences: Array<JobPreferences>;
   favoriteJobOffer: Array<FavoriteJobOffer>;
   otherSkillsData: Array<OtherSkillsData>;
-  academicData: Array<AcademicData>;
+  academicData: Array<AcademicDataWithStatus>;
   languageSkillsData: Array<LanguageSkill>;
   softwareSkillsData: Array<SoftwareSkill>;
   professionalData: Array<ProfessionalData>;

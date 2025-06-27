@@ -7,6 +7,7 @@ import { nameFormat } from '../../../helpers/textConverter';
 import dayjs from 'dayjs';
 import { HiPencil } from 'react-icons/hi';
 import { UserApplicant } from '../../../types/user';
+import { useCatalogContext } from '../../../context/catalogContext';
 
 type CandidateDetailProps = {
   title?: string;
@@ -33,6 +34,7 @@ const CandidateMainDetails = ({ title, value }: CandidateDetailProps) => {
 
 const CandidateDetails = () => {
   const { id } = useParams();
+  const { otherSkills } = useCatalogContext();
 
   const {
     data: user,
@@ -135,11 +137,11 @@ const CandidateDetails = () => {
               <CandidateMainDetails
                 key={index}
                 title={item.institutionName}
-                value={`${item.titleObtained} - ${dayjs(item.startDate).format('MMM YYYY')} ${item.endDate ? `a ${dayjs(item.endDate).format('MMM YYYY')}` : '(En curso)'}`}
+                value={`${item.titleObtained} - ${dayjs(item.startDate).format('MMM YYYY')} ${item.endDate ? `a ${dayjs(item.endDate).format('MMM YYYY')}` : ''} ${item.academic_status?.name ? `(${item.academic_status.name})` : ''}`}
               />
             ))}
             <hr className="my-4" />
-            <h4 className="font-bold mt-4">Idiomas y Conocimientos</h4>
+            <h4 className="font-bold mt-4">Idiomas</h4>
             {user?.languageSkillsData.map((item, index) => (
               <CandidateMainDetails
                 key={index}
@@ -147,7 +149,61 @@ const CandidateDetails = () => {
                 value={item.skillLevel.name}
               />
             ))}
+            {user?.languageSkillsData.length === 0 && (
+              <p className="text-muted-foreground">
+                No hay idiomas registrados
+              </p>
+            )}
             <hr className="my-4" />
+            <h4 className="font-bold mt-4">Habilidades Informáticas</h4>
+            <div className="flex flex-row flex-wrap items-center w-full gap-2">
+              {user?.softwareSkillsData.map((item, index) => (
+                <CandidateMainDetails
+                  key={index}
+                  title={item.software.name}
+                  value={item.skillLevel.name}
+                />
+              ))}
+            </div>
+            {user?.softwareSkillsData.length === 0 && (
+              <p className="text-muted-foreground">
+                No hay habilidades informáticas registradas
+              </p>
+            )}
+            <hr className="my-4" />
+            <h4 className="font-bold mt-4">Habilidades Adicionales</h4>
+            {user?.otherSkillsData && user.otherSkillsData.length > 0 ? (
+              <>
+                <h4 className="font-bold mt-4">Descripción</h4>
+                {user.otherSkillsData[0].otherSkills ? (
+                  <p className="font-semibold">
+                    {user.otherSkillsData[0].otherSkills}
+                  </p>
+                ) : (
+                  <p className="text-muted-foreground">
+                    No hay descripción registrada
+                  </p>
+                )}
+                <h4 className="font-bold mt-4">Otras Habilidades</h4>
+                {user.otherSkillsData[0].skillIds.map((item, index) => {
+                  const skill = otherSkills.find((skill) => skill.id === item);
+                  if (skill) {
+                    return (
+                      <CandidateMainDetails
+                        key={index}
+                        title={skill.name}
+                        value={skill.description || ''}
+                      />
+                    );
+                  }
+                  return <></>;
+                })}
+              </>
+            ) : (
+              <p className="text-muted-foreground">
+                No hay habilidades adicionales registradas
+              </p>
+            )}
           </div>
         </Card>
       </div>
