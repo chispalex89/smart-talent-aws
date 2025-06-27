@@ -652,7 +652,7 @@ export function useGenderPreferenceList() {
   const { list, total, error, isLoading, mutate } = query(
     filterData,
     tableData,
-    'gender-preference'
+    'gender-preferences'
   );
 
   return {

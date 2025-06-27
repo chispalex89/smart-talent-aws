@@ -6,12 +6,86 @@ import DataTable, {
 } from '@/components/shared/DataTable';
 import { useSkillLevelList } from '../../hooks';
 import { renderIsDeletedToggle } from '../../../../helpers/renderActiveToggle';
-import { Card } from '@/components/ui';
+import { Card, Drawer, toast } from '@/components/ui';
 import { SkillLevel } from '@prisma/client';
+import GenericForm from '../generic-form';
+import ActionTableColumn from '../generic-form/action-table-column';
+import apiService from '../../../../services/apiService';
+import Notification from '@/components/ui/Notification';
 
 const SkillLevelList = () => {
   const { list, total, tableData, isLoading, setTableData, mutate } =
     useSkillLevelList();
+
+  const [selectedRow, setSelectedRow] = React.useState<SkillLevel>(
+    {} as SkillLevel
+  );
+  const [isDrawerOpen, setIsDrawerOpen] = React.useState(false);
+  const handleEdit = (row: SkillLevel) => {
+    setSelectedRow(row);
+    setIsDrawerOpen(true);
+  };
+
+  const handleStatusChange = async (
+    row: SkillLevel,
+    isDeleted: boolean
+  ) => {};
+
+  const handleDelete = async (row: SkillLevel) => {
+    try {
+      await apiService.delete(`/skill-level/${row.id}`);
+      mutate();
+      toast.push(
+        <Notification type="info">
+         Nivel de habilidad eliminado correctamente
+        </Notification>,
+        {
+          placement: 'top-center',
+        }
+      );
+    } catch (error) {
+      console.error('Error deleting skill level:', error);
+      toast.push(
+        <Notification type="danger">
+          Error al eliminar el nivel de habilidad
+        </Notification>,
+        {
+          placement: 'top-center',
+        }
+      );
+    } finally {
+      setSelectedRow({} as SkillLevel);
+      setIsDrawerOpen(false);
+    }
+  };
+
+    const handleApply = async (updatedRow: SkillLevel) => {
+      try {
+        await apiService.put(`/skill-level/${selectedRow.id}`, updatedRow);
+        mutate();
+        toast.push(
+          <Notification type="info">
+            Nivel de habilidad actualizado correctamente
+          </Notification>,
+          {
+            placement: 'top-center',
+          }
+        );
+      } catch (error) {
+        console.error('Error updating skill level:', error);
+        toast.push(
+          <Notification type="danger">
+            Error al actualizar el estado del nivel de habilidad
+          </Notification>,
+          {
+            placement: 'top-center',
+          }
+        );
+      } finally {
+        setIsDrawerOpen(false);
+        setSelectedRow({} as SkillLevel);
+      }
+    };
 
   const handlePaginationChange = (page: number) => {
     const newTableData = cloneDeep(tableData);
@@ -38,7 +112,7 @@ const SkillLevelList = () => {
     () => [
       {
         accessorKey: 'name',
-        header: 'Habilidad',
+        header: 'Nivel de habilidad',
         cell: (info) => info.getValue(),
       },
       {
@@ -72,27 +146,56 @@ const SkillLevelList = () => {
             day: '2-digit',
           }),
       },
+      {
+        id: 'actions',
+        header: 'Acciones',
+        cell: (info) => (
+          <ActionTableColumn
+            row={info.row.original as SkillLevel}
+            onEdit={handleEdit}
+            onDelete={handleDelete}
+          />
+        ),
+      },
+
     ],
     []
   );
 
   return (
-    <Card>
-      <DataTable
-        columns={columns}
-        data={list}
-        noData={!isLoading && list.length === 0}
-        loading={isLoading}
-        pagingData={{
-          total: total,
-          pageIndex: tableData.pageIndex as number,
-          pageSize: tableData.pageSize as number,
-        }}
-        onPaginationChange={handlePaginationChange}
-        onSelectChange={handleSelectChange}
-        onSort={handleSort}
-      />
-    </Card>
+    <>
+      <Card>
+        <DataTable
+          columns={columns}
+          data={list}
+          noData={!isLoading && list.length === 0}
+          loading={isLoading}
+          pagingData={{
+            total: total,
+            pageIndex: tableData.pageIndex as number,
+            pageSize: tableData.pageSize as number,
+          }}
+          onPaginationChange={handlePaginationChange}
+          onSelectChange={handleSelectChange}
+          onSort={handleSort}
+        />
+      </Card>
+      <Drawer
+        isOpen={isDrawerOpen}
+        onClose={() => setIsDrawerOpen(false)}
+        title="Detalles del nivel de habilidad"
+        closable={true}
+      >
+        <GenericForm
+          initialValues={selectedRow as SkillLevel}          
+          onSubmit={(item) => handleApply(item)}
+          onCancel={() => setIsDrawerOpen(false)}
+          submitButtonText="Guardar Cambios"
+          cancelButtonText="Cancelar"
+          subTitle="Complete los detalles del nivel de habilidad"
+        ></GenericForm>
+      </Drawer>
+    </>
   );
 };
 

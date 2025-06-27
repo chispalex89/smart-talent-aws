@@ -70,28 +70,27 @@ model Recruiter {
 }
 
 model Applicant {
-  id                        Int                        @id @default(autoincrement())
-  userId                    Int                        @map("user_id")
-  status                    String
-  isDeleted                 Boolean                    @default(false) @map("is_deleted")
-  created_at                DateTime                   @default(now())
-  updated_at                DateTime?                  @updatedAt
-  created_by                String
-  updated_by                String?
-  user                      User                       @relation(fields: [userId], references: [id])
-  companyFavoriteApplicants CompanyFavoriteApplicant[]
-  jobApplicants             JobApplicant[]
-  professionalData          ProfessionalData[]
-  jobExperienceData         JobExperienceData[]
-  personalData              PersonalData[]
-  jobPreferences            JobPreferences[]
-  favoriteJobOffer          FavoriteJobOffer[]
-  otherSkillsData           OtherSkillsData[]
-  academicData              AcademicData[]
-  languageSkillsData        LanguageSkillsData[]
-  softwareSkillsData        SoftwareSkillsData[]
+  id                         Int                        @id @default(autoincrement())
+  userId                     Int                        @map("user_id")
+  status                     String
+  isDeleted                  Boolean                    @default(false) @map("is_deleted")
+  created_at                 DateTime                   @default(now())
+  updated_at                 DateTime?                  @updatedAt
+  created_by                 String
+  updated_by                 String?
+  user                       User                       @relation(fields: [userId], references: [id])
+  companyFavoriteApplicants  CompanyFavoriteApplicant[]
+  jobApplicants              JobApplicant[]
+  professionalData           ProfessionalData[]
+  jobExperienceData          JobExperienceData[]
+  personalData               PersonalData[]
+  jobPreferences             JobPreferences[]
+  favoriteJobOffer           FavoriteJobOffer[]
+  otherSkillsData            OtherSkillsData[]
+  academicData               AcademicData[]
+  languageSkillsData         LanguageSkillsData[]
+  softwareSkillsData         SoftwareSkillsData[]
   applicantArchivedCompanies CompanyArchivedApplicant[]
-
 
   @@map("applicant")
 }
@@ -398,7 +397,8 @@ model JobPreferences {
 
   @@map("job_preference")
 }
-model CompanyArchivedApplicant{
+
+model CompanyArchivedApplicant {
   id          Int       @id @default(autoincrement())
   applicantId Int       @map("applicant_id")
   companyId   Int       @map("company_id")
@@ -412,6 +412,7 @@ model CompanyArchivedApplicant{
 
   @@map("company_archived_applicant")
 }
+
 model CompanyFavoriteApplicant {
   id          Int       @id @default(autoincrement())
   applicantId Int       @map("applicant_id")
@@ -459,6 +460,7 @@ model Membership {
 
 model Role {
   id               Int              @id @default(autoincrement())
+  status           String           @default("active")
   name             String
   description      String
   created_at       DateTime         @default(now())
@@ -521,6 +523,7 @@ model Permission {
 model DocumentType {
   id            Int            @id @default(autoincrement())
   name          String         @unique
+  status        String         @default("active")
   description   String?
   created_at    DateTime       @default(now())
   updated_at    DateTime?      @updatedAt
@@ -535,6 +538,7 @@ model DocumentType {
 model Gender {
   id            Int            @id @default(autoincrement())
   name          String         @unique
+  status        String         @default("active")
   description   String?
   created_at    DateTime       @default(now())
   updated_at    DateTime?      @updatedAt
@@ -549,6 +553,7 @@ model Gender {
 model MaritalStatus {
   id            Int            @id @default(autoincrement())
   name          String         @unique
+  status        String         @default("active")
   description   String?
   created_at    DateTime       @default(now())
   updated_at    DateTime?      @updatedAt
@@ -564,6 +569,7 @@ model MaritalStatus {
 model Country {
   id              Int              @id @default(autoincrement())
   name            String           @unique
+  status          String           @default("active")
   description     String?
   created_at      DateTime         @default(now())
   updated_at      DateTime?        @updatedAt
@@ -581,6 +587,7 @@ model Country {
 model State {
   id              Int              @id @default(autoincrement())
   name            String
+  status          String           @default("active")
   description     String?
   countryId       Int              @map("country_id")
   created_at      DateTime         @default(now())
@@ -599,6 +606,7 @@ model State {
 model City {
   id              Int              @id @default(autoincrement())
   name            String
+  status          String           @default("active")
   description     String?
   stateId         Int              @map("state_id")
   created_at      DateTime         @default(now())
@@ -617,6 +625,7 @@ model City {
 model DriverLicense {
   id            Int            @id @default(autoincrement())
   name          String         @unique
+  status        String         @default("active")
   description   String?
   created_at    DateTime       @default(now())
   updated_at    DateTime?      @updatedAt
@@ -631,6 +640,7 @@ model DriverLicense {
 model AcademicLevel {
   id                Int                @id @default(autoincrement())
   name              String             @unique
+  status            String             @default("active")
   description       String?
   created_at        DateTime           @default(now())
   updated_at        DateTime?          @updatedAt
@@ -647,6 +657,7 @@ model AcademicLevel {
 model Profession {
   id                Int                @id @default(autoincrement())
   name              String             @unique
+  status            String             @default("active")
   description       String?
   created_at        DateTime           @default(now())
   updated_at        DateTime?          @updatedAt
@@ -663,6 +674,7 @@ model JobHierarchy {
   id                Int                @id @default(autoincrement())
   name              String             @unique
   description       String?
+  status            String             @default("active")
   created_at        DateTime           @default(now())
   updated_at        DateTime?          @updatedAt
   created_by        String
@@ -678,6 +690,7 @@ model JobHierarchy {
 model EmploymentStatus {
   id              Int              @id @default(autoincrement())
   name            String           @unique
+  status          String           @default("active")
   description     String?
   created_at      DateTime         @default(now())
   updated_at      DateTime?        @updatedAt
@@ -692,6 +705,7 @@ model EmploymentStatus {
 model EmploymentSector {
   id              Int              @id @default(autoincrement())
   name            String           @unique
+  status          String           @default("active")
   description     String?
   created_at      DateTime         @default(now())
   updated_at      DateTime?        @updatedAt
@@ -709,6 +723,7 @@ model EmploymentSector {
 model SalaryRange {
   id              Int              @id @default(autoincrement())
   range           String
+  status          String           @default("active")
   description     String?
   created_at      DateTime         @default(now())
   updated_at      DateTime?        @updatedAt
@@ -724,6 +739,7 @@ model SalaryRange {
 model WorkShift {
   id              Int              @id @default(autoincrement())
   name            String           @unique
+  status          String           @default("active")
   description     String?
   created_at      DateTime         @default(now())
   updated_at      DateTime?        @updatedAt
@@ -739,6 +755,7 @@ model WorkShift {
 model ContractType {
   id              Int              @id @default(autoincrement())
   name            String           @unique
+  status          String           @default("active")
   description     String?
   created_at      DateTime         @default(now())
   updated_at      DateTime?        @updatedAt
@@ -754,6 +771,7 @@ model ContractType {
 model GenderPreference {
   id          Int        @id @default(autoincrement())
   name        String     @unique
+  status      String     @default("active")
   description String?
   created_at  DateTime   @default(now())
   updated_at  DateTime?  @updatedAt
@@ -776,7 +794,7 @@ model MembershipType {
   created_by  String
   updated_by  String?
   isDeleted   Boolean      @default(false) @map("is_deleted")
-  status      String     @default("active")
+  status      String       @default("active")
   features    String[]
   membership  Membership[]
 
