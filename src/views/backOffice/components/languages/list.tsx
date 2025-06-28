@@ -25,11 +25,57 @@ const LanguageList = () => {
     setSelectedRow(row);
     setIsDrawerOpen(true);
   };
-
+  const handleActivate = async (row: Language) => {
+    try {
+      const updatedRow = { ...row, isDeleted: false};
+      await apiService.put(`/language/${row.id}`, updatedRow);
+      mutate();
+      toast.push(
+        <Notification type="info">
+          Idioma reactivado correctamente
+        </Notification>,
+        {
+          placement: "top-center",
+        }
+      );
+    } catch (error) {
+      console.error("Error updating language:", error);
+      toast.push(
+        <Notification type="danger">
+          Error al actualizar el idioma
+        </Notification>,
+        {
+          placement: "top-center",
+        }
+      );
+    } finally {
+      setSelectedRow({} as Language);
+    }
+  };
   const handleStatusChange = async (
     row: Language,
     isDeleted: boolean
-  ) => {};
+  ) => {
+    try {
+      const updatedRow = { ...row, status: isDeleted ? "inactive" : "active" };
+      await apiService.put(`/language/${row.id}`, updatedRow);
+      mutate();
+    } catch (error) {
+      console.error("Error updating language:", error);
+      toast.push(
+        <Notification type="danger">
+          Error al actualizar el idioma
+        </Notification>,
+        {
+          placement: "top-center",
+        }
+      );
+    } finally {
+      setSelectedRow({} as Language);
+    }
+    setIsDrawerOpen(false);
+  };
+
 
   const handleDelete = async (row: Language) => {
     try {
@@ -119,12 +165,19 @@ const LanguageList = () => {
         accessorKey: 'description',
         header: 'Descripción',
         cell: (info) => info.getValue(),
+      },{
+        accessorKey: 'status',
+        header: 'Visible',
+        cell: (info) =>
+          renderIsDeletedToggle(info.getValue() === 'active', (checked) =>
+            handleStatusChange(info.row.original as Language, checked), 'Sí', 'No'
+          ),
       },
       {
         accessorKey: 'isDeleted',
         header: 'Estado',
         cell: (info) =>
-          renderIsDeletedToggle(info.getValue() as boolean, () => {}),
+          (info.getValue() ? 'Inactivo': 'Activo'  ),
       },
       {
         accessorKey: 'created_at',
@@ -153,7 +206,10 @@ const LanguageList = () => {
           <ActionTableColumn
             row={info.row.original as Language}
             onEdit={handleEdit}
-            onDelete={handleDelete}
+            onDelete={info.row.original.isDeleted ? undefined : handleDelete}
+            onActivate={
+              info.row.original.isDeleted ? handleActivate : undefined
+            }
           />
         ),
       },

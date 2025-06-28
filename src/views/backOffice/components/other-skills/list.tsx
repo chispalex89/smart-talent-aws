@@ -25,12 +25,56 @@ const OtherSkillList = () => {
     setSelectedRow(row);
     setIsDrawerOpen(true);
   };
-
+  const handleActivate = async (row: OtherSkills) => {
+    try {
+      const updatedRow = { ...row, isDeleted: false};
+      await apiService.put(`/other-skills/${row.id}`, updatedRow);
+      mutate();
+      toast.push(
+        <Notification type="info">
+          Habilidad extra reactivado correctamente
+        </Notification>,
+        {
+          placement: "top-center",
+        }
+      );
+    } catch (error) {
+      console.error("Error updating other skill:", error);
+      toast.push(
+        <Notification type="danger">
+          Error al actualizar el estado académico
+        </Notification>,
+        {
+          placement: "top-center",
+        }
+      );
+    } finally {
+      setSelectedRow({} as OtherSkills);
+    }
+  };
   const handleStatusChange = async (
     row: OtherSkills,
     isDeleted: boolean
-  ) => {};
-
+  ) => {
+    try {
+      const updatedRow = { ...row, status: isDeleted ? "inactive" : "active" };
+      await apiService.put(`/other-skills/${row.id}`, updatedRow);
+      mutate();
+    } catch (error) {
+      console.error("Error updating academic status:", error);
+      toast.push(
+        <Notification type="danger">
+          Error al actualizar el estado académico
+        </Notification>,
+        {
+          placement: "top-center",
+        }
+      );
+    } finally {
+      setSelectedRow({} as OtherSkills);
+    }
+    setIsDrawerOpen(false);
+  };
   const handleDelete = async (row: OtherSkills) => {
     try {
       await apiService.delete(`/other-skills/${row.id}`);
@@ -44,7 +88,7 @@ const OtherSkillList = () => {
         }
       );
     } catch (error) {
-      console.error('Error deleting Other Skill:', error);
+      console.error('Error deleting other skill:', error);
       toast.push(
         <Notification type="danger">
           Error al eliminar la habilidad extra
@@ -121,10 +165,22 @@ const OtherSkillList = () => {
         cell: (info) => info.getValue(),
       },
       {
+        accessorKey: 'status',
+        header: 'Visible',
+        cell: (info) =>
+          renderIsDeletedToggle(
+            info.getValue() === 'active',
+            (checked) =>
+              handleStatusChange(info.row.original as OtherSkills, checked),
+            'Sí',
+            'No'
+          ),
+      },
+      {
         accessorKey: 'isDeleted',
         header: 'Estado',
         cell: (info) =>
-          renderIsDeletedToggle(info.getValue() as boolean, () => {}),
+          (info.getValue() ? 'Inactivo' : 'Activo') ,
       },
       {
         accessorKey: 'created_at',

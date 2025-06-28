@@ -12,6 +12,7 @@ import GenericForm from '../generic-form';
 import ActionTableColumn from '../generic-form/action-table-column';
 import apiService from '../../../../services/apiService';
 import Notification from '@/components/ui/Notification';
+import { checkPrime } from 'crypto';
 
 const JobHierarchyList = () => {
   const { list, total, tableData, isLoading, setTableData, mutate } =
@@ -25,10 +26,56 @@ const JobHierarchyList = () => {
     setSelectedRow(row);
     setIsDrawerOpen(true);
   };
+  const handleActivate = async (row: JobHierarchy) => {
+    try {
+      const updatedRow = { ...row, isDeleted: false};
+      await apiService.put(`/job-hierarchy/${row.id}`, updatedRow);
+      mutate();
+      toast.push(
+        <Notification type="info">
+          Jerarquía laboral reactivada correctamente
+        </Notification>,
+        {
+          placement: "top-center",
+        }
+      );
+    } catch (error) {
+      console.error("Error updating job hierarchy:", error);
+      toast.push(
+        <Notification type="danger">
+          Error al actualizar el estado académico
+        </Notification>,
+        {
+          placement: "top-center",
+        }
+      );
+    } finally {
+      setSelectedRow({} as JobHierarchy);
+    }
+  };
   const handleStatusChange = async (
     row: JobHierarchy,
     isDeleted: boolean
-  ) => {};
+  ) => {
+    try {
+      const updatedRow = { ...row, status: isDeleted ? "inactive" : "active" };
+      await apiService.put(`/job-hierarchy/${row.id}`, updatedRow);
+      mutate();
+    } catch (error) {
+      console.error("Error updating job hierarchy:", error);
+      toast.push(
+        <Notification type="danger">
+          Error al actualizar la jerarquía de trabajo
+        </Notification>,
+        {
+          placement: "top-center",
+        }
+      );
+    } finally {
+      setSelectedRow({} as JobHierarchy);
+    }
+    setIsDrawerOpen(false);
+  };
 
   const handleDelete = async (row: JobHierarchy) => {
     try {
@@ -121,9 +168,13 @@ const JobHierarchyList = () => {
       },
       {
         accessorKey: 'status',
-        header: 'Estado',
+        header: 'Visible',
         cell: (info) =>
-          renderIsDeletedToggle(info.getValue() as boolean, () => {}),
+          renderIsDeletedToggle(info.getValue() === 'active', (checked)=> handleStatusChange(info.row.original as JobHierarchy, checked)),
+      },{
+        accessorKey: 'isDeleted',
+        header: 'Estado',
+        cell: (info) => (info.getValue() ? 'Inactivo' : 'Activo'),
       },
       {
         accessorKey: 'created_at',
@@ -152,7 +203,8 @@ const JobHierarchyList = () => {
           <ActionTableColumn
             row={info.row.original as JobHierarchy}
             onEdit={handleEdit}
-            onDelete={handleDelete}
+            onDelete={info.row.original.isDeleted ? undefined : handleDelete}
+            onActivate={info.row.original.isDeleted ? handleActivate : undefined}
           />
         ),
       },

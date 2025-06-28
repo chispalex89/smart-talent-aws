@@ -1,17 +1,17 @@
-import React, { useMemo } from 'react';
-import { cloneDeep } from 'lodash';
+import React, { useMemo } from "react";
+import { cloneDeep } from "lodash";
 import DataTable, {
   ColumnDef,
   OnSortParam,
-} from '@/components/shared/DataTable';
-import  { useAcademicHistoryStatusList } from '../../hooks';
-import { renderIsDeletedToggle } from '../../../../helpers/renderActiveToggle';
-import { Card, Drawer, toast } from '@/components/ui';
-import { AcademicDataStatus } from '@prisma/client';
-import GenericForm from '../generic-form';
-import ActionTableColumn from '../generic-form/action-table-column';
-import apiService from '../../../../services/apiService';
-import Notification from '@/components/ui/Notification';
+} from "@/components/shared/DataTable";
+import { useAcademicHistoryStatusList } from "../../hooks";
+import { renderIsDeletedToggle } from "../../../../helpers/renderActiveToggle";
+import { Card, Drawer, toast } from "@/components/ui";
+import { AcademicDataStatus } from "@prisma/client";
+import GenericForm from "../generic-form";
+import ActionTableColumn from "../generic-form/action-table-column";
+import apiService from "../../../../services/apiService";
+import Notification from "@/components/ui/Notification";
 
 const AcademicDataStatusList = () => {
   const { list, total, tableData, isLoading, setTableData, mutate } =
@@ -22,14 +22,59 @@ const AcademicDataStatusList = () => {
   );
   const [isDrawerOpen, setIsDrawerOpen] = React.useState(false);
   const handleEdit = (row: AcademicDataStatus) => {
-  setSelectedRow(row);
+    setSelectedRow(row);
     setIsDrawerOpen(true);
   };
-
+  const handleActivate = async (row: AcademicDataStatus) => {
+    try {
+      const updatedRow = { ...row, isDeleted: false};
+      await apiService.put(`/academic-status/${row.id}`, updatedRow);
+      mutate();
+      toast.push(
+        <Notification type="info">
+          Estado académico reactivado correctamente
+        </Notification>,
+        {
+          placement: "top-center",
+        }
+      );
+    } catch (error) {
+      console.error("Error updating academic status:", error);
+      toast.push(
+        <Notification type="danger">
+          Error al actualizar el estado académico
+        </Notification>,
+        {
+          placement: "top-center",
+        }
+      );
+    } finally {
+      setSelectedRow({} as AcademicDataStatus);
+    }
+  };
   const handleStatusChange = async (
     row: AcademicDataStatus,
     isDeleted: boolean
-  ) => {};
+  ) => {
+    try {
+      const updatedRow = { ...row, status: isDeleted ? "inactive" : "active" };
+      await apiService.put(`/academic-status/${row.id}`, updatedRow);
+      mutate();
+    } catch (error) {
+      console.error("Error updating academic status:", error);
+      toast.push(
+        <Notification type="danger">
+          Error al actualizar el estado académico
+        </Notification>,
+        {
+          placement: "top-center",
+        }
+      );
+    } finally {
+      setSelectedRow({} as AcademicDataStatus);
+    }
+    setIsDrawerOpen(false);
+  };
 
   const handleDelete = async (row: AcademicDataStatus) => {
     try {
@@ -40,17 +85,17 @@ const AcademicDataStatusList = () => {
           Estado académico eliminado correctamente
         </Notification>,
         {
-          placement: 'top-center',
+          placement: "top-center",
         }
       );
     } catch (error) {
-      console.error('Error deleting a academic state :', error);
+      console.error("Error deleting a academic status :", error);
       toast.push(
         <Notification type="danger">
           Error al eliminar el estado académico
         </Notification>,
         {
-          placement: 'top-center',
+          placement: "top-center",
         }
       );
     } finally {
@@ -59,33 +104,33 @@ const AcademicDataStatusList = () => {
     }
   };
 
-    const handleApply = async (updatedRow: AcademicDataStatus) => {
-      try {
-        await apiService.put(`/academic-status/${selectedRow.id}`, updatedRow);
-        mutate();
-        toast.push(
-          <Notification type="info">
-            Estado academico actualizado correctamente
-          </Notification>,
-          {
-            placement: 'top-center',
-          }
-        );
-      } catch (error) {
-        console.error('Error updating State:', error);
-        toast.push(
-          <Notification type="danger">
-            Error al actualizar el estado académico
-          </Notification>,
-          {
-            placement: 'top-center',
-          }
-        );
-      } finally {
-        setIsDrawerOpen(false);
-        setSelectedRow({} as AcademicDataStatus);
-      }
-    };
+  const handleApply = async (updatedRow: AcademicDataStatus) => {
+    try {
+      await apiService.put(`/academic-status/${selectedRow.id}`, updatedRow);
+      mutate();
+      toast.push(
+        <Notification type="info">
+          Estado académico actualizado correctamente
+        </Notification>,
+        {
+          placement: "top-center",
+        }
+      );
+    } catch (error) {
+      console.error("Error updating academic state:", error);
+      toast.push(
+        <Notification type="danger">
+          Error al actualizar el estado académico
+        </Notification>,
+        {
+          placement: "top-center",
+        }
+      );
+    } finally {
+      setIsDrawerOpen(false);
+      setSelectedRow({} as AcademicDataStatus);
+    }
+  };
 
   const handlePaginationChange = (page: number) => {
     const newTableData = cloneDeep(tableData);
@@ -103,7 +148,7 @@ const AcademicDataStatusList = () => {
   const handleSort = (sort: OnSortParam) => {
     const newTableData = cloneDeep(tableData);
     newTableData.sort = {
-      [sort.key as string]: sort.order ? 'desc' : 'asc',
+      [sort.key as string]: sort.order ? "desc" : "asc",
     };
     setTableData(newTableData);
   };
@@ -111,50 +156,63 @@ const AcademicDataStatusList = () => {
   const columns: ColumnDef<AcademicDataStatus>[] = useMemo(
     () => [
       {
-        accessorKey: 'name',
-        header: 'Estado de historial académico',
+        accessorKey: "name",
+        header: "Estado de historial académico",
         cell: (info) => info.getValue(),
       },
       {
-        accessorKey: 'description',
-        header: 'Descripción',
+        accessorKey: "description",
+        header: "Descripción",
         cell: (info) => info.getValue(),
       },
       {
-        accessorKey: 'isDeleted',
-        header: 'Estado',
+        accessorKey: "status",
+        header: "Visible",
         cell: (info) =>
-          renderIsDeletedToggle(info.getValue() as boolean, () => {}),
+          renderIsDeletedToggle(
+            info.getValue() === "active",
+            (checked) =>
+              handleStatusChange(info.row.original as AcademicDataStatus, checked),
+            "Sí",
+            "No"
+          ),
       },
       {
-        accessorKey: 'created_at',
-        header: 'Fecha de creación',
+        accessorKey: "isDeleted",
+        header: "Estado",
+        cell: (info) => (info.getValue() ? "Inactivo" : "Activo"),
+      },
+      {
+        accessorKey: "created_at",
+        header: "Fecha de creación",
         cell: (info) =>
-          new Date(info.getValue() as string).toLocaleDateString('es-GT', {
-            year: 'numeric',
-            month: '2-digit',
-            day: '2-digit',
+          new Date(info.getValue() as string).toLocaleDateString("es-GT", {
+            year: "numeric",
+            month: "2-digit",
+            day: "2-digit",
           }),
       },
       {
-        accessorKey: 'updated_at',
-        header: 'Última actualización',
+        accessorKey: "updated_at",
+        header: "Última actualización",
         cell: (info) =>
-          new Date(info.getValue() as string).toLocaleDateString('es-GT', {
-            year: 'numeric',
-            month: '2-digit',
-            day: '2-digit',
+          new Date(info.getValue() as string).toLocaleDateString("es-GT", {
+            year: "numeric",
+            month: "2-digit",
+            day: "2-digit",
           }),
       },
       {
-        header: '',
-        id: 'action',
+        header: "",
+        id: "action",
         cell: (props) => (
           <ActionTableColumn
             row={props.row.original}
-            onActivate={props.row.original.isDeleted ? () => {} : undefined}
             onEdit={handleEdit}
             onDelete={props.row.original.isDeleted ? undefined : handleDelete}
+            onActivate={
+              props.row.original.isDeleted ? handleActivate : undefined
+            }
           />
         ),
       },
