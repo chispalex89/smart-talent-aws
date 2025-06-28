@@ -1,56 +1,94 @@
-import React, { useMemo } from 'react';
-import { cloneDeep } from 'lodash';
+import React, { useMemo } from "react";
+import { cloneDeep } from "lodash";
 import DataTable, {
   ColumnDef,
   OnSortParam,
-} from '@/components/shared/DataTable';
-import  { useStateList } from '../../hooks';
-import { renderIsDeletedToggle } from '../../../../helpers/renderActiveToggle';
-import { Card, Drawer, toast } from '@/components/ui';
-import { State } from '@prisma/client';
-import GenericForm from '../generic-form';
-import ActionTableColumn from '../generic-form/action-table-column';
-import apiService from '../../../../services/apiService';
-import Notification from '@/components/ui/Notification';
+} from "@/components/shared/DataTable";
+import { useStateList } from "../../hooks";
+import { renderIsDeletedToggle } from "../../../../helpers/renderActiveToggle";
+import { Card, Drawer, toast } from "@/components/ui";
+import { State } from "@prisma/client";
+import GenericForm from "../generic-form";
+import ActionTableColumn from "../generic-form/action-table-column";
+import apiService from "../../../../services/apiService";
+import Notification from "@/components/ui/Notification";
 
 const StateStatusList = () => {
   const { list, total, tableData, isLoading, setTableData, mutate } =
     useStateList();
 
-  const [selectedRow, setSelectedRow] = React.useState<State>(
-    {} as State
-  );
+  const [selectedRow, setSelectedRow] = React.useState<State>({} as State);
   const [isDrawerOpen, setIsDrawerOpen] = React.useState(false);
   const handleEdit = (row: State) => {
-  setSelectedRow(row);
+    setSelectedRow(row);
     setIsDrawerOpen(true);
   };
 
-  const handleStatusChange = async (
-    row: State,
-    isDeleted: boolean
-  ) => {};
+  const handleActivate = async (row: State) => {
+    try {
+      const updatedRow = { isDeleted: false };
+      await apiService.put(`/state/${row.id}`, updatedRow);
+      mutate();
+      toast.push(
+        <Notification type="info">
+          Estado reactivado correctamente
+        </Notification>,
+        {
+          placement: "top-center",
+        }
+      );
+    } catch (error) {
+      console.error("Error updating state:", error);
+      toast.push(
+        <Notification type="danger">
+          Error al actualizar el estado
+        </Notification>,
+        {
+          placement: "top-center",
+        }
+      );
+    } finally {
+      setSelectedRow({} as State);
+    }
+  };
+
+  const handleStatusChange = async (row: State, isDeleted: boolean) => {
+    try {
+      const updatedRow = { ...row, status: isDeleted ? "inactive" : "active" };
+      await apiService.put(`/state/${row.id}`, updatedRow);
+      mutate();
+    } catch (error) {
+      console.error("Error updating state:", error);
+      toast.push(
+        <Notification type="danger">
+          Error al actualizar el estado
+        </Notification>,
+        {
+          placement: "top-center",
+        }
+      );
+    } finally {
+      setSelectedRow({} as State);
+    }
+    setIsDrawerOpen(false);
+  };
 
   const handleDelete = async (row: State) => {
     try {
       await apiService.delete(`/state/${row.id}`);
       mutate();
       toast.push(
-        <Notification type="info">
-          Estado eliminado correctamente
-        </Notification>,
+        <Notification type="info">Estado eliminado correctamente</Notification>,
         {
-          placement: 'top-center',
+          placement: "top-center",
         }
       );
     } catch (error) {
-      console.error('Error deleting state :', error);
+      console.error("Error deleting state :", error);
       toast.push(
-        <Notification type="danger">
-          Error al eliminar el estado
-        </Notification>,
+        <Notification type="danger">Error al eliminar el estado</Notification>,
         {
-          placement: 'top-center',
+          placement: "top-center",
         }
       );
     } finally {
@@ -59,33 +97,33 @@ const StateStatusList = () => {
     }
   };
 
-    const handleApply = async (updatedRow: State) => {
-      try {
-        await apiService.put(`/state/${selectedRow.id}`, updatedRow);
-        mutate();
-        toast.push(
-          <Notification type="info">
-            Estado actualizado correctamente
-          </Notification>,
-          {
-            placement: 'top-center',
-          }
-        );
-      } catch (error) {
-        console.error('Error updating State:', error);
-        toast.push(
-          <Notification type="danger">
-            Error al actualizar el estado
-          </Notification>,
-          {
-            placement: 'top-center',
-          }
-        );
-      } finally {
-        setIsDrawerOpen(false);
-        setSelectedRow({} as State);
-      }
-    };
+  const handleApply = async (updatedRow: State) => {
+    try {
+      await apiService.put(`/state/${selectedRow.id}`, updatedRow);
+      mutate();
+      toast.push(
+        <Notification type="info">
+          Estado actualizado correctamente
+        </Notification>,
+        {
+          placement: "top-center",
+        }
+      );
+    } catch (error) {
+      console.error("Error updating State:", error);
+      toast.push(
+        <Notification type="danger">
+          Error al actualizar el estado
+        </Notification>,
+        {
+          placement: "top-center",
+        }
+      );
+    } finally {
+      setIsDrawerOpen(false);
+      setSelectedRow({} as State);
+    }
+  };
 
   const handlePaginationChange = (page: number) => {
     const newTableData = cloneDeep(tableData);
@@ -103,7 +141,7 @@ const StateStatusList = () => {
   const handleSort = (sort: OnSortParam) => {
     const newTableData = cloneDeep(tableData);
     newTableData.sort = {
-      [sort.key as string]: sort.order ? 'desc' : 'asc',
+      [sort.key as string]: sort.order ? "desc" : "asc",
     };
     setTableData(newTableData);
   };
@@ -111,59 +149,74 @@ const StateStatusList = () => {
   const columns: ColumnDef<State>[] = useMemo(
     () => [
       {
-        accessorKey: 'name',
-        header: 'Estado',
+        accessorKey: "name",
+        header: "Estado",
         cell: (info) => info.getValue(),
       },
       {
-        accessorKey: 'description',
-        header: 'Descripción',
+        accessorKey: "description",
+        header: "Descripción",
         cell: (info) => info.getValue(),
       },
       {
-        accessorKey: 'country',
-        header: 'País',
+        accessorKey: "country",
+        header: "País",
         cell: (info) => {
           const country = info.getValue();
-          return country && typeof country === 'object' && 'name' in country
+          return country && typeof country === "object" && "name" in country
             ? country.name
-            : 'N/A';
+            : "N/A";
         },
       },
       {
-        accessorKey: 'isDeleted',
-        header: 'Estado',
+        accessorKey: "status",
+        header: "Visible",
         cell: (info) =>
-          renderIsDeletedToggle(info.getValue() as boolean, () => {}),
+          renderIsDeletedToggle(
+            info.getValue() === "active",
+            (checked) =>
+              handleStatusChange(info.row.original as State, checked),
+            "Sí",
+            "No"
+          ),
       },
       {
-        accessorKey: 'created_at',
-        header: 'Fecha de creación',
+        accessorKey: "isDeleted",
+        header: "Estado",
         cell: (info) =>
-          new Date(info.getValue() as string).toLocaleDateString('es-GT', {
-            year: 'numeric',
-            month: '2-digit',
-            day: '2-digit',
+          (info.getValue() ? "Inactivo" : "Activo"),
+      },
+      {
+        accessorKey: "created_at",
+        header: "Fecha de creación",
+        cell: (info) =>
+          new Date(info.getValue() as string).toLocaleDateString("es-GT", {
+            year: "numeric",
+            month: "2-digit",
+            day: "2-digit",
           }),
       },
       {
-        accessorKey: 'updated_at',
-        header: 'Última actualización',
+        accessorKey: "updated_at",
+        header: "Última actualización",
         cell: (info) =>
-          new Date(info.getValue() as string).toLocaleDateString('es-GT', {
-            year: 'numeric',
-            month: '2-digit',
-            day: '2-digit',
+          new Date(info.getValue() as string).toLocaleDateString("es-GT", {
+            year: "numeric",
+            month: "2-digit",
+            day: "2-digit",
           }),
       },
       {
-        header: '',
-        id: 'action',
+        header: "",
+        id: "action",
         cell: (props) => (
           <ActionTableColumn
             row={props.row.original}
             onEdit={handleEdit}
-            onDelete={handleDelete}
+            onDelete={props.row.original.isDeleted ? undefined : handleDelete}
+            onActivate={
+              props.row.original.isDeleted ? handleActivate : undefined
+            }
           />
         ),
       },

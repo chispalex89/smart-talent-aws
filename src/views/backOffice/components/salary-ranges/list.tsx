@@ -1,17 +1,17 @@
-import React, { useMemo } from 'react';
-import { cloneDeep } from 'lodash';
+import React, { useMemo } from "react";
+import { cloneDeep } from "lodash";
 import DataTable, {
   ColumnDef,
   OnSortParam,
-} from '@/components/shared/DataTable';
-import { useSalaryRangeList } from '../../hooks';
-import { renderIsDeletedToggle } from '../../../../helpers/renderActiveToggle';
-import { Card, Drawer, toast } from '@/components/ui';
-import { SalaryRange } from '@prisma/client';
-import GenericForm from '../generic-form';
-import ActionTableColumn from '../generic-form/action-table-column';
-import apiService from '../../../../services/apiService';
-import Notification from '@/components/ui/Notification';
+} from "@/components/shared/DataTable";
+import { useSalaryRangeList } from "../../hooks";
+import { renderIsDeletedToggle } from "../../../../helpers/renderActiveToggle";
+import { Card, Drawer, toast } from "@/components/ui";
+import { SalaryRange } from "@prisma/client";
+import GenericForm from "../generic-form";
+import ActionTableColumn from "../generic-form/action-table-column";
+import apiService from "../../../../services/apiService";
+import Notification from "@/components/ui/Notification";
 
 const SalaryRangeList = () => {
   const { list, total, tableData, isLoading, setTableData, mutate } =
@@ -25,11 +25,53 @@ const SalaryRangeList = () => {
     setSelectedRow(row);
     setIsDrawerOpen(true);
   };
-
-  const handleStatusChange = async (
-    row: SalaryRange,
-    isDeleted: boolean
-  ) => {};
+  const handleActivate = async (row: SalaryRange) => {
+    try {
+      const updatedRow = { ...row, isDeleted: false };
+      await apiService.put(`/salary-range/${row.id}`, updatedRow);
+      mutate();
+      toast.push(
+        <Notification type="info">
+          Rango salarial reactivado correctamente
+        </Notification>,
+        {
+          placement: "top-center",
+        }
+      );
+    } catch (error) {
+      console.error("Error updating salary range:", error);
+      toast.push(
+        <Notification type="danger">
+          Error al actualizar el rango salarial
+        </Notification>,
+        {
+          placement: "top-center",
+        }
+      );
+    } finally {
+      setSelectedRow({} as SalaryRange);
+    }
+  };
+  const handleStatusChange = async (row: SalaryRange, isDeleted: boolean) => {
+    try {
+      const updatedRow = { ...row, status: isDeleted ? "inactive" : "active" };
+      await apiService.put(`/salary-range/${row.id}`, updatedRow);
+      mutate();
+    } catch (error) {
+      console.error("Error updating salary range:", error);
+      toast.push(
+        <Notification type="danger">
+          Error al actualizar el rango salarial
+        </Notification>,
+        {
+          placement: "top-center",
+        }
+      );
+    } finally {
+      setSelectedRow({} as SalaryRange);
+    }
+    setIsDrawerOpen(false);
+  };
 
   const handleDelete = async (row: SalaryRange) => {
     try {
@@ -37,20 +79,20 @@ const SalaryRangeList = () => {
       mutate();
       toast.push(
         <Notification type="info">
-         Rango salarial eliminado correctamente
+          Rango salarial eliminado correctamente
         </Notification>,
         {
-          placement: 'top-center',
+          placement: "top-center",
         }
       );
     } catch (error) {
-      console.error('Error deleting salary range:', error);
+      console.error("Error deleting salary range:", error);
       toast.push(
         <Notification type="danger">
           Error al eliminar el rango salarial
         </Notification>,
         {
-          placement: 'top-center',
+          placement: "top-center",
         }
       );
     } finally {
@@ -59,33 +101,33 @@ const SalaryRangeList = () => {
     }
   };
 
-    const handleApply = async (updatedRow: SalaryRange) => {
-      try {
-        await apiService.put(`/salary-range/${selectedRow.id}`, updatedRow);
-        mutate();
-        toast.push(
-          <Notification type="info">
-            Rango salarial actualizado correctamente
-          </Notification>,
-          {
-            placement: 'top-center',
-          }
-        );
-      } catch (error) {
-        console.error('Error updating salary range:', error);
-        toast.push(
-          <Notification type="danger">
-            Error al actualizar el estado del rango salarial
-          </Notification>,
-          {
-            placement: 'top-center',
-          }
-        );
-      } finally {
-        setIsDrawerOpen(false);
-        setSelectedRow({} as SalaryRange);
-      }
-    };
+  const handleApply = async (updatedRow: SalaryRange) => {
+    try {
+      await apiService.put(`/salary-range/${selectedRow.id}`, updatedRow);
+      mutate();
+      toast.push(
+        <Notification type="info">
+          Rango salarial actualizado correctamente
+        </Notification>,
+        {
+          placement: "top-center",
+        }
+      );
+    } catch (error) {
+      console.error("Error updating salary range:", error);
+      toast.push(
+        <Notification type="danger">
+          Error al actualizar el estado del rango salarial
+        </Notification>,
+        {
+          placement: "top-center",
+        }
+      );
+    } finally {
+      setIsDrawerOpen(false);
+      setSelectedRow({} as SalaryRange);
+    }
+  };
 
   const handlePaginationChange = (page: number) => {
     const newTableData = cloneDeep(tableData);
@@ -103,7 +145,7 @@ const SalaryRangeList = () => {
   const handleSort = (sort: OnSortParam) => {
     const newTableData = cloneDeep(tableData);
     newTableData.sort = {
-      [sort.key as string]: sort.order ? 'desc' : 'asc',
+      [sort.key as string]: sort.order ? "desc" : "asc",
     };
     setTableData(newTableData);
   };
@@ -111,53 +153,71 @@ const SalaryRangeList = () => {
   const columns: ColumnDef<SalaryRange>[] = useMemo(
     () => [
       {
-        accessorKey: 'range',
-        header: 'Rango salarial',
+        accessorKey: "range",
+        header: "Rango salarial",
         cell: (info) => info.getValue(),
       },
       {
-        accessorKey: 'description',
-        header: 'Descripción',
+        accessorKey: "description",
+        header: "Descripción",
         cell: (info) => info.getValue(),
       },
       {
-        accessorKey: 'isDeleted',
-        header: 'Estado',
+        accessorKey: "status",
+        header: "Visible",
         cell: (info) =>
-          renderIsDeletedToggle(info.getValue() as boolean, () => {}),
+          renderIsDeletedToggle(
+            info.getValue() === "active",
+            (checked) =>
+              handleStatusChange(
+                info.row.original as SalaryRange,
+                checked
+              ),
+            "Sí",
+            "No"
+          ),
       },
       {
-        accessorKey: 'created_at',
-        header: 'Fecha de creación',
+        accessorKey: "isDeleted",
+        header: "Estado",
         cell: (info) =>
-          new Date(info.getValue() as string).toLocaleDateString('es-GT', {
-            year: 'numeric',
-            month: '2-digit',
-            day: '2-digit',
+          (info.getValue() ? "Inactivo" : "Activo") ,
+      },
+      {
+        accessorKey: "created_at",
+        header: "Fecha de creación",
+        cell: (info) =>
+          new Date(info.getValue() as string).toLocaleDateString("es-GT", {
+            year: "numeric",
+            month: "2-digit",
+            day: "2-digit",
+          }),
+      },
+
+      {
+        accessorKey: "updated_at",
+        header: "Última actualización",
+        cell: (info) =>
+          new Date(info.getValue() as string).toLocaleDateString("es-GT", {
+            year: "numeric",
+            month: "2-digit",
+            day: "2-digit",
           }),
       },
       {
-        accessorKey: 'updated_at',
-        header: 'Última actualización',
-        cell: (info) =>
-          new Date(info.getValue() as string).toLocaleDateString('es-GT', {
-            year: 'numeric',
-            month: '2-digit',
-            day: '2-digit',
-          }),
-      },
-      {
-        id: 'actions',
-        header: 'Acciones',
+        id: "actions",
+        header: "Acciones",
         cell: (info) => (
           <ActionTableColumn
             row={info.row.original as SalaryRange}
             onEdit={handleEdit}
-            onDelete={handleDelete}
+            onDelete={info.row.original.isDeleted ? undefined : handleDelete}
+            onActivate={
+              info.row.original.isDeleted ? handleActivate : undefined
+            }
           />
         ),
       },
-
     ],
     []
   );
@@ -187,7 +247,7 @@ const SalaryRangeList = () => {
         closable={true}
       >
         <GenericForm
-          initialValues={selectedRow as SalaryRange}          
+          initialValues={selectedRow as SalaryRange}
           onSubmit={(item) => handleApply(item)}
           onCancel={() => setIsDrawerOpen(false)}
           submitButtonText="Guardar Cambios"
