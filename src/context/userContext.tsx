@@ -42,8 +42,10 @@ export interface IUserContext {
   setUser: (user: User | null) => void;
   recruiter: RecruiterWithDetails | null;
   setRecruiter: (recruiter: RecruiterWithDetails | null) => void;
+  refetchRecruiter: () => Promise<void>;
   applicant: ApplicantWithDetails | null;
   setApplicant: (applicant: ApplicantWithDetails | null) => void;
+  refetchApplicant: () => Promise<void>;
   refetchUser: () => Promise<void>;
   authUser: AuthUser | null;
   setAuthUser: (authUser: AuthUser | null) => void;
@@ -175,8 +177,10 @@ export const UserContextProvider: React.FC<{
         userAttributes,
         recruiter,
         setRecruiter,
+        refetchRecruiter: fetchRecruiter,
         applicant,
         setApplicant,
+        refetchApplicant: fetchApplicant,
         membershipType,
       }}
     >

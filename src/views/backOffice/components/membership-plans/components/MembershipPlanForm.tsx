@@ -1,17 +1,17 @@
-import Button from "@/components/ui/Button";
-import Tag from "@/components/ui/Tag";
-import { Switcher } from "@/components/ui";
-import { TbTrash } from "react-icons/tb";
-import { Form, FormItem } from "@/components/ui/Form";
-import { Controller, useForm } from "react-hook-form";
-import { Input } from "@/components/ui/Input";
-import { MembershipType } from "@prisma/client";
-import { useEffect } from "react";
-import apiService from "../../../../../services/apiService";
-import React from "react";
-import { BsFillPatchPlusFill, BsStar, BsWindowPlus } from "react-icons/bs";
+import Button from '@/components/ui/Button';
+import Tag from '@/components/ui/Tag';
+import { Switcher } from '@/components/ui';
+import { TbTrash } from 'react-icons/tb';
+import { Form, FormItem } from '@/components/ui/Form';
+import { Controller, useForm } from 'react-hook-form';
+import { Input } from '@/components/ui/Input';
+import { MembershipType } from '@prisma/client';
+import { useEffect } from 'react';
+import apiService from '../../../../../services/apiService';
+import React from 'react';
+import { BsFillPatchPlusFill, BsStar, BsWindowPlus } from 'react-icons/bs';
 
-type Membership = Omit<MembershipType, "created_at">;
+type Membership = Omit<MembershipType, 'created_at'>;
 
 export interface MembershipPlanFormProps {
   membership: Membership;
@@ -46,12 +46,21 @@ const MembershipPlanForm = ({
 
   const onSubmitForm = async (values: Membership) => {
     if (values.id) {
-      await apiService.put(`/membership-type/${values.id}`, values);
+      await apiService.put(`/membership-type/${values.id}`, {
+        price: values.price,
+        description: values.description,
+        name: values.name,
+        status: values.status,
+        features: values.features,
+      });
+    }
+    if (onSubmit) {
+      onSubmit(values);
     }
     reset(values);
   };
   const onErrorForm = (errors: any) => {
-    console.error("Form errors:", errors);
+    console.error('Form errors:', errors);
   };
 
   const [features, setFeatures] = React.useState(membership.features);
@@ -88,7 +97,6 @@ const MembershipPlanForm = ({
               )}
             />
 
-
             <div className="flex items-center justify-center flex-col sm:flex-row w-full">
               <span className="text-sm text-gray-500 pr-0 sm:pr-4 dark:text-gray-400 text-center sm:text-left mb-2 sm:mb-0">
                 Activo
@@ -96,14 +104,14 @@ const MembershipPlanForm = ({
               <Controller
                 name="status"
                 control={control}
-                defaultValue={"active"}
+                defaultValue={'active'}
                 render={({ field }) => (
                   <div className="flex justify-center">
                     <Switcher
-                      checked={field.value === "active"}
+                      checked={field.value === 'active'}
                       onChange={() => {
                         const newStatus =
-                          field.value === "active" ? "inactive" : "active";
+                          field.value === 'active' ? 'inactive' : 'active';
                         field.onChange(newStatus);
                         if (onUpdateMembership) {
                           onUpdateMembership({
@@ -114,42 +122,39 @@ const MembershipPlanForm = ({
                       }}
                     />
                   </div>
-                  
                 )}
               />
-              
             </div>
-            
           </div>
-                <div className="flex justify-end items-center space-x-2 pr-4 py-2 w-full">
-                <span className="font-bold min-w-[60px] p-4">Q</span>
-                <Controller
-                  name={"price"}
-                  control={control}
-                  render={({ field }) => (
-                  <Input
-                    type="number"
-                    className="font-bold text-center px-4 py-2 w-auto min-w-[80px] max-w-[140px]"
-                    style={{
-                    width: `${Math.max(80, String(field.value || "").length * 16)}px`,
-                    }}
-                    placeholder={"0.00"}
-                    min={0}
-                    step={0.01}
-                    {...field}
-                    onChange={(e) => {
+          <div className="flex justify-end items-center space-x-2 pr-4 py-2 w-full">
+            <span className="font-bold min-w-[60px] p-4">Q</span>
+            <Controller
+              name={'price'}
+              control={control}
+              render={({ field }) => (
+                <Input
+                  type="number"
+                  className="font-bold text-center px-4 py-2 w-auto min-w-[80px] max-w-[140px]"
+                  style={{
+                    width: `${Math.max(80, String(field.value || '').length * 16)}px`,
+                  }}
+                  placeholder={'0.00'}
+                  min={0}
+                  step={0.01}
+                  {...field}
+                  onChange={(e) => {
                     field.onChange(e);
                     if (onUpdateMembership) {
                       onUpdateMembership({
-                      ...membership,
-                      price: parseFloat(e.target.value),
+                        ...membership,
+                        price: parseFloat(e.target.value),
                       });
                     }
-                    }}
-                  />
-                  )}
+                  }}
                 />
-                </div>
+              )}
+            />
+          </div>
         </FormItem>
 
         <Controller
@@ -232,9 +237,9 @@ const MembershipPlanForm = ({
             type="button"
             className="ml-4 w-full"
             onClick={() => {
-              const currentFeatures = getValues("features") || [];
-              const newFeatures = [...currentFeatures, ""];
-              setValue("features", newFeatures);
+              const currentFeatures = getValues('features') || [];
+              const newFeatures = [...currentFeatures, ''];
+              setValue('features', newFeatures);
               setFeatures(newFeatures);
               if (onUpdateMembership) {
                 onUpdateMembership({ ...membership, features: newFeatures });
@@ -260,38 +265,26 @@ const MembershipPlanForm = ({
             variant="solid"
             className="ml-4"
             disabled={isSubmitting}
-            onClick={async (e) => {
-              e.preventDefault();
-              const updatedMembership = {
-                ...membership,
-                ...getValues(),
-                features: getValues("features"),
-              };
-              await onSubmitForm(updatedMembership);
-              if (onSubmit) {
-                onSubmit(updatedMembership);
-              }
-            }}
           >
             Guardar
           </Button>
         </div>
 
         <div className="text-xs text-gray-400 mt-4">
-          Última actualización:{" "}
+          Última actualización:{' '}
           {(() => {
-            const updatedAt = getValues("updated_at");
+            const updatedAt = getValues('updated_at');
             if (updatedAt instanceof Date) {
               return updatedAt.toLocaleString();
             }
-            if (typeof updatedAt === "string" && updatedAt) {
+            if (typeof updatedAt === 'string' && updatedAt) {
               const date = new Date(updatedAt);
-              return !isNaN(date.getTime()) ? date.toLocaleString() : "";
+              return !isNaN(date.getTime()) ? date.toLocaleString() : '';
             }
-            return "";
+            return '';
           })()}
-          {" por "}
-          {getValues("updated_by") || getValues("created_by") || ""}
+          {' por '}
+          {getValues('updated_by') || getValues('created_by') || ''}
         </div>
       </Form>
     </div>

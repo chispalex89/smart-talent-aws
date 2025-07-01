@@ -10,10 +10,11 @@ import { useCatalogContext } from '../../../context/catalogContext';
 const Plans = () => {
   const { membershipTypes } = useCatalogContext();
   const { paymentCycle, setPaymentDialog, setSelectedPlan } = usePricingStore();
+  
 
   return (
     <div className="grid grid-cols-1 xl:grid-cols-3 gap-8 xl:gap-4">
-      {membershipTypes?.map((plan, index) => (
+      {membershipTypes?.filter(x => !x.isDeleted && x.status === 'active').map((plan, index) => (
         <div
           key={plan.id}
           className={classNames(
@@ -30,6 +31,9 @@ const Plans = () => {
                   Recomendado
                 </Tag>
               )}
+              {
+
+              }
             </h5>
             <div className="">{plan.description}</div>
             <div className="mt-6">

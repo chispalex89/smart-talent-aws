@@ -8,7 +8,7 @@ import JobList from './job/JobList';
 import JobCreate from './job/JobCreate';
 import FavoriteCandidateList from './candidates/favorite';
 import CandidateList from './candidates/all';
-import Pricing from './pricing';
+import Pricing from './company/pricing';
 import PageContainer from '@/components/template/PageContainer';
 import Settings from './company/settings';
 import ArchivedJobList from './archive/JobList';
