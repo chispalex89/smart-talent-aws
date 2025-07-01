@@ -24,11 +24,10 @@ const statusColor: Record<string, string> = {
 const NameColumn = ({ row }: { row: FavoriteCandidate }) => {
   return (
     <div className="flex items-center">
-      {/* TODO: add image url */}
       <Avatar
         size={40}
         shape="circle"
-        src={'api.dicebear.com/7.x/pixel-art/svg'}
+        src={row.applicant?.user?.profileImage || ''}
       />
       <Link
         className={`hover:text-primary ml-2 rtl:mr-2 font-semibold text-gray-900 dark:text-gray-100`}
