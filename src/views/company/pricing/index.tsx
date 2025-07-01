@@ -2,11 +2,8 @@ import React from "react";
 import { Card } from "@/components/ui";
 import PaymentDialog from "./PaymentDialog";
 import Plans from "./Plans";
-import { useUserContext } from "../../../context/userContext";
 
 const Pricing = () => {
-  const { refetchUser } = useUserContext();
-
   return (
     <>
       <Card className="mb-4">
@@ -16,7 +13,7 @@ const Pricing = () => {
         </div>
         <Plans />
       </Card>
-      <PaymentDialog onSubmit={refetchUser} />
+      <PaymentDialog />
     </>
   );
 }
