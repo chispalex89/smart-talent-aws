@@ -47,7 +47,7 @@ const MembershipPlanForm = ({
   const onSubmitForm = async (values: Membership) => {
     if (values.id) {
       await apiService.put(`/membership-type/${values.id}`, {
-        price: values.price,
+        price: Number(values.price) || 0,
         description: values.description,
         name: values.name,
         status: values.status,
