@@ -240,7 +240,6 @@ const renderRoutes = (role: string | null, membershipType: string | null) => {
     );
   }
 
-  console.log('No role found, rendering NewClient view');
   if (role === null) {
     return (
       <Routes>
@@ -260,7 +259,7 @@ const renderRoutes = (role: string | null, membershipType: string | null) => {
 };
 
 const Views = () => {
-  const { user, role, membershipType, loadingUser } = useUserContext();
+  const { role, membershipType, loadingUser, loadingRole } = useUserContext();
   const [userType, setUserType] = useState<string | null>(null);
 
   useEffect(() => {
@@ -270,7 +269,7 @@ const Views = () => {
   }, [role]);
 
   return (
-    <Loading loading={loadingUser}>
+    <Loading loading={loadingUser || loadingRole}>
       <PageContainer>{renderRoutes(userType, membershipType)}</PageContainer>
     </Loading>
   );

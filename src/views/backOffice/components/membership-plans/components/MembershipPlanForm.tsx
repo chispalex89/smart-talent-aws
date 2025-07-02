@@ -10,6 +10,7 @@ import { useEffect } from 'react';
 import apiService from '../../../../../services/apiService';
 import React from 'react';
 import { BsFillPatchPlusFill, BsStar, BsWindowPlus } from 'react-icons/bs';
+import { NumericFormat } from 'react-number-format';
 
 type Membership = Omit<MembershipType, 'created_at'>;
 
@@ -132,25 +133,25 @@ const MembershipPlanForm = ({
               name={'price'}
               control={control}
               render={({ field }) => (
-                <Input
-                  type="number"
-                  className="font-bold text-center px-4 py-2 w-auto min-w-[80px] max-w-[140px]"
-                  style={{
-                    width: `${Math.max(80, String(field.value || '').length * 16)}px`,
-                  }}
-                  placeholder={'0.00'}
-                  min={0}
-                  step={0.01}
-                  {...field}
-                  onChange={(e) => {
-                    field.onChange(e);
+                <NumericFormat
+                  className="font-bold text-center px-4 py-2 w-auto min-w-[80px] max-w-[140px] dark:bg-gray-800 bg-white dark:text-gray-200 text-gray-800"
+                  placeholder="0.00"
+                  thousandSeparator={true}
+                  decimalScale={2}
+                  fixedDecimalScale={true}
+                  allowNegative={false}
+                  value={field.value || ''}
+                  onValueChange={(values) => {
+                    const numericValue = values.floatValue || 0;
+                    field.onChange(numericValue);
                     if (onUpdateMembership) {
                       onUpdateMembership({
                         ...membership,
-                        price: parseFloat(e.target.value),
+                        price: numericValue,
                       });
                     }
                   }}
+                  style={{ border: '1px solid #ccc', borderRadius: '4px' }}
                 />
               )}
             />

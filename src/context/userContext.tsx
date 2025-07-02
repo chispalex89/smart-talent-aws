@@ -39,6 +39,7 @@ export type ApplicantWithDetails = Applicant & {
 
 export interface IUserContext {
   loadingUser: boolean;
+  loadingRole: boolean;
   user: User | null;
   setUser: (user: User | null) => void;
   recruiter: RecruiterWithDetails | null;
@@ -64,6 +65,7 @@ export const UserContextProvider: React.FC<{
   children: React.ReactNode | React.ReactNode[] | null;
 }> = (props) => {
   const [loadingUser, setLoadingUser] = React.useState<boolean>(true);
+  const [loadingRole, setLoadingRole] = React.useState<boolean>(false);
   const [authUser, setAuthUser] = React.useState<AuthUser | null>(null);
   const [user, setUser] = React.useState<User | null>(null);
   const [recruiter, setRecruiter] = React.useState<RecruiterWithDetails | null>(
@@ -75,7 +77,6 @@ export const UserContextProvider: React.FC<{
   const [membershipType, setMembershipType] = React.useState<string | null>(
     null
   );
-
   const [role, setRole] = React.useState<string>('');
   const [permissions, setPermissions] = React.useState<Permission[]>([]);
   const [userAttributes, setUserAttributes] =
@@ -83,14 +84,21 @@ export const UserContextProvider: React.FC<{
 
   const fetchUser = async () => {
     setLoadingUser(true);
-    const currentUser = await apiService.get<User>(
-      `/user/${authUser?.username}`
-    );
-    setLoadingUser(false);
-    if (!currentUser || !currentUser.id) {
-      throw new Error('User not found');
+    try {
+
+      const currentUser = await apiService.get<User>(
+        `/user/${authUser?.username}`
+      );
+      if (!currentUser || !currentUser.id) {
+        throw new Error('User not found');
+      }
+      setUser(currentUser);
+    } catch (error) {
+      console.error('Error fetching user:', error);
+      setUser(null);
+    } finally {
+      setLoadingUser(false);
     }
-    setUser(currentUser);
   };
 
   const fetchRecruiter = async () => {
@@ -124,6 +132,7 @@ export const UserContextProvider: React.FC<{
 
   useEffect(() => {
     if (user && user.id) {
+      setLoadingRole(true);
       const fetchUserRoles = async () => {
         const userRole = await apiService.get<UserRoleWithDetails>(
           `/user-role/${user.id}`
@@ -133,6 +142,7 @@ export const UserContextProvider: React.FC<{
         } else {
           setRole(''); // Reset role if no userRole is found
         }
+        setLoadingRole(false);
       };
       const fetchUserPermissions = async () => {
         const userPermissions = await apiService.get<Permission[]>(
@@ -173,6 +183,7 @@ export const UserContextProvider: React.FC<{
     <UserContext.Provider
       value={{
         loadingUser,
+        loadingRole,
         user,
         setUser,
         refetchUser,
