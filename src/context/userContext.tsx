@@ -38,6 +38,7 @@ export type ApplicantWithDetails = Applicant & {
 };
 
 export interface IUserContext {
+  loadingUser: boolean;
   user: User | null;
   setUser: (user: User | null) => void;
   recruiter: RecruiterWithDetails | null;
@@ -62,6 +63,7 @@ export const UserContext = React.createContext<IUserContext | null>(null);
 export const UserContextProvider: React.FC<{
   children: React.ReactNode | React.ReactNode[] | null;
 }> = (props) => {
+  const [loadingUser, setLoadingUser] = React.useState<boolean>(true);
   const [authUser, setAuthUser] = React.useState<AuthUser | null>(null);
   const [user, setUser] = React.useState<User | null>(null);
   const [recruiter, setRecruiter] = React.useState<RecruiterWithDetails | null>(
@@ -80,9 +82,14 @@ export const UserContextProvider: React.FC<{
     React.useState<FetchUserAttributesOutput | null>(null);
 
   const fetchUser = async () => {
+    setLoadingUser(true);
     const currentUser = await apiService.get<User>(
       `/user/${authUser?.username}`
     );
+    setLoadingUser(false);
+    if (!currentUser || !currentUser.id) {
+      throw new Error('User not found');
+    }
     setUser(currentUser);
   };
 
@@ -165,6 +172,7 @@ export const UserContextProvider: React.FC<{
   return (
     <UserContext.Provider
       value={{
+        loadingUser,
         user,
         setUser,
         refetchUser,

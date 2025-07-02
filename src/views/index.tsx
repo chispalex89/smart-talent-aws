@@ -72,7 +72,7 @@ const renderRoutes = (role: string | null, membershipType: string | null) => {
             path="/candidates/favorite"
             element={<FavoriteCandidateList />}
           />
-          {(membershipType && membershipType !== 'Bronce') && (
+          {membershipType && membershipType !== 'Bronce' && (
             <Route path="/candidates/find" element={<CandidateList />} />
           )}
         </Route>
@@ -240,7 +240,8 @@ const renderRoutes = (role: string | null, membershipType: string | null) => {
     );
   }
 
-  if (role === '') {
+  console.log('No role found, rendering NewClient view');
+  if (role === null) {
     return (
       <Routes>
         <Route path="/" element={<NewClient />} />
@@ -259,7 +260,7 @@ const renderRoutes = (role: string | null, membershipType: string | null) => {
 };
 
 const Views = () => {
-  const { user, role, membershipType } = useUserContext();
+  const { user, role, membershipType, loadingUser } = useUserContext();
   const [userType, setUserType] = useState<string | null>(null);
 
   useEffect(() => {
@@ -268,12 +269,10 @@ const Views = () => {
     }
   }, [role]);
 
-  return user ? (
-    <Suspense fallback={<Loading loading={true} className="w-full" />}>
+  return (
+    <Loading loading={loadingUser}>
       <PageContainer>{renderRoutes(userType, membershipType)}</PageContainer>
-    </Suspense>
-  ) : (
-    <></>
+    </Loading>
   );
 };
 
