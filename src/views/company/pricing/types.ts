@@ -16,20 +16,13 @@ export const paymentMethods: {
 
 export type GetPricingPlanResponse = MembershipType[];
 
-// export type GetPricingPanResponse = {
-//   featuresModel: {
-//     id: string;
-//     description: string;
-//   }[];
-//   plans: {
-//     id: string;
-//     name: string;
-//     description: string;
-//     price: {
-//       monthly: number;
-//       annually: number;
-//     };
-//     features: string[];
-//     recommended: boolean;
-//   }[];
-// };
+export const planColors: {
+  [key: string]: string;
+} = {
+  basic: '#0074D9', // blue
+  bronce: '#0074D9', // blue
+  premium: '#C0C0C0', // silver
+  plata: '#C0C0C0', // silver
+  enterprise: '#FFD700', // gold
+  oro: '#FFD700', // gold
+};

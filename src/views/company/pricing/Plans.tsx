@@ -9,7 +9,7 @@ import useQuery from '@/utils/hooks/useQuery';
 import useSWR from 'swr';
 import { NumericFormat } from 'react-number-format';
 import { TbCheck } from 'react-icons/tb';
-import type { GetPricingPlanResponse } from './types';
+import { planColors, type GetPricingPlanResponse } from './types';
 import apiService from '../../../services/apiService';
 import { useMemo } from 'react';
 import { useUserContext } from '../../../context/userContext';
@@ -19,8 +19,6 @@ const Plans = () => {
   const { paymentCycle, setPaymentDialog, setSelectedPlan } = usePricingStore();
 
   const query = useQuery();
-  const subscription = query.get('subscription');
-  const cycle = query.get('cycle');
 
   const { data } = useSWR(
     `/membership-type`,
@@ -51,33 +49,42 @@ const Plans = () => {
           )}
         >
           <div>
-            <h5 className="mb-6 flex items-center gap-2">
-              <span>{plan.name}</span>
-              {/* {plan.recommended && (
+            <div
+              className={classNames(
+                index === 0 && 'bg-primary dark:bg-transparent',
+                index === 1 && 'bg-[#C0C0C0] dark:bg-transparent',
+                index === 2 && 'bg-[#FFD700] dark:bg-transparent',
+                'rounded-t-lg px-6 py-4'
+              )}
+            >
+              <h5 className="mb-6 flex items-center gap-2">
+                <span>{plan.name}</span>
+                {/* {plan.recommended && (
                 <Tag className="rounded-full bg-green-200 font-bold">
                   Recommended
                 </Tag>
               )} */}
-            </h5>
-            <div className="">{plan.description}</div>
-            <div className="mt-6">
-              {plan.price ? (
-                <NumericFormat
-                  className="h1"
-                  displayType="text"
-                  value={plan.price}
-                  fixedDecimalScale={true}
-                  decimalScale={2}
-                  prefix={'Q'}
-                  thousandSeparator={true}
-                />
-              ) : (
-                <span className="h1">Gratis</span>
-              )}
-              <span className="text-lg font-bold">
-                {' '}
-                / {paymentCycle === 'monthly' ? 'mensualmente' : 'anualmente'}
-              </span>
+              </h5>
+              <div className="">{plan.description}</div>
+              <div className="mt-6">
+                {plan.price ? (
+                  <NumericFormat
+                    className="h1"
+                    displayType="text"
+                    value={plan.price}
+                    fixedDecimalScale={true}
+                    decimalScale={2}
+                    prefix={'Q'}
+                    thousandSeparator={true}
+                  />
+                ) : (
+                  <span className="h1">Gratis</span>
+                )}
+                <span className="text-lg font-bold">
+                  {' '}
+                  / {paymentCycle === 'monthly' ? 'mensualmente' : 'anualmente'}
+                </span>
+              </div>
             </div>
             <div className="flex flex-col gap-4 border-t border-gray-200 dark:border-gray-700 mt-6 pt-6">
               {plan.features.map((feature, j) => (

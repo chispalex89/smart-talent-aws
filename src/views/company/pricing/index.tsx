@@ -8,7 +8,7 @@ const Pricing = () => {
     <>
       <Card className="mb-4">
         <div className="flex items-center justify-between mb-8">
-          <h3>Pricing</h3>
+          <h3>Membresías</h3>
           {/* <PaymentCycleToggle /> */}
         </div>
         <Plans />
