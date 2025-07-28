@@ -1,6 +1,8 @@
 import {
   Applicant,
   City,
+  CompanyArchivedApplicant,
+  CompanyFavoriteApplicant,
   Country,
   Gender,
   PersonalData,
@@ -44,6 +46,8 @@ export type Candidate = Applicant & {
   user: User;
   professionalData: ProfessionalDataWithDescription[];
   personalData: PersonalDataWithRelationships[];
+  companyFavoriteApplicants: CompanyFavoriteApplicant[];
+  companyArchivedApplicants: CompanyArchivedApplicant[];
 };
 
 export type GetCandidateListResponse = {

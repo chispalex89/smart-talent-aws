@@ -10,14 +10,18 @@ import { TbTrash } from 'react-icons/tb';
 import type { JobFormSchema } from './JobForm';
 import apiService from '../../services/apiService';
 
-const JobCreate = () => {
+interface JobCreateProps {
+  isEdit?: boolean;
+}
+
+const JobCreate = ({ isEdit }: JobCreateProps) => {
   const navigate = useNavigate();
   const { id } = useParams();
 
   const [discardConfirmationOpen, setDiscardConfirmationOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [defaultValues, setDefaultValues] = useState<JobFormSchema | null>(
-    null,
+    null
   );
 
   useEffect(() => {
@@ -30,16 +34,56 @@ const JobCreate = () => {
   }, [id, apiService]);
 
   const handleFormSubmit = async (values: JobFormSchema) => {
-    setIsSubmitting(true);
-    apiService.post('/job-offer', values);
-    setIsSubmitting(false);
-    toast.push(
-      <Notification type="success">¡Empleo creado exitosamente!</Notification>,
-      {
-        placement: 'top-center',
-      },
-    );
-    navigate('/job/my-jobs');
+    try {
+      setIsSubmitting(true);
+      values.isPublished = values.publicationDate.getTime() < Date.now();
+      if (isEdit) {
+        await apiService.put(`/job-offer/${values.uuid}`, values);
+      } else {
+        await apiService.post('/job-offer', values);
+      }
+      toast.push(
+        <Notification type="success">
+          ¡Empleo guardado exitosamente!
+        </Notification>,
+        {
+          placement: 'top-center',
+        }
+      );
+      setIsSubmitting(false);
+      navigate('/job/my-jobs');
+    } catch (error) {
+      console.error(error);
+      if (
+        error instanceof Error &&
+        error.message.includes(
+          'You have more published job offers at a time than your membership allows'
+        )
+      ) {
+        toast.push(
+          <Notification type="warning">
+            ¡Empleo guardado, pero no publicado! Ya tienes el máximo de ofertas
+            de empleo publicadas.
+          </Notification>,
+          {
+            placement: 'top-center',
+          }
+        );
+        setIsSubmitting(false);
+        navigate('/job/my-jobs');
+      } else {
+        toast.push(
+          <Notification type="danger">
+            ¡Error al guardar el empleo!
+          </Notification>,
+          {
+            placement: 'top-center',
+          }
+        );
+      }
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleConfirmDiscard = () => {

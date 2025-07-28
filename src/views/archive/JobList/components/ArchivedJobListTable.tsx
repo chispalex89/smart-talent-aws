@@ -66,11 +66,8 @@ const ActionColumn = ({
   return (
     <div className="flex justify-end text-lg gap-1">
       <Tooltip wrapperClass="flex" title="Restaurar">
-        <span
-          className="cursor-pointer p-2"
-          onClick={onRestore} 
-        >
-          <TbArchiveOff color="#FFD027" />
+        <span className="cursor-pointer p-2" onClick={onRestore}>
+          <TbArchiveOff color="#ffa527ff" />
         </span>
       </Tooltip>
       <Tooltip wrapperClass="flex" title="View">

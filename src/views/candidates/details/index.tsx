@@ -1,13 +1,15 @@
 import Container from '@/components/shared/Container';
-import { Avatar, Card, Tooltip } from '@/components/ui';
-import React, { use } from 'react';
+import { Avatar, Card } from '@/components/ui';
+import React, { useEffect, useState } from 'react';
 import useFetch from '../../../hooks/useFetch';
-import { useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { nameFormat } from '../../../helpers/textConverter';
 import dayjs from 'dayjs';
-import { HiPencil } from 'react-icons/hi';
 import { UserApplicant } from '../../../types/user';
 import { useCatalogContext } from '../../../context/catalogContext';
+import apiService from '../../../services/apiService';
+import { useUserContext } from '../../../context/userContext';
+import { CompanyViewedApplicant } from '@prisma/client';
 
 type CandidateDetailProps = {
   title?: string;
@@ -35,6 +37,8 @@ const CandidateMainDetails = ({ title, value }: CandidateDetailProps) => {
 const CandidateDetails = () => {
   const { id } = useParams();
   const { otherSkills } = useCatalogContext();
+  const { recruiter } = useUserContext();
+  const [availableToView, setAvailableToView] = useState(false);
 
   const {
     data: user,
@@ -42,7 +46,80 @@ const CandidateDetails = () => {
     loading,
   } = useFetch<UserApplicant>(`applicant/${id}/applicant-data`);
 
-  console.log(user);
+  const {
+    data: userViewed,
+    loading: loadingUserViewed,
+    refetch,
+  } = useFetch<any>(`company-viewed-applicant/${id}/${recruiter?.id}`, {
+    lazy: true,
+  });
+
+  useEffect(() => {
+    if (recruiter && id) {
+      refetch();
+    }
+  }, [recruiter, id]);
+
+  useEffect(() => {
+    if (recruiter && id) {
+      apiService.post('/company-viewed-applicant', {
+        applicantId: +id,
+        companyId: recruiter.companyId,
+        recruiterId: recruiter.id,
+      });
+    }
+  }, [id, recruiter]);
+
+  useEffect(() => {
+    if (userViewed) {
+      setAvailableToView(
+        recruiter?.company?.Membership[0].membership_type.name !== 'Bronce'
+      );
+    } else {
+      apiService
+        .get<
+          CompanyViewedApplicant[]
+        >(`/company-viewed-applicant?companyId=${recruiter?.companyId}`)
+        .then((response) => {
+          const viewed = response.find((item) => item.applicantId === +id!);
+          if (
+            !viewed &&
+            recruiter?.company?.Membership[0].membership_type.name === 'Plata'
+          ) {
+            setAvailableToView(response.length < 1);
+          } else {
+            setAvailableToView(!!viewed);
+          }
+        });
+    }
+  }, [userViewed, recruiter]);
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (!availableToView) {
+    return (
+      <Container>
+        <Card className="w-full h-full flex items-center justify-center">
+          <div className="flex flex-col items-center justify-center h-full">
+            <h3 className="text-lg font-semibold text-center">
+              No tienes permiso para ver más candidatos. <br />
+              Considera actualizar tu plan{' '}
+              <Link
+                to="/membership/plans"
+                className="text-blue-500 hover:underline"
+              >
+                aquí
+              </Link>{' '}
+              para obtener acceso.
+            </h3>
+          </div>
+        </Card>
+      </Container>
+    );
+  }
+
   return (
     <Container>
       <div className="flex flex-col xl:flex-row gap-4">

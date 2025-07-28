@@ -7,7 +7,7 @@ export const initialTableData: TableQueries = {
   pageSize: 10,
   query: '',
   sort: {
-    id: 'desc',
+    created_at: 'desc',
   },
 };
 

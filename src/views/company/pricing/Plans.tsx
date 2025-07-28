@@ -51,7 +51,7 @@ const Plans = () => {
           <div>
             <div
               className={classNames(
-                index === 0 && 'bg-primary dark:bg-transparent',
+                index === 0 && 'bg-primary-mild dark:bg-transparent',
                 index === 1 && 'bg-[#C0C0C0] dark:bg-transparent',
                 index === 2 && 'bg-[#FFD700] dark:bg-transparent',
                 'rounded-t-lg px-6 py-4'

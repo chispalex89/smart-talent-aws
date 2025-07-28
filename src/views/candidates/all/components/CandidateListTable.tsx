@@ -25,11 +25,8 @@ import {
   nameFormat,
 } from '../../../../helpers/textConverter';
 import { BsCloudDownload, BsStar } from 'react-icons/bs';
-import {
-  PiArchive,
-  PiUserDuotone,
-  PiWarning,
-} from 'react-icons/pi';
+import { PiArchive, PiUserDuotone, PiWarning } from 'react-icons/pi';
+import { TbArchiveFilled, TbArchiveOff } from 'react-icons/tb';
 
 const statusColor: Record<string, string> = {
   active: 'bg-emerald-200 dark:bg-emerald-200 text-gray-900 dark:text-gray-900',
@@ -60,16 +57,14 @@ const NameColumn = ({ row }: { row: Candidate }) => {
 };
 
 const CandidateListTable = ({
-  handleDelete,
   handleArchive,
   handleReport,
   handleFavorite,
   handleDownload,
 }: {
-  handleDelete: (id: number) => void;
-  handleArchive: (id: number) => void;
+  handleArchive: (id: number, unarchive: boolean) => void;
   handleReport: (id: number) => void;
-  handleFavorite: (id: number) => void;
+  handleFavorite: (id: number, unfavorite: boolean) => void;
   handleDownload: (id: number) => void;
 }) => {
   const navigate = useNavigate();
@@ -216,9 +211,13 @@ const CandidateListTable = ({
       <div className="grid md:grid-cols-4 gap-4">
         <div className="flex items-center gap-2">
           {row.original.user.profileImage ? (
-            <Avatar size={200} shape="square" src={row.original.user.profileImage} />
+            <Avatar
+              size={200}
+              shape="square"
+              src={row.original.user.profileImage}
+            />
           ) : (
-            <PiUserDuotone size={200}/>
+            <PiUserDuotone size={200} />
           )}
         </div>
         <div className="flex flex-col flex-start gap-2 md:col-span-2">
@@ -236,7 +235,8 @@ const CandidateListTable = ({
             {row.original.professionalData[0]?.description || ''}
           </span>
           <span className="text-md font-semibold">
-            Área de trabajo: {row.original.professionalData[0]?.profession?.name}
+            Área de trabajo:{' '}
+            {row.original.professionalData[0]?.profession?.name}
           </span>
           <span className="text-md font-semibold">
             Edad:{' '}
@@ -257,11 +257,30 @@ const CandidateListTable = ({
             variant="default"
             size="md"
             className="flex items-center gap-2 max-w-[250px]"
-            onClick={() => handleArchive(row.original.id)}
+            onClick={() => {
+              if (row.original.companyArchivedApplicants?.length) {
+                handleArchive(
+                  row.original.companyArchivedApplicants[0].id,
+                  true
+                );
+              } else {
+                handleArchive(row.original.id, false);
+              }
+            }}
           >
-            <PiArchive />
-            Archivar
+            {!row.original.companyArchivedApplicants?.length ? (
+              <>
+                <TbArchiveFilled color="#ffa527ff" />
+                Archivar
+              </>
+            ) : (
+              <>
+                <TbArchiveOff color="#ffa527ff" />
+                Desarchivar
+              </>
+            )}
           </Button>
+
           <Button
             variant="solid"
             size="md"
@@ -269,9 +288,21 @@ const CandidateListTable = ({
               'border-warning ring-1 ring-warning text-warning hover:bg-warning hover:ring-warning hover:text-white bg-transparent'
             }
             className="flex items-center gap-2 max-w-[250px]"
-            onClick={() => handleFavorite(row.original.id)}
+            onClick={() => {
+              if (row.original.companyFavoriteApplicants?.length) {
+                handleFavorite(
+                  row.original.companyFavoriteApplicants[0].id,
+                  true
+                );
+              } else {
+                handleFavorite(row.original.id, false);
+              }
+            }}
           >
-            <BsStar /> Favorito
+            <BsStar />{' '}
+            {row.original.companyFavoriteApplicants?.length
+              ? 'Quitar Favorito'
+              : 'Favorito'}
           </Button>
           <Button
             variant="solid"

@@ -102,13 +102,17 @@ class ApiService {
       body: JSON.stringify(data),
     }).then((res) => res.json() as Promise<T>);
   }
-  async delete(path: string) {
-    return fetch(`${this.baseUrl}${path}`, {
+  async delete(path: string, data?: Record<string, unknown>) {
+    const options: any = {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',
       },
-    });
+    };
+    if (data) {
+      options.body = JSON.stringify(data);
+    }
+    return fetch(`${this.baseUrl}${path}`, options);
   }
 }
 

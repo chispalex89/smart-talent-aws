@@ -73,7 +73,7 @@ const ActionColumn = ({
           className="cursor-pointer p-2"
           onClick={() => handleArchive(row.uuid)}
         >
-          <TbArchiveFilled color="#FFD027" />
+          <TbArchiveFilled color="#FFA527FF" />
         </span>
       </Tooltip>
       <Tooltip wrapperClass="flex" title="Editar">
@@ -142,13 +142,13 @@ const JobListTable = ({
     }
   };
 
-  const updatePublishStatus = async (job: Job, checked: boolean) => {
+  const updateIsFeatured = async (job: Job, checked: boolean) => {
     try {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { id, jobApplicants, ...rest } = job;
       const updatedJob: Omit<JobOffer, 'id'> = {
         ...rest,
-        isPublished: checked,
+        featured: checked,
       };
       await apiService.post(`/job-offer`, updatedJob);
       toast.push(
@@ -170,6 +170,52 @@ const JobListTable = ({
           placement: 'top-center',
         }
       );
+    }
+  };
+
+  const updatePublishStatus = async (job: Job, checked: boolean) => {
+    try {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { id, jobApplicants, ...rest } = job;
+      const updatedJob: Omit<JobOffer, 'id'> = {
+        ...rest,
+        isPublished: checked,
+      };
+      await apiService.put(`/job-offer/${job.uuid}`, updatedJob);
+      toast.push(
+        <Notification type="success">
+          ¡Oferta de Empleo Actualizada!
+        </Notification>,
+        {
+          placement: 'top-center',
+        }
+      );
+      mutate();
+    } catch (error) {
+      if (
+        error instanceof Error &&
+        error.message.includes('published job offers at a time')
+      ) {
+        toast.push(
+          <Notification type="warning">
+            ¡Oferta de Empleo no publicada! Ya tienes el
+            máximo de ofertas de empleo publicadas.
+          </Notification>,
+          {
+            placement: 'top-center',
+          }
+        );
+      } else {
+        console.error(error);
+        toast.push(
+          <Notification type="danger">
+            ¡Error al actualizar el empleo!
+          </Notification>,
+          {
+            placement: 'top-center',
+          }
+        );
+      }
     }
   };
 
@@ -216,8 +262,8 @@ const JobListTable = ({
         },
       },
       {
-        header: 'Status',
-        accessorKey: 'status',
+        header: 'Publicado',
+        accessorKey: 'isPublished',
         cell: (props) => {
           const { isPublished } = props.row.original;
           return (
@@ -225,7 +271,9 @@ const JobListTable = ({
               checked={isPublished}
               checkedContent="Publicado"
               unCheckedContent="No Publicado"
-              onChange={(checked) => updatePublishStatus(props.row.original, checked)}
+              onChange={(checked) =>
+                updatePublishStatus(props.row.original, checked)
+              }
             />
           );
         },
@@ -251,6 +299,19 @@ const JobListTable = ({
             <Switcher
               checked={row.receivesResumesByEmail}
               onChange={(checked) => updateReceiveResumesByEmail(row, checked)}
+            />
+          );
+        },
+      },
+      {
+        header: 'Destacado',
+        accessorKey: 'featured',
+        cell: (props) => {
+          const row = props.row.original;
+          return (
+            <Switcher
+              checked={row.featured}
+              onChange={(checked) => updateIsFeatured(row, checked)}
             />
           );
         },

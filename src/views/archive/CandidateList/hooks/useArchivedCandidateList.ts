@@ -1,23 +1,24 @@
 import useSWR from 'swr';
-import { useCandidateListStore as useCandidateListStore } from '../store/candidateListStore';
-import type { GetCandidateListResponse } from '../types';
-import type { TableQueries } from '@/@types/common';
+import { useArchivedCandidateListStore } from '../store/favoriteCandidateListStore';
+import type { GetArchivedCustomersListResponse } from '../types';
 import apiService from '../../../../services/apiService';
-import qs from 'qs';
 import { useUserContext } from '../../../../context/userContext';
 
-export default function useCandidateList() {
+import qs from 'qs';
+
+export default function useArchivedCandidateList() {
   const {
     tableData,
     filterData,
     setTableData,
-    selectedCandidates,
-    setSelectedCandidate,
-    setSelectAllCandidate,
+    selectedArchivedCandidate,
+    setSelectedArchivedCandidate,
+    setSelectAllArchivedCandidate,
     setFilterData,
-  } = useCandidateListStore((state) => state);
+  } = useArchivedCandidateListStore((state) => state);
 
   const { recruiter } = useUserContext();
+  console.log('useArchivedCandidateList', recruiter);
 
   const filterDataWithoutEmptyValues = Object.entries(filterData).reduce(
     (prev, curr) => {
@@ -29,7 +30,7 @@ export default function useCandidateList() {
       }
       return prev;
     },
-    {},
+    {}
   );
 
   // Serialize the tableData and filterData into a query string
@@ -43,36 +44,36 @@ export default function useCandidateList() {
     query: tableData.query ? tableData.query : undefined,
 
     ...filterDataWithoutEmptyValues,
-    companyId: recruiter?.companyId || 0,
+    companyId: recruiter?.companyId,
   });
 
   const { data, error, isLoading, mutate } = useSWR(
-    `/applicant?${queryString}`,
+    `/company-archived-applicant?${queryString}`,
     (url) =>
-      apiService.get<GetCandidateListResponse>(
-        `/applicant?${queryString}`,
+      apiService.get<GetArchivedCustomersListResponse>(
+        `/company-archived-applicant?${queryString}`
       ),
     {
       revalidateOnFocus: false,
-    },
+    }
   );
 
-  const candidateList = data?.list || [];
+  const archivedCandidateList = data?.list || [];
 
-  const candidateListTotal = data?.total || 0;
+  const archivedCandidateListTotal = data?.total || 0;
 
   return {
-    candidateList,
-    candidateListTotal,
+    archivedCandidateList,
+    archivedCandidateListTotal,
     error,
     isLoading,
     tableData,
     filterData,
     mutate,
     setTableData,
-    selectedCandidates,
-    setSelectedCandidate,
-    setSelectAllCandidate,
+    selectedArchivedCandidate,
+    setSelectedArchivedCandidate,
+    setSelectAllArchivedCandidate,
     setFilterData,
   };
 }

@@ -13,7 +13,7 @@ import PageContainer from '@/components/template/PageContainer';
 import Settings from './company/settings';
 import ArchivedJobList from './archive/JobList';
 import { useUserContext } from '../context/userContext';
-// import ArchivedCandidateList from './archive/CandidateList';
+import ArchivedCandidateList from './archive/CandidateList';
 import ApplicantDashboard from './dashboards/ApplicantDashboard';
 import ApplicantSettings from './candidates/Settings';
 import Logout from './auth/logout';
@@ -84,7 +84,7 @@ const renderRoutes = (role: string | null, membershipType: string | null) => {
         </Route>
         <Route path="/archive">
           <Route path="/archive/jobOffers" element={<ArchivedJobList />} />
-          {/* <Route path="/archive/candidates" element={<ArchivedCandidateList />} /> */}
+          <Route path="/archive/candidates" element={<ArchivedCandidateList />} />
         </Route>
         <Route path="/logout" element={<Logout />} />
         <Route path="/" element={<BusinessDashboard />} />

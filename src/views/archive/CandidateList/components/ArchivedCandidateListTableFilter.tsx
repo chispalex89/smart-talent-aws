@@ -4,7 +4,7 @@ import Dialog from '@/components/ui/Dialog';
 import Checkbox from '@/components/ui/Checkbox';
 import Input from '@/components/ui/Input';
 import { Form, FormItem } from '@/components/ui/Form';
-import useFavoriteCandidateList from '../hooks/useFavoriteCandidateList';
+import useArchivedCandidateList from '../hooks/useArchivedCandidateList';
 import { TbFilter } from 'react-icons/tb';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -21,12 +21,12 @@ const validationSchema: ZodType<FormSchema> = z.object({
   profession: z.array(z.number()),
 });
 
-const FavoriteCandidateListTableFilter = () => {
+const ArchivedCandidateListTableFilter = () => {
   const { professions } = useCatalogContext();
     
     const [dialogIsOpen, setIsOpen] = useState(false);
 
-  const { filterData, setFilterData } = useFavoriteCandidateList();
+  const { filterData, setFilterData } = useArchivedCandidateList();
 
   const openDialog = () => {
     setIsOpen(true);
@@ -106,4 +106,4 @@ const FavoriteCandidateListTableFilter = () => {
   );
 };
 
-export default FavoriteCandidateListTableFilter;
+export default ArchivedCandidateListTableFilter;

@@ -9,7 +9,7 @@ import { useUserContext } from '../../../context/userContext';
 import { useEffect, useState } from 'react';
 import apiService from '../../../services/apiService';
 
-const ProjectDashboard = () => {
+const BusinessDashboard = () => {
   const { recruiter } = useUserContext();
   const [data, setData] = useState<GetBusinessDashboardResponse | null>(null);
   const [loading, setLoading] = useState(false);
@@ -68,4 +68,4 @@ const ProjectDashboard = () => {
   );
 };
 
-export default ProjectDashboard;
+export default BusinessDashboard;

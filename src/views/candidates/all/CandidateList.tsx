@@ -10,8 +10,10 @@ import useCandidateList from './hooks/useCandidateList';
 import apiService from '../../../services/apiService';
 import Notification from '@/components/ui/Notification';
 import { toast } from '@/components/ui';
+import { useUserContext } from '../../../context/userContext';
 
 const CandidateList = () => {
+  const { recruiter } = useUserContext();
   const [confirmationOpen, setConfirmationOpen] = useState(false);
   const [confirmationArchiveOpen, setConfirmationArchiveOpen] = useState(false);
   const [confirmationReportOpen, setConfirmationReportOpen] = useState(false);
@@ -19,6 +21,7 @@ const CandidateList = () => {
     useState(false);
   const { mutate } = useCandidateList();
   const [id, setId] = useState(0);
+  const [isRemoveAction, setIsRemoveAction] = useState(false);
 
   const handleConfirmReport = async () => {
     // await apiService.post(`/company-report-applicant/${id}`);
@@ -30,11 +33,24 @@ const CandidateList = () => {
   };
 
   const handleConfirmArchive = async () => {
-    // await apiService.post(`/company-archive-applicant/${id}`);
-    toast.push(<Notification type="info">Candidato archivado</Notification>, {
-      placement: 'top-center',
-    });
-    setConfirmationOpen(false);
+    if (isRemoveAction) {
+      await apiService.delete(`/company-archived-applicant/${id}`);
+      toast.push(
+        <Notification type="info">Candidato eliminado del archivo</Notification>,
+        {
+          placement: 'top-center',
+        }
+      );
+    } else {
+      await apiService.post('/company-archived-applicant', {
+        applicantId: id,
+        companyId: recruiter?.companyId,
+      });
+      toast.push(<Notification type="info">Candidato archivado</Notification>, {
+        placement: 'top-center',
+      });
+    }
+    handleCancel();
     mutate();
   };
 
@@ -48,30 +64,29 @@ const CandidateList = () => {
         placement: 'top-center',
       }
     );
-    setConfirmationOpen(false);
+    handleCancel();
     mutate();
   };
 
   const handleConfirmFavorite = async () => {
-    // await apiService.post(`/company-favorite-applicant/${id}`);
+    await apiService.post('/company-favorite-applicant', {
+      applicantId: id,
+      companyId: recruiter?.companyId,
+    });
     toast.push(
       <Notification type="info">Candidato agregado a favoritos</Notification>,
       {
         placement: 'top-center',
       }
     );
-    setConfirmationOpen(false);
+    handleCancel();
     mutate();
   };
 
-  const handleDelete = (id: number) => {
-    setConfirmationOpen(true);
-    setId(id);
-  };
-
-  const handleArchive = (id: number) => {
+  const handleArchive = (id: number, unarchive: boolean) => {
     setConfirmationArchiveOpen(true);
     setId(id);
+    setIsRemoveAction(unarchive);
   };
 
   const handleReport = (id: number) => {
@@ -79,14 +94,19 @@ const CandidateList = () => {
     setId(id);
   };
 
-  const handleFavorite = (id: number) => {
-    setConfirmationOpen(true);
+  const handleFavorite = (id: number, unfavorite: boolean) => {
+    if (unfavorite) {
+      setConfirmationOpen(true);
+    } else {
+      setConfirmationFavoriteOpen(true);
+    }
     setId(id);
+    setIsRemoveAction(unfavorite);
   };
 
   const handleDownload = (id: number) => {
     console.log('Download', id);
-  }
+  };
 
   const handleCancel = () => {
     setConfirmationOpen(false);
@@ -106,7 +126,6 @@ const CandidateList = () => {
             </div>
             <CandidatesListTableTools />
             <CandidatesListTable
-              handleDelete={handleDelete}
               handleArchive={handleArchive}
               handleReport={handleReport}
               handleFavorite={handleFavorite}
@@ -128,14 +147,17 @@ const CandidateList = () => {
       </ConfirmDialog>
       <ConfirmDialog
         isOpen={confirmationArchiveOpen}
-        type="danger"
+        type="info"
         title=""
         onClose={handleCancel}
         onRequestClose={handleCancel}
         onCancel={handleCancel}
         onConfirm={handleConfirmArchive}
       >
-        <p>¿Está seguro de archivar al candidato?</p>
+        <p>
+          ¿Está seguro de {isRemoveAction ? 'quitar del archivo ' : 'archivar '}
+          al candidato?
+        </p>
       </ConfirmDialog>
       <ConfirmDialog
         isOpen={confirmationReportOpen}
@@ -155,7 +177,7 @@ const CandidateList = () => {
         onClose={handleCancel}
         onRequestClose={handleCancel}
         onCancel={handleCancel}
-        onConfirm={handleConfirmArchive}
+        onConfirm={handleConfirmFavorite}
       >
         <p>¿Está seguro de guardar como favorito al candidato?</p>
       </ConfirmDialog>

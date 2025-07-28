@@ -70,27 +70,27 @@ model Recruiter {
 }
 
 model Applicant {
-  id                         Int                        @id @default(autoincrement())
-  userId                     Int                        @map("user_id")
-  status                     String
-  isDeleted                  Boolean                    @default(false) @map("is_deleted")
-  created_at                 DateTime                   @default(now())
-  updated_at                 DateTime?                  @updatedAt
-  created_by                 String
-  updated_by                 String?
-  user                       User                       @relation(fields: [userId], references: [id])
-  companyFavoriteApplicants  CompanyFavoriteApplicant[]
-  jobApplicants              JobApplicant[]
-  professionalData           ProfessionalData[]
-  jobExperienceData          JobExperienceData[]
-  personalData               PersonalData[]
-  jobPreferences             JobPreferences[]
-  favoriteJobOffer           FavoriteJobOffer[]
-  otherSkillsData            OtherSkillsData[]
-  academicData               AcademicData[]
-  languageSkillsData         LanguageSkillsData[]
-  softwareSkillsData         SoftwareSkillsData[]
-  applicantArchivedCompanies CompanyArchivedApplicant[]
+  id                        Int                        @id @default(autoincrement())
+  userId                    Int                        @map("user_id")
+  status                    String
+  isDeleted                 Boolean                    @default(false) @map("is_deleted")
+  created_at                DateTime                   @default(now())
+  updated_at                DateTime?                  @updatedAt
+  created_by                String
+  updated_by                String?
+  user                      User                       @relation(fields: [userId], references: [id])
+  companyFavoriteApplicants CompanyFavoriteApplicant[]
+  companyArchivedApplicants CompanyArchivedApplicant[]
+  jobApplicants             JobApplicant[]
+  professionalData          ProfessionalData[]
+  jobExperienceData         JobExperienceData[]
+  personalData              PersonalData[]
+  jobPreferences            JobPreferences[]
+  favoriteJobOffer          FavoriteJobOffer[]
+  otherSkillsData           OtherSkillsData[]
+  academicData              AcademicData[]
+  languageSkillsData        LanguageSkillsData[]
+  softwareSkillsData        SoftwareSkillsData[]
 
   @@map("applicant")
 }
@@ -165,10 +165,10 @@ model Company {
   updated_by                  String?
   country                     Country                    @relation(fields: [countryId], references: [id])
   employment_sector           EmploymentSector           @relation(fields: [employmentSectorId], references: [id])
-  company_favorite_applicants CompanyFavoriteApplicant[]
   recruiters                  Recruiter[]
   jobOffers                   JobOffer[]
   Membership                  Membership[]
+  company_favorite_applicants CompanyFavoriteApplicant[]
   company_archived_applicants CompanyArchivedApplicant[]
 
   @@map("company")
@@ -425,6 +425,15 @@ model CompanyFavoriteApplicant {
   company     Company   @relation(fields: [companyId], references: [id])
 
   @@map("company_favorite_applicant")
+}
+
+model CompanyViewedApplicant {
+  applicantId Int      @map("applicant_id")
+  companyId   Int      @map("company_id")
+  recruiterId Int      @map("recruiter_id")
+  viewed_at   DateTime @default(now()) @map("viewed_at")
+
+  @@id([applicantId, companyId])
 }
 
 model FavoriteJobOffer {

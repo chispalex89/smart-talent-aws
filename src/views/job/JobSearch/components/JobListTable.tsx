@@ -73,7 +73,7 @@ const ActionColumn = ({
           className="cursor-pointer p-2"
           onClick={() => handleArchive(row.uuid)}
         >
-          <TbArchiveFilled color="#FFD027" />
+          <TbArchiveFilled color="#ffa527ff" />
         </span>
       </Tooltip>
       <Tooltip wrapperClass="flex" title="Editar">

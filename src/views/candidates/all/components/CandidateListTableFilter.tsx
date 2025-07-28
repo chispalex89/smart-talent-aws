@@ -58,19 +58,26 @@ const CandidateListTableFilter = () => {
         onRequestClose={onDialogClose}
       >
         <h4 className="mb-4">Filtrar</h4>
-        <Form onSubmit={(e) => {
+        <Form
+          onSubmit={(e) => {
             e.preventDefault();
             const professions = getValues('profession');
             const selectedProfessions = professions.filter(Boolean);
             setValue('profession', selectedProfessions);
-            handleSubmit(onSubmit)()
-            }}>
+            handleSubmit(onSubmit)();
+          }}
+        >
           <FormItem label="Profesiones">
             <Controller
               name="profession"
               control={control}
               render={({ field }) => (
-                <Checkbox.Group vertical className="flex mt-4" {...field}>
+                <Checkbox.Group
+                  vertical
+                  className="flex mt-4"
+                  {...field}
+                  value={(field.value ?? []).map(String)}
+                >
                   {professions.map((source) => (
                     <Checkbox
                       key={source.id}
