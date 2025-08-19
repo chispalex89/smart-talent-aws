@@ -15,7 +15,7 @@ model User {
   secondLastName  String?     @map("second_last_name")
   marriedLastName String?     @map("married_last_name")
   email           String      @unique
-  loginId         String      @unique
+  loginId         String      @unique @map("login_id")
   status          String
   profileImage    String?     @map("profile_image")
   isDeleted       Boolean     @default(false) @map("is_deleted")
