@@ -104,8 +104,8 @@ const CandidateList = () => {
     setIsRemoveAction(unfavorite);
   };
 
-  const handleDownload = (id: number) => {
-    console.log('Download', id);
+  const handleDownload = (url: string) => {
+    window.open(url, '_blank');
   };
 
   const handleCancel = () => {
@@ -122,7 +122,6 @@ const CandidateList = () => {
           <div className="flex flex-col gap-4">
             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2">
               <h3>Candidatos</h3>
-              <CandidatesListActionTools />
             </div>
             <CandidatesListTableTools />
             <CandidatesListTable

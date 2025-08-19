@@ -342,7 +342,7 @@ const NewClient = () => {
         ...user,
       });
 
-      if ((result as any).status !== 201) {
+      if (!result) {
         throw new Error('Error creating account');
       }
       setTimeout(async () => {

@@ -13,7 +13,7 @@ import type {
 import type { Candidate } from '../types';
 import type { TableQueries } from '@/@types/common';
 import dayjs from 'dayjs';
-import { Button } from '@/components/ui';
+import { Button, Tooltip } from '@/components/ui';
 import {
   HiOutlineChevronDown,
   HiOutlineChevronRight,
@@ -65,7 +65,7 @@ const CandidateListTable = ({
   handleArchive: (id: number, unarchive: boolean) => void;
   handleReport: (id: number) => void;
   handleFavorite: (id: number, unfavorite: boolean) => void;
-  handleDownload: (id: number) => void;
+  handleDownload: (url: string) => void;
 }) => {
   const navigate = useNavigate();
 
@@ -304,17 +304,40 @@ const CandidateListTable = ({
               ? 'Quitar Favorito'
               : 'Favorito'}
           </Button>
-          <Button
-            variant="solid"
-            size="md"
-            customColorClass={() =>
-              'border-blue-500 ring-1 ring-blue-500 text-blue-500 hover:border-blue-500 hover:ring-blue-500 hover:text-white hover:bg-blue-500 bg-transparent'
-            }
-            className="flex items-center gap-2 max-w-[250px]"
-            onClick={() => handleDownload(row.original.id)}
-          >
-            <BsCloudDownload /> Descargar CV
-          </Button>
+          {row.original.professionalData[0]?.resumeUrl ? (
+            <Button
+              variant="solid"
+              size="md"
+              customColorClass={() =>
+                'border-blue-500 ring-1 ring-blue-500 text-blue-500 hover:border-blue-500 hover:ring-blue-500 hover:text-white hover:bg-blue-500 bg-transparent'
+              }
+              className="flex items-center gap-2 max-w-[250px]"
+              onClick={() =>
+                handleDownload(
+                  row.original.professionalData[0]?.resumeUrl || ''
+                )
+              }
+            >
+              <BsCloudDownload /> Descargar CV
+            </Button>
+          ) : (
+            <Tooltip
+              title="No hay CV disponible"
+            >
+              <Button
+                variant="solid"
+                size="md"
+                disabled
+                customColorClass={() =>
+                  'border-blue-500 ring-1 ring-blue-500 text-blue-500 hover:border-blue-500 hover:ring-blue-500 hover:text-white hover:bg-blue-500 bg-transparent'
+                }
+                className="flex items-center gap-2 max-w-[250px]"
+                onClick={() => {}}
+              >
+                <BsCloudDownload /> Descargar CV
+              </Button>
+            </Tooltip>
+          )}
           <Button
             variant="solid"
             size="md"
