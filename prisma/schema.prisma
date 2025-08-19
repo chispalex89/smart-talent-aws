@@ -158,13 +158,13 @@ model Company {
   isDeleted                   Boolean                    @default(false) @map("is_deleted")
   logoUrl                     String?                    @map("logo_url")
   countryId                   Int                        @map("country_id")
-  employmentSectorId          Int                        @map("employment_sector_id")
+  hiringEmploymentSectorId    Int                        @map("hiring_employment_sector_id")
   created_at                  DateTime                   @default(now())
   updated_at                  DateTime?                  @updatedAt
   created_by                  String
   updated_by                  String?
   country                     Country                    @relation(fields: [countryId], references: [id])
-  employment_sector           EmploymentSector           @relation(fields: [employmentSectorId], references: [id])
+  hiring_employment_sector    HiringEmploymentSector     @relation(fields: [hiringEmploymentSectorId], references: [id])
   recruiters                  Recruiter[]
   jobOffers                   JobOffer[]
   Membership                  Membership[]
@@ -434,6 +434,8 @@ model CompanyViewedApplicant {
   viewed_at   DateTime @default(now()) @map("viewed_at")
 
   @@id([applicantId, companyId])
+
+  @@map("company_viewed_applicant")
 }
 
 model FavoriteJobOffer {
@@ -531,7 +533,7 @@ model Permission {
 
 model DocumentType {
   id            Int            @id @default(autoincrement())
-  name          String         @unique
+  name          String         
   status        String         @default("active")
   description   String?
   created_at    DateTime       @default(now())
@@ -546,7 +548,7 @@ model DocumentType {
 
 model Gender {
   id            Int            @id @default(autoincrement())
-  name          String         @unique
+  name          String         
   status        String         @default("active")
   description   String?
   created_at    DateTime       @default(now())
@@ -561,7 +563,7 @@ model Gender {
 
 model MaritalStatus {
   id            Int            @id @default(autoincrement())
-  name          String         @unique
+  name          String         
   status        String         @default("active")
   description   String?
   created_at    DateTime       @default(now())
@@ -577,7 +579,7 @@ model MaritalStatus {
 
 model Country {
   id              Int              @id @default(autoincrement())
-  name            String           @unique
+  name            String           
   status          String           @default("active")
   description     String?
   created_at      DateTime         @default(now())
@@ -633,7 +635,7 @@ model City {
 
 model DriverLicense {
   id            Int            @id @default(autoincrement())
-  name          String         @unique
+  name          String         
   status        String         @default("active")
   description   String?
   created_at    DateTime       @default(now())
@@ -648,7 +650,7 @@ model DriverLicense {
 
 model AcademicLevel {
   id                Int                @id @default(autoincrement())
-  name              String             @unique
+  name              String             
   status            String             @default("active")
   description       String?
   created_at        DateTime           @default(now())
@@ -665,7 +667,7 @@ model AcademicLevel {
 
 model Profession {
   id                Int                @id @default(autoincrement())
-  name              String             @unique
+  name              String             
   status            String             @default("active")
   description       String?
   created_at        DateTime           @default(now())
@@ -681,7 +683,7 @@ model Profession {
 
 model JobHierarchy {
   id                Int                @id @default(autoincrement())
-  name              String             @unique
+  name              String             
   description       String?
   status            String             @default("active")
   created_at        DateTime           @default(now())
@@ -698,7 +700,7 @@ model JobHierarchy {
 
 model EmploymentStatus {
   id              Int              @id @default(autoincrement())
-  name            String           @unique
+  name            String           
   status          String           @default("active")
   description     String?
   created_at      DateTime         @default(now())
@@ -713,7 +715,24 @@ model EmploymentStatus {
 
 model EmploymentSector {
   id              Int              @id @default(autoincrement())
-  name            String           @unique
+  name            String           
+  status          String           @default("active")
+  description     String?
+  created_at      DateTime         @default(now())
+  updated_at      DateTime?        @updatedAt
+  created_by      String
+  updated_by      String?
+  isDeleted       Boolean          @default(false) @map("is_deleted")
+  job             JobOffer[]
+  job_preferences JobPreferences[]
+  AcademicData    AcademicData[]
+
+  @@map("employment_sector")
+}
+
+model HiringEmploymentSector {
+  id              Int              @id @default(autoincrement())
+  name            String           
   status          String           @default("active")
   description     String?
   created_at      DateTime         @default(now())
@@ -722,11 +741,8 @@ model EmploymentSector {
   updated_by      String?
   isDeleted       Boolean          @default(false) @map("is_deleted")
   companies       Company[]
-  job             JobOffer[]
-  job_preferences JobPreferences[]
-  AcademicData    AcademicData[]
 
-  @@map("employment_sector")
+  @@map("hiring_employment_sector")
 }
 
 model SalaryRange {
@@ -747,7 +763,7 @@ model SalaryRange {
 
 model WorkShift {
   id              Int              @id @default(autoincrement())
-  name            String           @unique
+  name            String           
   status          String           @default("active")
   description     String?
   created_at      DateTime         @default(now())
@@ -763,7 +779,7 @@ model WorkShift {
 
 model ContractType {
   id              Int              @id @default(autoincrement())
-  name            String           @unique
+  name            String           
   status          String           @default("active")
   description     String?
   created_at      DateTime         @default(now())
@@ -779,7 +795,7 @@ model ContractType {
 
 model GenderPreference {
   id          Int        @id @default(autoincrement())
-  name        String     @unique
+  name        String     
   status      String     @default("active")
   description String?
   created_at  DateTime   @default(now())
@@ -793,26 +809,28 @@ model GenderPreference {
 }
 
 model MembershipType {
-  id          Int          @id @default(autoincrement())
-  name        String       @unique
-  price       Float
-  salePrice   Float?       @map("sale_price")
-  description String?
-  created_at  DateTime     @default(now())
-  updated_at  DateTime?    @updatedAt
-  created_by  String
-  updated_by  String?
-  isDeleted   Boolean      @default(false) @map("is_deleted")
-  status      String       @default("active")
-  features    String[]
-  membership  Membership[]
+  id            Int          @id @default(autoincrement())
+  name          String       
+  price         Float
+  salePrice     Float?       @map("sale_price")
+  description   String?
+  paypalPlanId  String?      @map("paypal_plan_id")
+  qPayProPlanId String?      @map("qpay_pro_plan_id")
+  created_at    DateTime     @default(now())
+  updated_at    DateTime?    @updatedAt
+  created_by    String
+  updated_by    String?
+  isDeleted     Boolean      @default(false) @map("is_deleted")
+  status        String       @default("active")
+  features      String[]
+  membership    Membership[]
 
   @@map("membership_type")
 }
 
 model SoftwareSkills {
   id                 Int                  @id @default(autoincrement())
-  name               String               @unique
+  name               String               
   description        String?
   created_at         DateTime             @default(now())
   updated_at         DateTime?            @updatedAt
@@ -826,7 +844,7 @@ model SoftwareSkills {
 
 model Language {
   id                 Int                  @id @default(autoincrement())
-  name               String               @unique
+  name               String               
   description        String?
   created_at         DateTime             @default(now())
   updated_at         DateTime?            @updatedAt
@@ -840,7 +858,7 @@ model Language {
 
 model SkillLevel {
   id                 Int                  @id @default(autoincrement())
-  name               String               @unique
+  name               String               
   description        String?
   created_at         DateTime             @default(now())
   updated_at         DateTime?            @updatedAt
@@ -855,7 +873,7 @@ model SkillLevel {
 
 model OtherSkills {
   id          Int       @id @default(autoincrement())
-  name        String    @unique
+  name        String    
   description String?
   created_at  DateTime  @default(now())
   updated_at  DateTime? @updatedAt
@@ -868,7 +886,7 @@ model OtherSkills {
 
 model AcademicDataStatus {
   id           Int            @id @default(autoincrement())
-  name         String         @unique
+  name         String         
   status       String         @default("active")
   description  String?
   created_at   DateTime       @default(now())

@@ -119,6 +119,7 @@ const NewClient = () => {
     countries,
     states,
     employmentSectors,
+    hiringEmploymentSectors,
   } = useCatalogContext();
   const { userAttributes, refetchUser } = useUserContext();
 
@@ -142,26 +143,13 @@ const NewClient = () => {
   }, [states]);
 
   // TODO: add actual employment sectors
-  const employmentSectorOptions = useMemo(() => {
-    return [
-      {
-        name: 'Empleador Directo',
-        id: 1,
-      },
-      {
-        name: 'Agencia de Reclutamiento',
-        id: 2,
-      },
-      {
-        name: 'Servicios Temporales',
-        id: 3,
-      },
-    ].map((employmentSector) => ({
-      label: employmentSector.name,
-      value: employmentSector.id,
+  const hiringEmploymentSectorOptions = useMemo(() => {
+    return hiringEmploymentSectors.map((sector) => ({
+      label: sector.name,
+      value: sector.id,
       className: 'text-gray-900',
     }));
-  }, [employmentSectors]);
+  }, [hiringEmploymentSectors]);
 
   const [cityOptions, setCityOptions] = useState(
     [] as { label: string; value: number; className: string }[]
@@ -683,8 +671,8 @@ const NewClient = () => {
                     <Select<Option>
                       placeholder="Sector Empresarial"
                       {...field}
-                      options={employmentSectorOptions}
-                      value={employmentSectorOptions.filter(
+                      options={hiringEmploymentSectorOptions}
+                      value={hiringEmploymentSectorOptions.filter(
                         (option) => option.value === field.value
                       )}
                       onChange={(option) => field.onChange(option?.value)}

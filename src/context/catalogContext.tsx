@@ -21,6 +21,7 @@ import {
   GenderPreference,
   OtherSkills,
   AcademicDataStatus,
+  HiringEmploymentSector,
 } from '@prisma/client';
 import React, { FC, useEffect } from 'react';
 import apiService from '../services/apiService';
@@ -35,6 +36,7 @@ export interface ICatalogContext {
   driverLicenseTypes: DriverLicense[];
   employmentStatuses: EmploymentStatus[];
   employmentSectors: EmploymentSector[];
+  hiringEmploymentSectors: HiringEmploymentSector[];
   jobHierarchies: JobHierarchy[];
   genders: Gender[];
   genderPreferences: GenderPreference[];
@@ -70,6 +72,9 @@ export const CatalogContextProvider: FC<{
   >([]);
   const [employmentSectors, setEmploymentSectors] = React.useState<
     EmploymentSector[]
+  >([]);
+  const [hiringEmploymentSectors, setHiringEmploymentSectors] = React.useState<
+    HiringEmploymentSector[]
   >([]);
   const [employmentStatuses, setEmploymentStatuses] = React.useState<
     EmploymentStatus[]
@@ -159,6 +164,13 @@ export const CatalogContextProvider: FC<{
       setGenderPreferences(data);
     }
 
+    async function fetchHiringEmploymentSectors() {
+      const data = await apiService.get<HiringEmploymentSector[]>(
+        '/hiring-employment-sector',
+      );
+      setHiringEmploymentSectors(data);
+    }
+
     async function fetchJobHierarchies() {
       const data = await apiService.get<JobHierarchy[]>('/job-hierarchy');
       setJobHierarchies(data);
@@ -226,6 +238,7 @@ export const CatalogContextProvider: FC<{
       fetchEmploymentStatuses();
       fetchGenders();
       fetchGenderPreferences();
+      fetchHiringEmploymentSectors();
       fetchJobHierarchies();
       fetchLanguages();
       fetchMaritalStatuses();
@@ -255,6 +268,7 @@ export const CatalogContextProvider: FC<{
         employmentStatuses,
         genders,
         genderPreferences,
+        hiringEmploymentSectors,
         jobHierarchies,
         languages,
         maritalStatuses,

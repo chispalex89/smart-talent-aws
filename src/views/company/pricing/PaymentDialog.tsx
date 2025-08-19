@@ -22,6 +22,11 @@ import { paymentMethods, PaymentMethods } from './types';
 import { Input } from '@/components/ui';
 import apiService from '../../../services/apiService';
 import { useUserContext } from '../../../context/userContext';
+import {
+  PayPalButtons,
+  PayPalScriptProvider,
+  PayPalButtonsComponentProps,
+} from '@paypal/react-paypal-js';
 
 function limit(val: string, max: string) {
   if (val.length === 1 && val[0] > max[0]) {
@@ -46,6 +51,12 @@ function cardExpiryFormat(val: string) {
   return month + (date.length ? '/' + date : '');
 }
 
+const tomorrowDate = () => {
+  const date = new Date();
+  date.setDate(date.getDate() + 1);
+  return date.toISOString();
+};
+
 const PaymentDialog = () => {
   const { recruiter, refetchRecruiter } = useUserContext();
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethods | null>(
@@ -57,6 +68,8 @@ const PaymentDialog = () => {
   const navigate = useNavigate();
 
   const { paymentDialog, setPaymentDialog, selectedPlan } = usePricingStore();
+
+  console.log(selectedPlan);
 
   const handleDialogClose = async () => {
     setPaymentDialog(false);
@@ -76,7 +89,7 @@ const PaymentDialog = () => {
       //   planId: selectedPlan.id,
       //   paymentMethod,
       // });
-      
+
       await apiService.patch(`/company/${recruiter?.companyId}/membership`, {
         membershipTypeId: selectedPlan.id,
       });
@@ -87,7 +100,7 @@ const PaymentDialog = () => {
     } finally {
       setLoading(false);
     }
-  }
+  };
 
   const handleManageSubscription = async () => {
     navigate('/profile/company?category=billing');
@@ -243,9 +256,42 @@ const PaymentDialog = () => {
             </div>
           </div>
           <div className="mt-6">
-            <Button block variant="solid" loading={loading} onClick={handlePay}>
-              Pagar
-            </Button>
+            {(paymentMethod === 'creditCard' || selectedPlan.price === 0) && (
+              <Button
+                block
+                variant="solid"
+                loading={loading}
+                onClick={handlePay}
+              >
+                Pagar
+              </Button>
+            )}
+            {paymentMethod === 'paypal' && selectedPlan.price! > 0 && (
+              <PayPalButtons
+                style={{
+                  shape: 'rect',
+                  layout: 'vertical',
+                  label: 'subscribe',
+                }}
+                message={{
+                  amount: selectedPlan.price,
+                }}
+                createSubscription={(data, actions) => {
+                  return actions.subscription.create({
+                    /* Creates the subscription */
+                    plan_id: selectedPlan.paypalPlanId!,
+                  });
+                }}
+                onApprove={async (data, actions) => {
+                  await apiService.patch(
+                    `/company/${recruiter?.companyId}/membership`,
+                    {
+                      subscriptionId: data.subscriptionID,
+                    }
+                  );
+                }}
+              />
+            )}
           </div>
         </>
       )}

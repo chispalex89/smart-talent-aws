@@ -15,7 +15,7 @@ import { useMemo } from 'react';
 import { useUserContext } from '../../../context/userContext';
 
 const Plans = () => {
-  const { recruiter } = useUserContext();
+  const { recruiter, refetchRecruiter } = useUserContext();
   const { paymentCycle, setPaymentDialog, setSelectedPlan } = usePricingStore();
 
   const query = useQuery();
@@ -104,9 +104,19 @@ const Plans = () => {
               disabled={
                 recruiter?.company?.Membership[0]?.membershipTypeId === plan.id
               }
-              onClick={() => {
+              onClick={async () => {
                 setSelectedPlan(plan);
-                setPaymentDialog(true);
+                if (plan.price > 0) {
+                  setPaymentDialog(true);
+                } else {
+                  await apiService.patch(
+                    `/company/${recruiter?.companyId}/membership`,
+                    {
+                      membershipTypeId: plan.id,
+                    }
+                  );
+                  await refetchRecruiter();
+                }
               }}
             >
               {recruiter?.company?.Membership[0]?.membershipTypeId === plan.id

@@ -59,7 +59,7 @@ const renderRoutes = (role: string | null, membershipType: string | null) => {
         <Route path="/home" element={<BusinessDashboard />} />
         <Route path="/job">
           <Route path="/job/create" element={<JobCreate />} />
-          <Route path="/job/edit/:id" element={<JobCreate />} />
+          <Route path="/job/edit/:id" element={<JobCreate isEdit={true} />} />
           <Route path="/job/my-jobs" element={<JobList />} />
           <Route path="/job/:uuid" element={<JobDetails />} />
         </Route>
