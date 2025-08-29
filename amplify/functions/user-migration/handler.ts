@@ -3,8 +3,6 @@ import type {
   UserMigrationForgotPasswordTriggerEvent,
   Context,
 } from 'aws-lambda';
-import { PasswordHash } from 'phpass';
-import bcrypt from 'bcryptjs';
 import crypto from 'crypto';
 
 // If you declared env in resource.ts, use Amplify's typed env:
@@ -19,8 +17,9 @@ async function findLegacyUser(usernameOrEmail: string) {
 function verifyLegacyPassword(plain: string, hash: string): boolean {
   // WordPress "portable phpass" hashes start with $P$ or $H$
   if (hash.startsWith('$P$') || hash.startsWith('$H$')) {
-    const hasher = new PasswordHash(8, true);;
-    return hasher.CheckPassword(plain, hash);
+    // const hasher = new PasswordHash(8, true);;
+    // return hasher.CheckPassword(plain, hash);
+    return false; // TODO: implement phpass check
   }
   // WP may also contain bcrypt ($2a/$2y/$2b)
   if (
@@ -28,7 +27,8 @@ function verifyLegacyPassword(plain: string, hash: string): boolean {
     hash.startsWith('$2y$') ||
     hash.startsWith('$2b$')
   ) {
-    return bcrypt.compareSync(plain, hash);
+    // return bcrypt.compareSync(plain, hash);
+    return false; // TODO: implement bcrypt check
   }
   // Check for 32-char hex MD5
   if (/^[a-f0-9]{32}$/i.test(hash)) {
