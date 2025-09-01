@@ -15,5 +15,4 @@ export const userMigration = defineFunction({
     level: 'info',
     format: 'json',
   },
-  
 });

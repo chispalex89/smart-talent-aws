@@ -46,6 +46,7 @@ export const handler = async (
     | UserMigrationForgotPasswordTriggerEvent,
   _ctx: Context
 ) => {
+  console.info('User Migration event called');
   const { triggerSource, userName } = event;
   console.info('UserMigration event:', { triggerSource, userName, _ctx });
   // Runs when a non-existent user tries to sign in
