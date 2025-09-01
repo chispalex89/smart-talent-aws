@@ -11,4 +11,8 @@ export const userMigration = defineFunction({
     LEGACY_DB_USER: secret('LEGACY_DB_USER'),
     LEGACY_DB_PASS: secret('LEGACY_DB_PASS'),
   },
+  logging: {
+    level: 'info',
+    format: 'json',
+  },
 });
