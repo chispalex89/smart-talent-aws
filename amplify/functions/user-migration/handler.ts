@@ -47,7 +47,7 @@ export const handler = async (
   _ctx: Context
 ) => {
   const { triggerSource, userName } = event;
-  console.info('UserMigration event:', { triggerSource, userName });
+  console.info('UserMigration event:', { triggerSource, userName, _ctx });
   // Runs when a non-existent user tries to sign in
   if (triggerSource === 'UserMigration_Authentication') {
     const password = event.request.password!;
