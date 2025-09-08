@@ -118,10 +118,9 @@ const NewClient = () => {
     genders,
     countries,
     states,
-    employmentSectors,
     hiringEmploymentSectors,
   } = useCatalogContext();
-  const { userAttributes, refetchUser } = useUserContext();
+  const { userAttributes, refetchUser, user: storedUser } = useUserContext();
 
   const [stateId, setStateId] = useState<number | null>(null);
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
@@ -284,7 +283,7 @@ const NewClient = () => {
     }
 
     try {
-      await apiService.post('/user/company', formData);
+      await apiService.post(`/user/${storedUser?.id}/company`, formData);
       toast.push(
         <Notification type="success">
           Cuenta creada exitosamente. Redirigiendo...
@@ -337,10 +336,13 @@ const NewClient = () => {
     };
 
     try {
-      const result = await apiService.post('/user/applicant', {
-        ...data,
-        ...user,
-      });
+      const result = await apiService.post(
+        `/user/${storedUser?.id}/applicant`,
+        {
+          ...data,
+          ...user,
+        }
+      );
 
       if (!result) {
         throw new Error('Error creating account');

@@ -10,6 +10,7 @@ import { useCatalogContext } from '../../../context/catalogContext';
 import apiService from '../../../services/apiService';
 import { useUserContext } from '../../../context/userContext';
 import { CompanyViewedApplicant } from '@prisma/client';
+import { profileImageUrl } from '../../../helpers/s3Url';
 
 type CandidateDetailProps = {
   title?: string;
@@ -130,7 +131,7 @@ const CandidateDetails = () => {
                 <Avatar
                   size={90}
                   shape="circle"
-                  src={user?.profileImage || ''}
+                  src={profileImageUrl(user?.profileImage) || ''}
                 />
                 <h4 className="font-bold">{user ? nameFormat(user) : ''}</h4>
                 <span className="text-sm text-muted-foreground">

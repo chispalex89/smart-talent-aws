@@ -8,6 +8,7 @@ import { User } from '@prisma/client';
 import { useUserList } from '../../hooks';
 import { nameFormat } from '../../../../helpers/textConverter';
 import { renderStatus } from '../../../../helpers/renderStatus';
+import { profileImageUrl } from '../../../../helpers/s3Url';
 import { Card } from '@/components/ui';
 
 const UserList = () => {
@@ -45,7 +46,7 @@ const UserList = () => {
             <div className="flex items-center gap-2">
               {info.row.original.profileImage && (
                 <img
-                  src={info.row.original.profileImage ?? ''}
+                  src={profileImageUrl(info.row.original.profileImage) ?? ''}
                   alt="user"
                   className="w-8 h-8 rounded-full"
                 />

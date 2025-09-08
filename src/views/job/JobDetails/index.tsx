@@ -11,6 +11,7 @@ import { BsCheck2Circle, BsStar } from 'react-icons/bs';
 import { useUserContext } from '../../../context/userContext';
 import apiService from '../../../services/apiService';
 import { FavoriteJobOffer, JobApplicant } from '@prisma/client';
+import { profileImageUrl } from '../../../helpers/s3Url';
 
 const JobDetails = () => {
   const { applicant, recruiter } = useUserContext();
@@ -188,7 +189,7 @@ const JobDetails = () => {
           <Avatar
             size={80}
             shape="square"
-            src={jobDetails?.company?.logoUrl || undefined}
+            src={profileImageUrl(jobDetails?.company?.logoUrl) || undefined}
             alt={jobDetails?.company?.name}
           />
           <h3>{jobDetails?.name}</h3>

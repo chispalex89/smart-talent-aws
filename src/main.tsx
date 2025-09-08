@@ -18,9 +18,6 @@ const root = ReactDOM.createRoot(
 );
 
 root.render(
-  // <StrictMode>
-  //   <App />
-  // </StrictMode>,
   <ThemeProvider>
     <AuthenticatorApp />
   </ThemeProvider>,

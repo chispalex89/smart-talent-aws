@@ -7,29 +7,37 @@ import Views from './views';
 
 import { CatalogContextProvider } from './context/catalogContext';
 import { useUserContext } from './context/userContext';
-import { getCurrentUser } from 'aws-amplify/auth';
 import navigationConfigByRole from './config/navigation.config';
+import { profileImageUrl } from './helpers/s3Url';
 
 const App: FC = () => {
-  const { setAuthUser, role, user, recruiter, membershipType } = useUserContext();
+  const { setAuthUser, role, user, recruiter, membershipType } =
+    useUserContext();
 
   useEffect(() => {
-    getCurrentUser().then((user) => {
-      setAuthUser(user);
+    setAuthUser({
+      username: localStorage.getItem('userName') || '',
+      userId: '',
     });
-  }, [getCurrentUser]);
+  }, [localStorage.getItem('userName')]);
 
   return (
     <Theme>
       <BrowserRouter>
         <CatalogContextProvider>
           <Layouts
-            navigationConfig={navigationConfigByRole(role, membershipType || '')}
+            navigationConfig={navigationConfigByRole(
+              role,
+              membershipType || ''
+            )}
             user={{
-              avatar: user?.profileImage || recruiter?.company?.logoUrl || '',
+              avatar:
+                profileImageUrl(
+                  user?.profileImage || recruiter?.company?.logoUrl
+                ) || '',
               email: user?.email,
               userName: `${user?.firstName} ${user?.lastName}`,
-              role: role,
+              role: role as string,
             }}
           >
             <Views />

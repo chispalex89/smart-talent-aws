@@ -14,6 +14,7 @@ import { Form, FormItem, Input, Select, toast, Upload } from '@/components/ui';
 import Notification from '@/components/ui/Notification';
 import { useUserContext } from '../../../../context/userContext';
 import { useCatalogContext } from '../../../../context/catalogContext';
+import { profileImageUrl } from '../../../../helpers/s3Url';
 
 type Option = {
   value: number;
@@ -204,7 +205,7 @@ const SettingCompany = () => {
               <div className="flex flex-col gap-2">
                 {field.value && (
                   <img
-                    src={field.value}
+                    src={profileImageUrl(field.value) ?? ''}
                     alt="Logo de la empresa"
                     className="border border-gray-300"
                     loading="lazy"

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import useJobOfferList from '../hooks/useJobOfferList';
 import {
   Avatar,
@@ -16,9 +16,8 @@ import { MdLocationPin } from 'react-icons/md';
 import { Link } from 'react-router-dom';
 import apiService from '../../../../services/apiService';
 import { useUserContext } from '../../../../context/userContext';
-import useFetch from 'src/hooks/useFetch';
-import { JobOfferDetails } from '../../JobDetails/types';
 import { JobOffer } from '@prisma/client';
+import { profileImageUrl } from '../../../../helpers/s3Url';
 
 type Option = {
   value: number;
@@ -144,7 +143,7 @@ const JobSearch = () => {
               <div className="grid md:grid-cols-12 gap-4">
                 <Avatar
                   alt={offer.company.name}
-                  src={offer.company.logoUrl || undefined}
+                  src={profileImageUrl(offer.company.logoUrl) || undefined}
                   shape="square"
                   size={100}
                   className="col-span-2"

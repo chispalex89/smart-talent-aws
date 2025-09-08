@@ -5,6 +5,7 @@ import {
 } from '@/constants/navigation.constant';
 
 import type { NavigationTree } from '@/@types/navigation';
+import { FrontendRole } from '../helpers/roleMapping';
 
 const home: NavigationTree = {
   key: 'home',
@@ -116,11 +117,11 @@ const recruiterArchive: NavigationTree = {
 };
 
 const navigationConfigByRole = (
-  role: string,
+  role: FrontendRole | null,
   membershipType: string
 ): NavigationTree[] => {
   switch (role) {
-    case 'Recruiter':
+    case FrontendRole.RECRUITER:
       if (!membershipType || membershipType === 'Bronce') {
         return [
           home,
@@ -159,7 +160,7 @@ const navigationConfigByRole = (
           type: NAV_ITEM_TYPE_ITEM,
         },
       ];
-    case 'Applicant':
+    case FrontendRole.APPLICANT:
       return [
         {
           key: 'home',
@@ -212,7 +213,7 @@ const navigationConfigByRole = (
           type: NAV_ITEM_TYPE_ITEM,
         },
       ];
-    case 'Admin':
+    case FrontendRole.ADMIN:
       return [
         {
           key: 'home',

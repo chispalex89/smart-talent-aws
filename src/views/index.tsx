@@ -50,9 +50,10 @@ import BackOfficeSkillLevelList from './backOffice/components/skill-levels/list'
 import BackOfficeOtherSkillList from './backOffice/components/other-skills/list';
 import JobDetails from './job/JobDetails';
 import MembershipCard from './backOffice/components/membership-plans/membershipCards';
+import { FrontendRole } from '../helpers/roleMapping';
 
-const renderRoutes = (role: string | null, membershipType: string | null) => {
-  if (role === 'Recruiter') {
+const renderRoutes = (role: FrontendRole | null, membershipType: string | null) => {
+  if (role === FrontendRole.RECRUITER) {
     return (
       <Routes>
         <Route path="/" element={<BusinessDashboard />} />
@@ -92,7 +93,7 @@ const renderRoutes = (role: string | null, membershipType: string | null) => {
     );
   }
 
-  if (role === 'Applicant') {
+  if (role === FrontendRole.APPLICANT) {
     return (
       <Routes>
         <Route path="/" element={<ApplicantDashboard />} />
@@ -111,7 +112,7 @@ const renderRoutes = (role: string | null, membershipType: string | null) => {
     );
   }
 
-  if (role === 'Admin') {
+  if (role === FrontendRole.ADMIN) {
     return (
       <Routes>
         <Route path="/" element={<BackOfficeDashboard />} />
@@ -260,7 +261,7 @@ const renderRoutes = (role: string | null, membershipType: string | null) => {
 
 const Views = () => {
   const { role, membershipType, loadingUser, loadingRole } = useUserContext();
-  const [userType, setUserType] = useState<string | null>(null);
+  const [userType, setUserType] = useState<FrontendRole | null>(null);
 
   useEffect(() => {
     if (role) {

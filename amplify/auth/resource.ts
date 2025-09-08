@@ -1,5 +1,4 @@
 import { defineAuth } from '@aws-amplify/backend';
-import { userMigration } from '../functions/user-migration/resource';
 
 /**
  * Define and configure your auth resource
@@ -25,5 +24,4 @@ export const auth = defineAuth({
       },
     },
   },
-  triggers: { userMigration },
 });

@@ -8,6 +8,7 @@ import { useCompanyList } from '../../hooks';
 import { Card } from '@/components/ui';
 import { renderIsDeletedToggle } from '../../../../helpers/renderActiveToggle';
 import { CompanyWithUsers } from '../../../../types/company';
+import { profileImageUrl } from '../../../../helpers/s3Url';
 
 const CompanyList = () => {
   const { list, total, tableData, isLoading, setTableData, mutate } =
@@ -44,7 +45,7 @@ const CompanyList = () => {
             <div className="flex items-center gap-2">
               {info.row.original.logoUrl && (
                 <img
-                  src={info.row.original.logoUrl ?? ''}
+                  src={profileImageUrl(info.row.original.logoUrl) ?? ''}
                   alt="user"
                   className="w-8 h-8 rounded-full"
                 />
@@ -62,12 +63,15 @@ const CompanyList = () => {
       {
         accessorKey: 'email',
         header: 'Email del Usuario Principal',
-        cell: (info) => info.row.original.recruiters[0]?.user?.email ?? 'Sin email registrado',
+        cell: (info) =>
+          info.row.original.recruiters[0]?.user?.email ??
+          'Sin email registrado',
       },
       {
         accessorKey: 'membership',
         header: 'Tipo de membresía',
-        cell: (info) => info.row.original.Membership[0]?.membership_type?.name ?? 'Bronce',
+        cell: (info) =>
+          info.row.original.Membership[0]?.membership_type?.name ?? 'Bronce',
       },
       {
         accessorKey: 'isDeleted',

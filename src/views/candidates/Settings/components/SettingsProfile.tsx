@@ -271,7 +271,7 @@ const SettingsProfile = () => {
 
   const uploadResume = async (file: File) => {
     const formData = new FormData();
-    formData.append('resume', file); // Key must match 'profileImage'
+    formData.append('resume', file); // Key must match 'resume'
     try {
       const { professionalData } = data;
       const professional = professionalData[0];

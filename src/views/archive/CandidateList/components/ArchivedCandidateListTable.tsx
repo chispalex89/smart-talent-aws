@@ -15,6 +15,7 @@ import type {
 import type { ArchivedCandidate } from '../types';
 import type { TableQueries } from '@/@types/common';
 import dayjs from 'dayjs';
+import { profileImageUrl } from '../../../../helpers/s3Url';
 
 const statusColor: Record<string, string> = {
   active: 'bg-emerald-200 dark:bg-emerald-200 text-gray-900 dark:text-gray-900',
@@ -27,7 +28,7 @@ const NameColumn = ({ row }: { row: ArchivedCandidate }) => {
       <Avatar
         size={40}
         shape="circle"
-        src={row.applicant?.user?.profileImage || ''}
+        src={profileImageUrl(row.applicant?.user?.profileImage) || ''}
       />
       <Link
         className={`hover:text-primary ml-2 rtl:mr-2 font-semibold text-gray-900 dark:text-gray-100`}

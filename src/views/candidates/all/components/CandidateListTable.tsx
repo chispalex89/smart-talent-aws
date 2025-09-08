@@ -27,6 +27,7 @@ import {
 import { BsCloudDownload, BsStar } from 'react-icons/bs';
 import { PiArchive, PiUserDuotone, PiWarning } from 'react-icons/pi';
 import { TbArchiveFilled, TbArchiveOff } from 'react-icons/tb';
+import { profileImageUrl } from '../../../../helpers/s3Url';
 
 const statusColor: Record<string, string> = {
   active: 'bg-emerald-200 dark:bg-emerald-200 text-gray-900 dark:text-gray-900',
@@ -42,7 +43,11 @@ const NameColumn = ({ row }: { row: Candidate }) => {
   return (
     <div className="flex items-center">
       {row.user.profileImage ? (
-        <Avatar size={40} shape="circle" src={row.user.profileImage} />
+        <Avatar
+          size={40}
+          shape="circle"
+          src={profileImageUrl(row.user.profileImage) ?? ''}
+        />
       ) : (
         <PiUserDuotone />
       )}
@@ -214,7 +219,7 @@ const CandidateListTable = ({
             <Avatar
               size={200}
               shape="square"
-              src={row.original.user.profileImage}
+              src={profileImageUrl(row.original.user.profileImage) ?? ''}
             />
           ) : (
             <PiUserDuotone size={200} />
@@ -321,9 +326,7 @@ const CandidateListTable = ({
               <BsCloudDownload /> Descargar CV
             </Button>
           ) : (
-            <Tooltip
-              title="No hay CV disponible"
-            >
+            <Tooltip title="No hay CV disponible">
               <Button
                 variant="solid"
                 size="md"

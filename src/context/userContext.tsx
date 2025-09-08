@@ -1,8 +1,4 @@
-import {
-  AuthUser,
-  fetchUserAttributes,
-  type FetchUserAttributesOutput,
-} from 'aws-amplify/auth';
+import { AuthUser, type FetchUserAttributesOutput } from 'aws-amplify/auth';
 import React, { useEffect } from 'react';
 import apiService from '../services/apiService';
 import {
@@ -16,6 +12,11 @@ import {
   User,
   UserRole,
 } from '@prisma/client';
+import {
+  DBRole,
+  FrontendRole,
+  mapDBRoleToFrontendRole,
+} from '../helpers/roleMapping';
 
 export type UserRoleWithDetails = UserRole & {
   role: Role;
@@ -51,8 +52,8 @@ export interface IUserContext {
   refetchUser: () => Promise<void>;
   authUser: AuthUser | null;
   setAuthUser: (authUser: AuthUser | null) => void;
-  role: string;
-  setRole: (roles: string) => void;
+  role: FrontendRole | null;
+  setRole: (role: FrontendRole | null) => void;
   permissions: Permission[];
   setPermissions: (permissions: Permission[]) => void;
   userAttributes: FetchUserAttributesOutput | null;
@@ -77,7 +78,7 @@ export const UserContextProvider: React.FC<{
   const [membershipType, setMembershipType] = React.useState<string | null>(
     null
   );
-  const [role, setRole] = React.useState<string>('');
+  const [role, setRole] = React.useState<FrontendRole | null>(null);
   const [permissions, setPermissions] = React.useState<Permission[]>([]);
   const [userAttributes, setUserAttributes] =
     React.useState<FetchUserAttributesOutput | null>(null);
@@ -85,7 +86,6 @@ export const UserContextProvider: React.FC<{
   const fetchUser = async () => {
     setLoadingUser(true);
     try {
-
       const currentUser = await apiService.get<User>(
         `/user/${authUser?.username}`
       );
@@ -93,6 +93,14 @@ export const UserContextProvider: React.FC<{
         throw new Error('User not found');
       }
       setUser(currentUser);
+      setUserAttributes({
+        email: currentUser.email,
+        name: currentUser.firstName,
+        middle_name: currentUser.middleName || '',
+        family_name: currentUser.lastName || '',
+        second_family_name: currentUser.secondLastName || '',
+        sub: currentUser.loginId,
+      });
     } catch (error) {
       console.error('Error fetching user:', error);
       setUser(null);
@@ -124,9 +132,6 @@ export const UserContextProvider: React.FC<{
     if (authUser) {
       setUserAttributes(null);
       fetchUser();
-      fetchUserAttributes().then((attributes) => {
-        setUserAttributes(attributes);
-      });
     }
   }, [authUser]);
 
@@ -134,13 +139,19 @@ export const UserContextProvider: React.FC<{
     if (user && user.id) {
       setLoadingRole(true);
       const fetchUserRoles = async () => {
-        const userRole = await apiService.get<UserRoleWithDetails>(
-          `/user-role/${user.id}`
-        );
-        if (userRole) {
-          setRole(userRole.role.name);
-        } else {
-          setRole(''); // Reset role if no userRole is found
+        try {
+          const userRole = await apiService.get<UserRoleWithDetails>(
+            `/user-role/${user.id}`
+          );
+          if (userRole) {
+            setRole(
+              mapDBRoleToFrontendRole(userRole.role.name as DBRole) || null
+            );
+          } else {
+            setRole(null); // Reset role if no userRole is found
+          }
+        } catch {
+          setRole(null);
         }
         setLoadingRole(false);
       };
@@ -160,9 +171,9 @@ export const UserContextProvider: React.FC<{
 
   useEffect(() => {
     if (user) {
-      if (role === 'Recruiter') {
+      if (role === FrontendRole.RECRUITER) {
         fetchRecruiter();
-      } else if (role === 'Applicant') {
+      } else if (role === FrontendRole.APPLICANT) {
         fetchApplicant();
       } else {
         setRecruiter(null);
