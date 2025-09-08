@@ -461,7 +461,6 @@ export default function LoginPage() {
 
   useEffect(() => {
     localStorage.setItem('idToken', loginSession || '');
-    window.location.reload();
   }, [loginSession]);
 
   const handleSignIn = async (email: string, password: string) => {
@@ -491,6 +490,7 @@ export default function LoginPage() {
 
         const { IdToken } = tokens;
         setLoginSession(IdToken);
+        window.location.reload();
       }
     } catch (error: any) {
       if (error.message.includes('401') || error.message.includes('404')) {
@@ -526,7 +526,7 @@ export default function LoginPage() {
     const { IdToken } = tokens;
 
     setLoginSession(IdToken);
-
+    window.location.reload();
   };
 
   const handleConfirmEmail = async (email: string, code: string) => {
