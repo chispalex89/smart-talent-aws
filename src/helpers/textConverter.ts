@@ -15,3 +15,8 @@ export const calculateAge = (date: string | Date) => {
   const ageDate = new Date(difference);
   return Math.abs(ageDate.getUTCFullYear() - 1970);
 };
+
+export const truncateText = (text: string, maxLength: number) => {
+  if (text.length <= maxLength) return text;
+  return text.slice(0, maxLength) + '…';
+};

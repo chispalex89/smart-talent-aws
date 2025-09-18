@@ -18,6 +18,7 @@ import apiService from '../../../../services/apiService';
 import { useUserContext } from '../../../../context/userContext';
 import { JobOffer } from '@prisma/client';
 import { profileImageUrl } from '../../../../helpers/s3Url';
+import { truncateText } from '../../../../helpers/textConverter';
 
 type Option = {
   value: number;
@@ -149,7 +150,7 @@ const JobSearch = () => {
                   className="col-span-2"
                 />
 
-                <h3
+                <h4
                   className="col-span-7 flex items-center justify-center"
                   style={{
                     whiteSpace: 'nowrap',
@@ -161,6 +162,7 @@ const JobSearch = () => {
                     textDecorationStyle: 'solid',
                     textUnderlineOffset: '2px',
                     color: '#5994FF',
+                    width: '100%',
                   }}
                   title={offer.name}
                 >
@@ -176,9 +178,9 @@ const JobSearch = () => {
                       );
                     }}
                   >
-                    {offer.name}
+                    {truncateText(offer.name, 25)}
                   </Link>
-                </h3>
+                </h4>
                 <div className="col-span-3 flex flex-col items-center justify-center gap-2">
                   {isApplied ? (
                     <Tooltip
