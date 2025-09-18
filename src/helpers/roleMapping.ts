@@ -2,7 +2,7 @@ export enum DBRole {
   USER = 'Usuario',
   COMPANY = 'Empresa',
   ADMIN = 'Admin',
-  SUPERADMIN = 'SuperAdmin',
+  SUPERADMIN = 'Super Admin',
 }
 
 export enum FrontendRole {
