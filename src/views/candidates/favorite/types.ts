@@ -1,12 +1,22 @@
-import { Applicant, CompanyFavoriteApplicant, Profession, ProfessionalData, User } from '@prisma/client';
+import {
+  Applicant,
+  CompanyFavoriteApplicant,
+  JobOffer,
+  Profession,
+  ProfessionalData,
+  User,
+} from '@prisma/client';
 
-type ProfessionalDataWithDescription = ProfessionalData & { profession: Profession};
+type ProfessionalDataWithDescription = ProfessionalData & {
+  profession: Profession;
+};
 
 export type FavoriteCandidate = CompanyFavoriteApplicant & {
   applicant: Applicant & {
     user: User;
     professionalData: ProfessionalDataWithDescription[];
   };
+  job?: JobOffer | null;
 };
 
 export type GetFavoriteCustomersListResponse = {

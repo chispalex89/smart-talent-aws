@@ -10,7 +10,8 @@
     "candidates": {
       "candidates": "Candidatos",
       "favorite": "Favoritos",
-      "all": "Buscar Candidatos"
+      "all": "Buscar Candidatos",
+      "applied": "Candidatos Que Aplicaron"
     },
     "users": {
       "users": "Usuarios",

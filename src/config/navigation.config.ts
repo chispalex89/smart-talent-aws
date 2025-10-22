@@ -60,6 +60,16 @@ const recruiterFreeSubscription: NavigationTree = {
   authority: ['Recruiter'],
   subMenu: [
     {
+      key: 'candidates.applied',
+      path: '/candidates/applied',
+      title: 'Applied Candidates',
+      translateKey: 'nav.candidates.applied',
+      icon: 'applied',
+      type: NAV_ITEM_TYPE_ITEM,
+      authority: ['Recruiter'],
+      subMenu: [],
+    },
+    {
       key: 'candidates.favorite',
       path: '/candidates/favorite',
       title: 'Favorite Candidates',

@@ -139,14 +139,26 @@ const FavoriteCandidateListTable = ({
         },
       },
       {
-        header: 'Fecha de Aplicación',
-        accessorKey: 'totalSpending',
+        header: 'Fecha de Guardado',
+        accessorKey: 'created_at',
         cell: (props) => {
           const row = props.row.original;
           return (
             <span className="font-semibold">
               {dayjs(row.created_at).locale('es').format('DD/MM/YYYY')}
             </span>
+          );
+        },
+      },
+      {
+        header: 'Trabajo Aplicado',
+        accessorKey: 'job',
+        cell: (props) => {
+          const row = props.row.original;
+          return row.jobId ? (
+            <Link to={`/job/${row.jobUuid}`}>{row.job?.name || 'N/A'}</Link>
+          ) : (
+            'N/A'
           );
         },
       },
@@ -161,7 +173,7 @@ const FavoriteCandidateListTable = ({
         ),
       },
     ],
-    [],
+    []
   );
 
   const handleSetTableData = (data: TableQueries) => {
@@ -196,7 +208,7 @@ const FavoriteCandidateListTable = ({
 
   const handleAllRowSelect = (
     checked: boolean,
-    rows: Row<FavoriteCandidate>[],
+    rows: Row<FavoriteCandidate>[]
   ) => {
     if (checked) {
       const originalRows = rows.map((row) => row.original);

@@ -92,9 +92,8 @@ const CandidateListTable = ({
   const columns: ColumnDef<Candidate>[] = useMemo(
     () => [
       {
-        // Make an expander cell
-        header: () => null, // No header
-        id: 'expander', // It needs an ID
+        header: () => null,
+        id: 'expander',
         cell: ({ row }) => (
           <>
             {row.getCanExpand() ? (
@@ -111,6 +110,7 @@ const CandidateListTable = ({
             ) : null}
           </>
         ),
+        size: 40,
       },
       {
         header: 'Nombre',
@@ -119,6 +119,7 @@ const CandidateListTable = ({
           const row = props.row.original;
           return <NameColumn row={row} />;
         },
+        size: 220, // Example: set width to 220px
       },
       {
         header: 'Email',
@@ -127,6 +128,7 @@ const CandidateListTable = ({
           const row = props.row.original;
           return <span className="font-semibold">{row.user.email}</span>;
         },
+        size: 200,
       },
       {
         header: 'Profesión',
@@ -139,6 +141,7 @@ const CandidateListTable = ({
             </span>
           );
         },
+        size: 160,
       },
       {
         header: 'Status',
@@ -153,6 +156,7 @@ const CandidateListTable = ({
             </div>
           );
         },
+        size: 120,
       },
       {
         header: 'Última Actualización de Perfil',
@@ -167,6 +171,7 @@ const CandidateListTable = ({
             </span>
           );
         },
+        size: 180,
       },
     ],
     []

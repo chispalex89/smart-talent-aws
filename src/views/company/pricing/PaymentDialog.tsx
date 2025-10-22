@@ -85,10 +85,11 @@ const PaymentDialog = () => {
   const handlePay = async () => {
     setLoading(true);
     try {
-      // await apiService.post('/payment', {
-      //   planId: selectedPlan.id,
-      //   paymentMethod,
-      // });
+      await apiService.post('/payment', {
+        planId: selectedPlan.id,
+        paymentMethod,
+        
+      });
 
       await apiService.patch(`/company/${recruiter?.companyId}/membership`, {
         membershipTypeId: selectedPlan.id,

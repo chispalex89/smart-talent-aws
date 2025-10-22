@@ -8,6 +8,7 @@ import JobList from './job/JobList';
 import JobCreate from './job/JobCreate';
 import FavoriteCandidateList from './candidates/favorite';
 import CandidateList from './candidates/all';
+import AppliedCandidateList from './candidates/jobApplicants';
 import Pricing from './company/pricing';
 import PageContainer from '@/components/template/PageContainer';
 import Settings from './company/settings';
@@ -72,6 +73,10 @@ const renderRoutes = (role: FrontendRole | null, membershipType: string | null) 
           <Route
             path="/candidates/favorite"
             element={<FavoriteCandidateList />}
+          />
+          <Route
+            path="/candidates/applied"
+            element={<AppliedCandidateList />}
           />
           {membershipType && membershipType !== 'Bronce' && (
             <Route path="/candidates/find" element={<CandidateList />} />

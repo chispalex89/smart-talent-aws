@@ -16,6 +16,7 @@ model User {
   marriedLastName String?     @map("married_last_name")
   email           String      @unique
   loginId         String      @unique @map("login_id")
+  legacyPassword  String?     @map("legacy_password")
   status          String
   profileImage    String?     @map("profile_image")
   isDeleted       Boolean     @default(false) @map("is_deleted")
@@ -97,19 +98,19 @@ model Applicant {
 
 model PersonalData {
   id                   Int            @id @default(autoincrement())
-  documentId           String         @map("document_id")
-  address              String
+  documentId           String?        @map("document_id")
+  address              String?
   phone                String?
   mobile               String?
-  dateOfBirth          DateTime       @map("date_of_birth")
-  availabilityToTravel Boolean        @map("availability_to_travel")
-  documentTypeId       Int            @map("document_type_id")
-  genderId             Int            @map("gender_id")
-  maritalStatusId      Int            @map("marital_status_id")
-  countryOfResidencyId Int            @map("country_of_residency_id")
-  stateId              Int            @map("state_id")
-  cityId               Int            @map("city_id")
-  zone                 String         @map("zone")
+  dateOfBirth          DateTime?      @map("date_of_birth")
+  availabilityToTravel Boolean?       @map("availability_to_travel")
+  documentTypeId       Int?           @map("document_type_id")
+  genderId             Int?           @map("gender_id")
+  maritalStatusId      Int?           @map("marital_status_id")
+  countryOfResidencyId Int?           @map("country_of_residency_id")
+  stateId              Int?           @map("state_id")
+  cityId               Int?           @map("city_id")
+  zone                 String?        @map("zone")
   driverLicenseId      Int?           @map("driver_license_id")
   applicantId          Int            @map("applicant_id")
   created_at           DateTime       @default(now())
@@ -117,31 +118,31 @@ model PersonalData {
   created_by           String
   updated_by           String?
   applicant            Applicant      @relation(fields: [applicantId], references: [id])
-  city                 City           @relation(fields: [cityId], references: [id])
-  document_type        DocumentType   @relation(fields: [documentTypeId], references: [id])
+  city                 City?          @relation(fields: [cityId], references: [id])
+  document_type        DocumentType?  @relation(fields: [documentTypeId], references: [id])
   driver_license       DriverLicense? @relation(fields: [driverLicenseId], references: [id])
-  gender               Gender         @relation(fields: [genderId], references: [id])
-  marital_status       MaritalStatus  @relation(fields: [maritalStatusId], references: [id])
+  gender               Gender?        @relation(fields: [genderId], references: [id])
+  marital_status       MaritalStatus? @relation(fields: [maritalStatusId], references: [id])
 
   @@map("personal_data")
 }
 
 model ProfessionalData {
-  id                  Int           @id @default(autoincrement())
-  applicantId         Int           @map("applicant_id")
-  description         String
-  resumeUrl           String?       @map("resume_url")
-  lastAcademicLevelId Int           @map("last_academic_level_id")
-  professionId        Int           @map("profession_id")
-  lastJobHierarchyId  Int           @map("last_job_hierarchy_id")
-  created_at          DateTime      @default(now())
-  updated_at          DateTime?     @updatedAt
+  id                  Int            @id @default(autoincrement())
+  applicantId         Int            @map("applicant_id")
+  description         String?
+  resumeUrl           String?        @map("resume_url")
+  lastAcademicLevelId Int?           @map("last_academic_level_id")
+  professionId        Int?           @map("profession_id")
+  lastJobHierarchyId  Int?           @map("last_job_hierarchy_id")
+  created_at          DateTime       @default(now())
+  updated_at          DateTime?      @updatedAt
   created_by          String
   updated_by          String?
-  applicant           Applicant     @relation(fields: [applicantId], references: [id])
-  last_academic_level AcademicLevel @relation(fields: [lastAcademicLevelId], references: [id])
-  last_job_hierarchy  JobHierarchy  @relation(fields: [lastJobHierarchyId], references: [id])
-  profession          Profession    @relation(fields: [professionId], references: [id])
+  applicant           Applicant      @relation(fields: [applicantId], references: [id])
+  last_academic_level AcademicLevel? @relation(fields: [lastAcademicLevelId], references: [id])
+  last_job_hierarchy  JobHierarchy?  @relation(fields: [lastJobHierarchyId], references: [id])
+  profession          Profession?    @relation(fields: [professionId], references: [id])
 
   @@map("professional_data")
 }
@@ -158,12 +159,17 @@ model Company {
   isDeleted                   Boolean                    @default(false) @map("is_deleted")
   logoUrl                     String?                    @map("logo_url")
   countryId                   Int                        @map("country_id")
+  stateId                     Int?                       @map("state_id")
+  cityId                      Int?                       @map("city_id")
+  zone                        String?
   hiringEmploymentSectorId    Int                        @map("hiring_employment_sector_id")
   created_at                  DateTime                   @default(now())
   updated_at                  DateTime?                  @updatedAt
   created_by                  String
   updated_by                  String?
   country                     Country                    @relation(fields: [countryId], references: [id])
+  state                       State?                     @relation(fields: [stateId], references: [id])
+  city                        City?                      @relation(fields: [cityId], references: [id])
   hiring_employment_sector    HiringEmploymentSector     @relation(fields: [hiringEmploymentSectorId], references: [id])
   recruiters                  Recruiter[]
   jobOffers                   JobOffer[]
@@ -175,65 +181,66 @@ model Company {
 }
 
 model JobOffer {
-  id                           Int                @id @default(autoincrement())
+  id                           Int                        @id @default(autoincrement())
   uuid                         String
   name                         String
-  ageRangeFrom                 Int                @map("age_range_from")
-  ageRangeTo                   Int                @map("age_range_to")
-  description                  String
-  publicDescription            String?            @map("public_description")
-  countryId                    Int                @map("country_id")
-  isExperienceRequired         Boolean            @map("is_experience_required")
-  requiredExperience           Int?               @map("required_experience")
-  softwareSkills               Json               @map("software_skills")
-  mainLanguageId               Int                @map("main_language_id")
-  languageSkills               Json               @map("language_skills")
-  otherLanguages               Json               @map("other_languages")
-  isConfidential               Boolean            @map("is_confidential")
-  featured                     Boolean
-  requiredAvailabilityToTravel Boolean            @map("required_availability_to_travel")
-  requiredDriverLicense        Boolean            @map("required_driver_license")
-  expectedDriverLicense        Int[]              @map("expected_driver_license")
-  schedule                     String
-  vacancies                    Int
-  hiringDate                   DateTime           @map("hiring_date")
-  publicationDate              DateTime           @map("publication_date")
-  isPublished                  Boolean            @map("is_published")
-  receivesResumesByEmail       Boolean            @map("receives_resumes_by_email")
+  ageRangeFrom                 Int?                       @map("age_range_from")
+  ageRangeTo                   Int?                       @map("age_range_to")
+  description                  String?
+  publicDescription            String?                    @map("public_description")
+  countryId                    Int?                       @map("country_id")
+  isExperienceRequired         Boolean?                   @map("is_experience_required")
+  requiredExperience           Int?                       @map("required_experience")
+  softwareSkills               Json?                      @map("software_skills")
+  mainLanguageId               Int?                       @map("main_language_id")
+  languageSkills               Json?                      @map("language_skills")
+  otherLanguages               Json?                      @map("other_languages")
+  isConfidential               Boolean?                   @map("is_confidential")
+  featured                     Boolean?                   @map("featured")
+  requiredAvailabilityToTravel Boolean?                   @map("required_availability_to_travel")
+  requiredDriverLicense        Boolean?                   @map("required_driver_license")
+  expectedDriverLicense        Int[]                      @map("expected_driver_license")
+  schedule                     String?
+  vacancies                    Int?
+  hiringDate                   DateTime?                  @map("hiring_date")
+  publicationDate              DateTime                   @map("publication_date")
+  isPublished                  Boolean                    @map("is_published")
+  receivesResumesByEmail       Boolean                    @map("receives_resumes_by_email")
   status                       String
-  companyId                    Int                @map("company_id")
-  professionId                 Int                @map("profession_id")
-  maritalStatusId              Int                @map("marital_status_id")
-  employmentSectorId           Int                @map("employment_sector_id")
-  jobHierarchyId               Int                @map("job_hierarchy_id")
-  genderPreferenceId           Int                @map("gender_preference_id")
-  minimumAcademicLevelId       Int                @map("minimum_academic_level_id")
-  stateId                      Int                @map("state_id")
-  cityId                       Int                @map("city_id")
-  salaryRangeId                Int                @map("salary_range_id")
-  workShiftId                  Int                @map("work_shift_id")
-  contractTypeId               Int                @map("contract_type_id")
-  created_at                   DateTime           @default(now())
-  updated_at                   DateTime?          @updatedAt
+  companyId                    Int?                       @map("company_id")
+  professionId                 Int?                       @map("profession_id")
+  maritalStatusId              Int?                       @map("marital_status_id")
+  employmentSectorId           Int?                       @map("employment_sector_id")
+  jobHierarchyId               Int?                       @map("job_hierarchy_id")
+  genderPreferenceId           Int?                       @map("gender_preference_id")
+  minimumAcademicLevelId       Int?                       @map("minimum_academic_level_id")
+  stateId                      Int?                       @map("state_id")
+  cityId                       Int?                       @map("city_id")
+  salaryRangeId                Int?                       @map("salary_range_id")
+  workShiftId                  Int?                       @map("work_shift_id")
+  contractTypeId               Int?                       @map("contract_type_id")
+  created_at                   DateTime                   @default(now())
+  updated_at                   DateTime?                  @updatedAt
   created_by                   String
   updated_by                   String?
-  isDeleted                    Boolean            @default(false) @map("is_deleted")
-  zone                         String?            @map("zone")
+  isDeleted                    Boolean                    @default(false) @map("is_deleted")
+  zone                         String?                    @map("zone")
   jobApplicants                JobApplicant[]
-  company                      Company            @relation(fields: [companyId], references: [id])
-  city                         City               @relation(fields: [cityId], references: [id])
-  country                      Country            @relation(fields: [countryId], references: [id])
-  employment_sector            EmploymentSector   @relation(fields: [employmentSectorId], references: [id])
-  gender_preference            GenderPreference   @relation(fields: [genderPreferenceId], references: [id])
-  job_hierarchy                JobHierarchy       @relation(fields: [jobHierarchyId], references: [id])
-  marital_status               MaritalStatus      @relation(fields: [maritalStatusId], references: [id])
-  minimum_academic_level       AcademicLevel      @relation(fields: [minimumAcademicLevelId], references: [id])
-  profession                   Profession         @relation(fields: [professionId], references: [id])
-  salary_range                 SalaryRange        @relation(fields: [salaryRangeId], references: [id])
-  state                        State              @relation(fields: [stateId], references: [id])
-  work_shift                   WorkShift          @relation(fields: [workShiftId], references: [id])
-  contract_type                ContractType       @relation(fields: [contractTypeId], references: [id])
+  company                      Company?                   @relation(fields: [companyId], references: [id])
+  city                         City?                      @relation(fields: [cityId], references: [id])
+  country                      Country?                   @relation(fields: [countryId], references: [id])
+  employment_sector            EmploymentSector?          @relation(fields: [employmentSectorId], references: [id])
+  gender_preference            GenderPreference?          @relation(fields: [genderPreferenceId], references: [id])
+  job_hierarchy                JobHierarchy?              @relation(fields: [jobHierarchyId], references: [id])
+  marital_status               MaritalStatus?             @relation(fields: [maritalStatusId], references: [id])
+  minimum_academic_level       AcademicLevel?             @relation(fields: [minimumAcademicLevelId], references: [id])
+  profession                   Profession?                @relation(fields: [professionId], references: [id])
+  salary_range                 SalaryRange?               @relation(fields: [salaryRangeId], references: [id])
+  state                        State?                     @relation(fields: [stateId], references: [id])
+  work_shift                   WorkShift?                 @relation(fields: [workShiftId], references: [id])
+  contract_type                ContractType?              @relation(fields: [contractTypeId], references: [id])
   FavoriteJobOffer             FavoriteJobOffer[]
+  CompanyFavoriteApplicant     CompanyFavoriteApplicant[]
 
   @@map("job_offer")
 }
@@ -264,46 +271,46 @@ model JobApplicant {
 }
 
 model AcademicData {
-  id                 Int                @id @default(autoincrement())
-  institutionName    String             @map("institution_name")
-  startDate          DateTime           @map("start_date")
-  endDate            DateTime?          @map("end_date")
-  academicLevelId    Int                @map("academic_level_id")
-  employmentSectorId Int                @map("employment_sector_id")
-  titleObtained      String             @map("title_obtained")
-  academicStatusId   Int                @map("academic_status_id")
-  isDeleted          Boolean            @default(false) @map("is_deleted")
-  created_at         DateTime           @default(now())
-  updated_at         DateTime?          @updatedAt
-  status             String
+  id                 Int                 @id @default(autoincrement())
+  institutionName    String?             @map("institution_name")
+  startDate          DateTime?           @map("start_date")
+  endDate            DateTime?           @map("end_date")
+  academicLevelId    Int?                @map("academic_level_id")
+  employmentSectorId Int?                @map("employment_sector_id")
+  titleObtained      String?             @map("title_obtained")
+  academicStatusId   Int?                @map("academic_status_id")
+  isDeleted          Boolean?            @default(false) @map("is_deleted")
+  created_at         DateTime?           @default(now())
+  updated_at         DateTime?           @updatedAt
+  status             String?
   created_by         String
   updated_by         String?
-  applicantId        Int                @map("applicant_id")
-  applicant          Applicant          @relation(fields: [applicantId], references: [id])
-  academic_level     AcademicLevel      @relation(fields: [academicLevelId], references: [id])
-  employment_sector  EmploymentSector   @relation(fields: [employmentSectorId], references: [id])
-  academic_status    AcademicDataStatus @relation(fields: [academicStatusId], references: [id])
+  applicantId        Int                 @map("applicant_id")
+  applicant          Applicant           @relation(fields: [applicantId], references: [id])
+  academic_level     AcademicLevel?      @relation(fields: [academicLevelId], references: [id])
+  employment_sector  EmploymentSector?   @relation(fields: [employmentSectorId], references: [id])
+  academic_status    AcademicDataStatus? @relation(fields: [academicStatusId], references: [id])
 
   @@map("academic_data")
 }
 
 model JobExperienceData {
   id              Int       @id @default(autoincrement())
-  companyName     String    @map("company_name")
-  position        String
-  countryId       Int       @map("country_id")
-  stateId         Int       @map("state_id")
-  cityId          Int       @map("city_id")
-  zone            String
-  startDate       DateTime  @map("start_date")
+  companyName     String?   @map("company_name")
+  position        String?
+  countryId       Int?      @map("country_id")
+  stateId         Int?      @map("state_id")
+  cityId          Int?      @map("city_id")
+  zone            String?
+  startDate       DateTime? @map("start_date")
   endDate         DateTime? @map("end_date")
-  useForReference Boolean   @map("use_for_reference")
+  useForReference Boolean?  @map("use_for_reference")
   referenceName   String?   @map("reference_name")
   referencePhone  String?   @map("reference_phone")
   referenceEmail  String?   @map("reference_email")
-  jobDescription  String    @map("job_description")
-  status          String
-  isDeleted       Boolean   @default(false) @map("is_deleted")
+  jobDescription  String?   @map("job_description")
+  status          String?   @map("status")
+  isDeleted       Boolean?  @default(false) @map("is_deleted")
 
   applicantId Int       @map("applicant_id")
   applicant   Applicant @relation(fields: [applicantId], references: [id])
@@ -417,12 +424,15 @@ model CompanyFavoriteApplicant {
   id          Int       @id @default(autoincrement())
   applicantId Int       @map("applicant_id")
   companyId   Int       @map("company_id")
+  jobId       Int?      @map("job_id")
+  jobUuid     String?   @map("job_uuid")
   created_at  DateTime  @default(now())
   updated_at  DateTime? @updatedAt
   created_by  String
   updated_by  String?
   applicant   Applicant @relation(fields: [applicantId], references: [id])
   company     Company   @relation(fields: [companyId], references: [id])
+  job         JobOffer? @relation(fields: [jobId], references: [id])
 
   @@map("company_favorite_applicant")
 }
@@ -434,7 +444,6 @@ model CompanyViewedApplicant {
   viewed_at   DateTime @default(now()) @map("viewed_at")
 
   @@id([applicantId, companyId])
-
   @@map("company_viewed_applicant")
 }
 
@@ -533,7 +542,7 @@ model Permission {
 
 model DocumentType {
   id            Int            @id @default(autoincrement())
-  name          String         
+  name          String
   status        String         @default("active")
   description   String?
   created_at    DateTime       @default(now())
@@ -548,7 +557,7 @@ model DocumentType {
 
 model Gender {
   id            Int            @id @default(autoincrement())
-  name          String         
+  name          String
   status        String         @default("active")
   description   String?
   created_at    DateTime       @default(now())
@@ -563,7 +572,7 @@ model Gender {
 
 model MaritalStatus {
   id            Int            @id @default(autoincrement())
-  name          String         
+  name          String
   status        String         @default("active")
   description   String?
   created_at    DateTime       @default(now())
@@ -579,7 +588,7 @@ model MaritalStatus {
 
 model Country {
   id              Int              @id @default(autoincrement())
-  name            String           
+  name            String
   status          String           @default("active")
   description     String?
   created_at      DateTime         @default(now())
@@ -610,6 +619,7 @@ model State {
   job             JobOffer[]
   job_preferences JobPreferences[]
   country         Country          @relation(fields: [countryId], references: [id])
+  Company         Company[]
 
   @@map("state")
 }
@@ -629,13 +639,14 @@ model City {
   job             JobOffer[]
   job_preferences JobPreferences[]
   PersonalData    PersonalData[]
+  Company         Company[]
 
   @@map("city")
 }
 
 model DriverLicense {
   id            Int            @id @default(autoincrement())
-  name          String         
+  name          String
   status        String         @default("active")
   description   String?
   created_at    DateTime       @default(now())
@@ -650,7 +661,7 @@ model DriverLicense {
 
 model AcademicLevel {
   id                Int                @id @default(autoincrement())
-  name              String             
+  name              String
   status            String             @default("active")
   description       String?
   created_at        DateTime           @default(now())
@@ -667,7 +678,7 @@ model AcademicLevel {
 
 model Profession {
   id                Int                @id @default(autoincrement())
-  name              String             
+  name              String
   status            String             @default("active")
   description       String?
   created_at        DateTime           @default(now())
@@ -683,7 +694,7 @@ model Profession {
 
 model JobHierarchy {
   id                Int                @id @default(autoincrement())
-  name              String             
+  name              String
   description       String?
   status            String             @default("active")
   created_at        DateTime           @default(now())
@@ -700,7 +711,7 @@ model JobHierarchy {
 
 model EmploymentStatus {
   id              Int              @id @default(autoincrement())
-  name            String           
+  name            String
   status          String           @default("active")
   description     String?
   created_at      DateTime         @default(now())
@@ -715,7 +726,7 @@ model EmploymentStatus {
 
 model EmploymentSector {
   id              Int              @id @default(autoincrement())
-  name            String           
+  name            String
   status          String           @default("active")
   description     String?
   created_at      DateTime         @default(now())
@@ -731,16 +742,16 @@ model EmploymentSector {
 }
 
 model HiringEmploymentSector {
-  id              Int              @id @default(autoincrement())
-  name            String           
-  status          String           @default("active")
-  description     String?
-  created_at      DateTime         @default(now())
-  updated_at      DateTime?        @updatedAt
-  created_by      String
-  updated_by      String?
-  isDeleted       Boolean          @default(false) @map("is_deleted")
-  companies       Company[]
+  id          Int       @id @default(autoincrement())
+  name        String
+  status      String    @default("active")
+  description String?
+  created_at  DateTime  @default(now())
+  updated_at  DateTime? @updatedAt
+  created_by  String
+  updated_by  String?
+  isDeleted   Boolean   @default(false) @map("is_deleted")
+  companies   Company[]
 
   @@map("hiring_employment_sector")
 }
@@ -763,7 +774,7 @@ model SalaryRange {
 
 model WorkShift {
   id              Int              @id @default(autoincrement())
-  name            String           
+  name            String
   status          String           @default("active")
   description     String?
   created_at      DateTime         @default(now())
@@ -779,7 +790,7 @@ model WorkShift {
 
 model ContractType {
   id              Int              @id @default(autoincrement())
-  name            String           
+  name            String
   status          String           @default("active")
   description     String?
   created_at      DateTime         @default(now())
@@ -795,7 +806,7 @@ model ContractType {
 
 model GenderPreference {
   id          Int        @id @default(autoincrement())
-  name        String     
+  name        String
   status      String     @default("active")
   description String?
   created_at  DateTime   @default(now())
@@ -810,7 +821,7 @@ model GenderPreference {
 
 model MembershipType {
   id            Int          @id @default(autoincrement())
-  name          String       
+  name          String
   price         Float
   salePrice     Float?       @map("sale_price")
   description   String?
@@ -830,7 +841,7 @@ model MembershipType {
 
 model SoftwareSkills {
   id                 Int                  @id @default(autoincrement())
-  name               String               
+  name               String
   description        String?
   created_at         DateTime             @default(now())
   updated_at         DateTime?            @updatedAt
@@ -844,7 +855,7 @@ model SoftwareSkills {
 
 model Language {
   id                 Int                  @id @default(autoincrement())
-  name               String               
+  name               String
   description        String?
   created_at         DateTime             @default(now())
   updated_at         DateTime?            @updatedAt
@@ -858,7 +869,7 @@ model Language {
 
 model SkillLevel {
   id                 Int                  @id @default(autoincrement())
-  name               String               
+  name               String
   description        String?
   created_at         DateTime             @default(now())
   updated_at         DateTime?            @updatedAt
@@ -873,7 +884,7 @@ model SkillLevel {
 
 model OtherSkills {
   id          Int       @id @default(autoincrement())
-  name        String    
+  name        String
   description String?
   created_at  DateTime  @default(now())
   updated_at  DateTime? @updatedAt
@@ -886,7 +897,7 @@ model OtherSkills {
 
 model AcademicDataStatus {
   id           Int            @id @default(autoincrement())
-  name         String         
+  name         String
   status       String         @default("active")
   description  String?
   created_at   DateTime       @default(now())
@@ -897,4 +908,15 @@ model AcademicDataStatus {
   AcademicData AcademicData[]
 
   @@map("academic_data_status")
+}
+
+model UserTemporaryPassword {
+  id           Int       @id @default(autoincrement())
+  userId       Int       @map("user_id")
+  tempPassword String    @map("temp_password")
+  created_at   DateTime  @default(now())
+  updated_at   DateTime? @updatedAt
+  isUsed       Boolean   @default(false) @map("is_used")
+
+  @@map("user_temporary_password")
 }
